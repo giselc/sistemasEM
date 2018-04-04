@@ -1,0 +1,41 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Mar 25, 2016, 6:25:36 PM
+    Author     : Gisel
+*/
+body{
+    word-wrap: break-word;
+    background-image: url(../images/Acuarela_Escuela_Militar.jpg);
+    background-color: #bfd070;
+    background-repeat: no-repeat;
+    vertical-align: top;
+    width: 100%;
+}
+.fondo{
+    vertical-align: top;
+}
+.boton:hover {
+	width:95%
+}
+.boton{
+	width:100%;
+}
+.thumb{
+    width: 50%;
+}
+.conteinermenu {
+	-webkit-box-shadow:0px 0px 2px #bababa, inset 0px 0px #990000; 
+	-moz-box-shadow: 0px 0px 2px   #bababa inset 0px 0px 1px #990000; 
+	box-shadow:0px 0px -2px #bababa inset 0px 0px 1px #990000;
+	border-radius: 33px 33px 33px 33px;
+	-moz-border-radius: 33px 33px 33px 33px;
+	-webkit-border-radius: 33px 33px 33px 33px;
+	border: 0px solid #000000;
+        background-color: rgba(158,158,158,0.7);
+        padding: 5%;
+        padding-top: 0px;
+       }
