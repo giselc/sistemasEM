@@ -65,6 +65,63 @@ public class ManejadorCodigoBD {
         }
         return al;
     }
+    
+    public Curso getCurso(int codigo){
+        Curso d= null;
+        try {
+            Statement s= connection.createStatement();
+            String sql="Select * from sistemasEM.cursos where codigo="+ codigo;
+            ResultSet rs=s.executeQuery(sql);
+            if (rs.next()){
+                d = new Curso(codigo, rs.getString("descripcion"));
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return d;
+    }
+    public ArrayList<Curso> getCursos(){
+        ArrayList<Curso> al= new ArrayList<>();
+        try {
+            Statement s= connection.createStatement();
+            String sql="Select * from sistemasEM.cursos order by descripcion asc";
+            ResultSet rs=s.executeQuery(sql);
+            while (rs.next()){
+                al.add(new Curso(rs.getInt("codigo"), rs.getString("descripcion")));
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return al;
+    }
+    public Arma getArma(int codigo){
+        Arma d= null;
+        try {
+            Statement s= connection.createStatement();
+            String sql="Select * from sistemasEM.armas where codigo="+ codigo;
+            ResultSet rs=s.executeQuery(sql);
+            if (rs.next()){
+                d = new Arma(codigo, rs.getString("descripcion"));
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return d;
+    }
+    public ArrayList<Arma> getArmas(){
+        ArrayList<Arma> al= new ArrayList<>();
+        try {
+            Statement s= connection.createStatement();
+            String sql="Select * from sistemasEM.armas order by descripcion asc";
+            ResultSet rs=s.executeQuery(sql);
+            while (rs.next()){
+                al.add(new Arma(rs.getInt("codigo"), rs.getString("descripcion")));
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return al;
+    }
     public EstadoCivil getEstadoCivil(int codigo){
         EstadoCivil d= null;
         try {
@@ -108,8 +165,8 @@ public class ManejadorCodigoBD {
         }
         return d;
     }
-    public ArrayList<TipoDescuento> getTipoDescuentos(){
-        ArrayList<TipoDescuento> al= new ArrayList<>();
+    public ArrayList<Tipo> getTipoDescuentos(){
+        ArrayList<Tipo> al= new ArrayList<>();
         try {
             Statement s= connection.createStatement();
             String sql="Select * from sistemasEM.tiposDescuentos order by descripcion asc";
@@ -157,8 +214,9 @@ public class ManejadorCodigoBD {
             String sql="Select * from sistemasEM.usuarios where id="+ id;
             ResultSet rs=s.executeQuery(sql);
             if (rs.next()){
-                TipoDescuento td = this.getTipoDescuento(rs.getInt("tipoDescuento"));
-                d= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),rs.getBoolean("s1"),rs.getBoolean("descuentos"),td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"));
+                TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
+                TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
+                d= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"));
 
             }
         } catch (Exception ex) {
@@ -173,8 +231,9 @@ public class ManejadorCodigoBD {
             String sql="Select * from sistemasEM.usuarios order by mostrar asc";
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                TipoDescuento td = this.getTipoDescuento(rs.getInt("tipoDescuento"));
-                al.add(new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),rs.getBoolean("s1"),rs.getBoolean("descuentos"),td,rs.getBoolean("notas"),rs.getBoolean("habilitacion") ));
+                TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
+                TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
+                al.add( new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion")));
             }
         } catch (Exception ex) {
             Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -333,8 +392,9 @@ public class ManejadorCodigoBD {
                 ResultSet rs = s.executeQuery(sql);
                 Usuario u;
                 while(rs.next()){
-                    TipoDescuento td = this.getTipoDescuento(rs.getInt("tipoDescuento"));
-                    al.add(new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),rs.getBoolean("s1"),rs.getBoolean("descuentos"),td,rs.getBoolean("notas"),rs.getBoolean("habilitacion") ));
+                    TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
+                    TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
+                    al.add( new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion")));
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -352,8 +412,9 @@ public class ManejadorCodigoBD {
                 Statement s= connection.createStatement();
                 ResultSet rs = s.executeQuery(sql);
                 while(rs.next()){
-                    TipoDescuento td = this.getTipoDescuento(rs.getInt("tipoDescuento"));
-                    u=new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),rs.getBoolean("s1"),rs.getBoolean("descuentos"),td,rs.getBoolean("notas"),rs.getBoolean("habilitacion") );
+                    TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
+                    TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
+                    u= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"));
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -370,8 +431,9 @@ public class ManejadorCodigoBD {
                 Statement s= connection.createStatement();
                 ResultSet rs = s.executeQuery(sql);
                 while(rs.next()){
-                    TipoDescuento td = this.getTipoDescuento(rs.getInt("tipoDescuento"));
-                    u=new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),rs.getBoolean("s1"),rs.getBoolean("descuentos"),td,rs.getBoolean("notas"),rs.getBoolean("habilitacion") );
+                    TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
+                    TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
+                    u= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"));
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -387,7 +449,7 @@ public class ManejadorCodigoBD {
                 out.print("<td style='width: 20%' align='center'><h3 style='margin:2%;'>Usuario</h3></td>");
                 out.print("<td style='width: 20%' align='center'><h3 style='margin:2%;'>Nombre para mostrar</h3></td>");
                 out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Admin</h3></td>");
-                out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>S1</h3></td>");
+                out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Personal</h3></td>");
                 out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Descuentos</h3></td>");
                 out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Tipo Descuento</h3></td>");
                 out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Notas</h3></td>");
@@ -408,9 +470,14 @@ public class ManejadorCodigoBD {
                 out.print("<td style='width: 20%' align='center'>"+u1.getNombre()+"</td>");
                 out.print("<td style='width: 20%' align='center'>"+u1.getNombreMostrar()+"</td>");
                 out.print("<td style='width: 10%' align='center'>"+u1.isAdmin()+"</td>");
-                out.print("<td style='width: 10%' align='center'>"+u1.isDescuentos()+"</td>");
-                if(u1.getTipoDescuento()!=null){
-                    out.print("<td style='width: 10%' align='center'>"+u1.getTipoDescuento().getDescripcion()+"</td>"); 
+                if(u1.getPermisosPersonal()!=null){
+                    out.print("<td style='width: 10%' align='center'>"+u1.getPermisosPersonal().getDescripcion()+"</td>"); 
+                }
+                else{
+                    out.print("<td style='width: 10%' align='center'></td>");
+                }
+                if(u1.getPermisosDescuento()!=null){
+                    out.print("<td style='width: 10%' align='center'>"+u1.getPermisosDescuento().getDescripcion()+"</td>"); 
                 }
                 else{
                     out.print("<td style='width: 10%' align='center'></td>");

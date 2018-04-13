@@ -14,20 +14,18 @@ public class Usuario {
     private String nombre;
     private String nombreMostrar;
     private boolean admin;
-    private boolean s1;
-    private boolean descuentos;
-    private TipoDescuento tipoDescuento; 
+    private TipoPersonal permisosPersonal;
+    private TipoDescuento permisosDescuento; 
     private boolean notas;
     private boolean habilitacion;
 
-    public Usuario(int id, String nombre, String nombreMostrar, boolean admin, boolean s1, boolean descuentos, TipoDescuento tipoDescuento, boolean notas, boolean habilitacion) {
+    public Usuario(int id, String nombre, String nombreMostrar, boolean admin, TipoPersonal permisosPersonal, TipoDescuento tipoDescuento, boolean notas, boolean habilitacion) {
         this.id = id;
         this.nombre = nombre;
         this.nombreMostrar = nombreMostrar;
         this.admin = admin;
-        this.s1 = s1;
-        this.descuentos = descuentos;
-        this.tipoDescuento = tipoDescuento;
+        this.permisosPersonal = permisosPersonal;
+        this.permisosDescuento = tipoDescuento;
         this.notas = notas;
         this.habilitacion = habilitacion;
     }
@@ -48,17 +46,16 @@ public class Usuario {
         return admin;
     }
 
-    public boolean isS1() {
-        return s1;
+
+
+    public TipoPersonal getPermisosPersonal() {
+        return permisosPersonal;
     }
 
-    public boolean isDescuentos() {
-        return descuentos;
+    public TipoDescuento getPermisosDescuento() {
+        return permisosDescuento;
     }
 
-    public TipoDescuento getTipoDescuento() {
-        return tipoDescuento;
-    }
 
     public boolean isNotas() {
         return notas;

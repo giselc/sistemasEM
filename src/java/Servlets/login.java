@@ -51,13 +51,13 @@ public class login extends HttpServlet {
                     response.sendRedirect("sistemas.jsp");
                 }
                 else{
-                    if(u.isS1()){
-                        sesion.setAttribute("inicio", "s1.jsp");
-                        response.sendRedirect("s1.jsp");
+                    if(u.getPermisosPersonal()!=null){
+                        sesion.setAttribute("inicio", "personal.jsp?id="+u.getPermisosPersonal().getId());
+                        response.sendRedirect("personal.jsp");
                     }
                     else{
-                        if(u.isDescuentos()){
-                            sesion.setAttribute("inicio", "descuentos.jsp");
+                        if(u.getPermisosDescuento()!=null){
+                            sesion.setAttribute("inicio", "descuentos.jsp?id="+u.getPermisosDescuento().getId());
                             response.sendRedirect("descuentos.jsp");
                         }
                         else{

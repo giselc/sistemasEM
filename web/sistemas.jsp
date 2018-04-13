@@ -60,7 +60,7 @@
     %>
     <ul class="nav2" style="width: 80%;padding-left: 10%;min-height: 400px;">
             <li  style="width: 25%">
-                <a><p align="center" style="margin:0px"><img  class="boton" title="S1" src="images/S1.png"/></p></a>
+                <a><p align="center" style="margin:0px"><img  class="boton" title="S1" src="images/button_personal.png"/></p></a>
                 <ul>
                     <li  style="width: 90%">
                         <a href="cadetes.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Cadetes" src="images/button_cadetes.png"/></p></a>

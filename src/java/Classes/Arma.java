@@ -9,9 +9,10 @@ package Classes;
  *
  * @author Gisel
  */
-public class TipoDescuento extends Tipo{
+public class Arma extends Tipo{
 
-    public TipoDescuento(int id, String descripcion) {
+    public Arma(int id, String descripcion) {
         super(id, descripcion);
     }
+    
 }

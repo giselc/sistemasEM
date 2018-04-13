@@ -9,9 +9,9 @@ package Classes;
  *
  * @author Gisel
  */
-public class TipoDescuento extends Tipo{
+public class TipoDocumento extends Tipo{
 
-    public TipoDescuento(int id, String descripcion) {
-        super(id, descripcion);
+    public TipoDocumento(int id, String descripcion) {
+        super(id,descripcion);
     }
 }

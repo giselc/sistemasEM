@@ -9,22 +9,12 @@ package Classes;
  *
  * @author Gisel
  */
-public class TipoPersonal {
-    private int codigo;
-    private String descripcion;
+public class TipoPersonal extends Tipo{
 
-    public TipoPersonal(int codigo, String descripcion) {
-        this.codigo = codigo;
-        this.descripcion = descripcion;
+    public TipoPersonal(int id, String descripcion) {
+        super(id, descripcion);
     }
-
-    public int getCodigo() {
-        return codigo;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
+   
     
     
 }

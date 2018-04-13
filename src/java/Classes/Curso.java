@@ -9,9 +9,10 @@ package Classes;
  *
  * @author Gisel
  */
-public class TipoDescuento extends Tipo{
+public class Curso extends Tipo{
 
-    public TipoDescuento(int id, String descripcion) {
+    public Curso(int id, String descripcion) {
         super(id, descripcion);
     }
+    
 }
