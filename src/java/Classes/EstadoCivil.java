@@ -10,8 +10,8 @@ package Classes;
  * @author Gisel
  */
 public class EstadoCivil {
-    private int codigo;
-    private String descripcion;
+    private final int codigo;
+    private final String descripcion;
 
     public EstadoCivil(int codigo, String descripcion) {
         this.codigo = codigo;

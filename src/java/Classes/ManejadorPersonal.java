@@ -5,9 +5,16 @@
  */
 package Classes;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,7 +26,34 @@ public class ManejadorPersonal {
     public ManejadorPersonal() {
         connection = ConexionDB.GetConnection();
     }
-    
+    public boolean AgregarCadetesTXT(){
+        File archivo = null;
+      FileReader fr = null;
+      BufferedReader br = null;
+
+      try {
+         // Apertura del fichero y creacion de BufferedReader para poder
+         // hacer una lectura comoda (disponer del metodo readLine()).
+         archivo = new File ("C:\\Consulta1.txt");
+         
+         fr = new FileReader (archivo);
+         br = new BufferedReader(fr);
+
+         // Lectura del fichero
+         String linea;
+         int i=0;
+         String [] campos;
+         ManejadorCodigos mc= ManejadorCodigos.getInstance();
+         while((linea=br.readLine())!=null){
+            campos= linea.split(";");
+            
+         }
+      }
+      catch(Exception e){
+         e.printStackTrace();
+      }
+      return true;
+    }
     public String getFiltroSQL(RecordCadetesFiltro rc){ 
         ManejadorCodigoBD mc =  new ManejadorCodigoBD(); 
         String filtro = "";
@@ -193,4 +227,86 @@ public class ManejadorPersonal {
         }
         return al;
     }
+    
+    public boolean agregarPersonal(Personal p){
+        java.util.Calendar fecha1 = java.util.Calendar.getInstance();
+        int mes = fecha1.get(java.util.Calendar.MONTH)+1;
+        String fecha=  fecha1.get(java.util.Calendar.YEAR)+"-"+mes+"-"+fecha1.get(java.util.Calendar.DATE); //usada para log
+        String sql = "INSERT INTO sistemasem.personal (numero,ci,idGrado,idArma, PrimerNombre, PrimerApellido, SegundoNombre, SegundoApellido,  OBSERVACIONES, profesor) values (?,?,?,?,?,?,?,?,?,?)";
+        int i=1;
+        try {
+            PreparedStatement statement= connection.prepareStatement(sql); // sql a insertar en postulantes
+            statement.setInt(i++,p.getNroInterno());
+            statement.setInt(i++,p.getCi());
+            if(p.getGrado()!=null){
+                statement.setInt(i++,p.getGrado().getId());
+            }
+            else{
+                statement.setInt(i++,-1);
+            }
+            if(p.getArma()!=null){
+                statement.setInt(i++,p.getArma().getId());
+            }
+            else{
+                statement.setInt(i++,-1);
+            }
+            
+            statement.setString(i++,p.getPrimerNombre());
+            statement.setString(i++,p.getPrimerApellido());
+            statement.setString(i++,p.getSegundoNombre());
+            statement.setString(i++,p.getSegundoApellido());
+            statement.setString(i++,p.getObservaciones());
+            statement.setBoolean(i++,p.isProfesor());
+            statement.setString(i++, fecha);
+            int row=statement.executeUpdate();
+            if(row>0){
+                if(p instanceof Cadete){
+                    sql = "INSERT INTO sistemasem.cadetes (ci,numero,idCurso,fechaNac, sexo, idDepartamentoNac, localidadNac, cc,  ccNro, idEstadoCivil,domicilio,idDepartamentoDom,localidadDom,telefono,email,derecha,hijos,repitiente,lmga,paseDirecto,notaPaseDirecto) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    i=1;
+                    statement= connection.prepareStatement(sql);
+                    statement.setInt(i++,p.getCi());
+                    statement.setInt(i++,p.getNroInterno());
+                    Cadete c= (Cadete)p;
+                    statement.setInt(i++,c.getCurso().getId());
+                    statement.setDate(i++,c.getFechaNac());
+                    statement.setString(i++,c.getSexo());
+                    statement.setInt(i++,c.getDepartamentoNac().getCodigo());
+                    statement.setString(i++, c.getLocalidadNac());
+                    statement.setString(i++, c.getCc());
+                    statement.setInt(i++, c.getCcNro());
+                    statement.setInt(i++,c.getEstadoCivil().getCodigo());
+                    statement.setString(i++, c.getDomicilio());
+                    statement.setInt(i++,c.getDepartamento().getCodigo());
+                    statement.setString(i++, c.getLocalidad());
+                    statement.setString(i++, c.getTelefono());
+                    statement.setString(i++, c.getEmail());
+                    statement.setInt(i++, c.getDerecha());
+                    statement.setInt(i++, c.getHijos());
+                    statement.setBoolean(i++, c.isRepitiente());
+                    statement.setBoolean(i++, c.isLmga());
+                    statement.setBoolean(i++, c.isPaseDirecto());
+                    statement.setDouble(i++, c.getNotaPaseDirecto());
+                    row=statement.executeUpdate();
+                    if(row>0){
+                        return true;
+                    }
+                    else{
+                        sql = "DELETE FROM sistemasem.PERSONAL WHERE CI="+ p.getCi();
+                        Statement statement1= connection.createStatement();
+                        statement1.execute(sql);
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else{
+                return false;
+            }
+            
+        } catch (Exception ex) {
+            System.out.print(ex);
+            return false;
+        }
+    }
+    
 }

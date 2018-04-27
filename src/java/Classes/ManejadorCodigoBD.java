@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -51,14 +52,14 @@ public class ManejadorCodigoBD {
         }
         return d;
     }
-    public ArrayList<Departamento> getDepartamentos(){
-        ArrayList<Departamento> al= new ArrayList<>();
+    public HashMap<Integer,Departamento> getDepartamentos(){
+        HashMap<Integer,Departamento> al= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql="Select * from sistemasEM.departamentos order by descripcion asc";
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                al.add(new Departamento(rs.getInt("codigo"), rs.getString("descripcion")));
+                al.put(rs.getInt("codigo"),new Departamento(rs.getInt("codigo"), rs.getString("descripcion")));
             }
         } catch (Exception ex) {
             Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -80,14 +81,42 @@ public class ManejadorCodigoBD {
         }
         return d;
     }
-    public ArrayList<Curso> getCursos(){
-        ArrayList<Curso> al= new ArrayList<>();
+    public HashMap<Integer,Curso> getCursos(){
+       HashMap<Integer,Curso> al= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql="Select * from sistemasEM.cursos order by descripcion asc";
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                al.add(new Curso(rs.getInt("codigo"), rs.getString("descripcion")));
+                al.put(rs.getInt("codigo"),new Curso(rs.getInt("codigo"), rs.getString("descripcion")));
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return al;
+    }
+    public Grado getGrado(int codigo){
+        Grado d= null;
+        try {
+            Statement s= connection.createStatement();
+            String sql="Select * from sistemasEM.grado where codigo="+ codigo;
+            ResultSet rs=s.executeQuery(sql);
+            if (rs.next()){
+                d = new Grado(codigo, rs.getString("descripcion"),rs.getString("abreviacion"));
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return d;
+    }
+    public HashMap<Integer,Grado> getGrados(){
+       HashMap<Integer,Grado> al= new HashMap<>();
+        try {
+            Statement s= connection.createStatement();
+            String sql="Select * from sistemasEM.Grado order by descripcion asc";
+            ResultSet rs=s.executeQuery(sql);
+            while (rs.next()){
+                al.put(rs.getInt("codigo"),new Grado(rs.getInt("codigo"), rs.getString("descripcion"),rs.getString("abreviacion")));
             }
         } catch (Exception ex) {
             Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -98,7 +127,7 @@ public class ManejadorCodigoBD {
         Arma d= null;
         try {
             Statement s= connection.createStatement();
-            String sql="Select * from sistemasEM.armas where codigo="+ codigo;
+            String sql="Select * from sistemasEM.arma where codigo="+ codigo;
             ResultSet rs=s.executeQuery(sql);
             if (rs.next()){
                 d = new Arma(codigo, rs.getString("descripcion"));
@@ -108,14 +137,14 @@ public class ManejadorCodigoBD {
         }
         return d;
     }
-    public ArrayList<Arma> getArmas(){
-        ArrayList<Arma> al= new ArrayList<>();
+    public HashMap<Integer,Arma> getArmas(){
+        HashMap<Integer,Arma> al= new HashMap<>();
         try {
             Statement s= connection.createStatement();
-            String sql="Select * from sistemasEM.armas order by descripcion asc";
+            String sql="Select * from sistemasEM.arma order by descripcion asc";
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                al.add(new Arma(rs.getInt("codigo"), rs.getString("descripcion")));
+                al.put(rs.getInt("codigo"),new Arma(rs.getInt("codigo"), rs.getString("descripcion")));
             }
         } catch (Exception ex) {
             Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -137,14 +166,14 @@ public class ManejadorCodigoBD {
         return d;
     }
     
-    public ArrayList<EstadoCivil> getEstadosCiviles(){
-        ArrayList<EstadoCivil> al= new ArrayList<>();
+    public HashMap<Integer,EstadoCivil> getEstadosCiviles(){
+        HashMap<Integer,EstadoCivil> al= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql="Select * from sistemasEM.estadocivil order by descripcion asc";
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                al.add(new EstadoCivil(rs.getInt("codigo"), rs.getString("descripcion")));
+                al.put(rs.getInt("codigo"),new EstadoCivil(rs.getInt("codigo"), rs.getString("descripcion")));
             }
         } catch (Exception ex) {
             Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);

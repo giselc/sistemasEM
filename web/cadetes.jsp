@@ -6,7 +6,7 @@
 
 <%@page import="java.util.ArrayList"%>
 <%@page import="Classes.*"%>
-<%@page import="Classes.ManejadorCadetes"%>
+<%@page import="Classes.ManejadorPersonal"%>
 <%@page import="java.sql.Statement"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Connection"%>

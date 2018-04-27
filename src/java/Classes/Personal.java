@@ -83,8 +83,52 @@ public class Personal {
         return observaciones;
     }
 
-    
+    public void setNroInterno(int nroInterno) {
+        this.nroInterno = nroInterno;
+    }
 
+    public void setCi(int ci) {
+        this.ci = ci;
+    }
+
+    public void setGrado(Grado grado) {
+        this.grado = grado;
+    }
+
+    public void setArma(Arma arma) {
+        this.arma = arma;
+    }
+
+    public void setPrimerNombre(String primerNombre) {
+        this.primerNombre = primerNombre;
+    }
+
+    public void setSegundoNombre(String segundoNombre) {
+        this.segundoNombre = segundoNombre;
+    }
+
+    public void setPrimerApellido(String primerApellido) {
+        this.primerApellido = primerApellido;
+    }
+
+    public void setSegundoApellido(String segundoApellido) {
+        this.segundoApellido = segundoApellido;
+    }
+
+    public void setDocumentos(ArrayList<Documento> documentos) {
+        this.documentos = documentos;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    public void setProfesor(boolean profesor) {
+        this.profesor = profesor;
+    }
+
+    
+    
     
     
 

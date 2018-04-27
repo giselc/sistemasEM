@@ -139,6 +139,86 @@ public class Cadete extends Personal{
     public double getNotaPaseDirecto() {
         return notaPaseDirecto;
     }
+
+    public void setCurso(Curso curso) {
+        this.curso = curso;
+    }
+
+    public void setFechaNac(Date fechaNac) {
+        this.fechaNac = fechaNac;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
+    public void setDepartamentoNac(Departamento departamentoNac) {
+        this.departamentoNac = departamentoNac;
+    }
+
+    public void setLocalidadNac(String localidadNac) {
+        this.localidadNac = localidadNac;
+    }
+
+    public void setCc(String cc) {
+        this.cc = cc;
+    }
+
+    public void setCcNro(int ccNro) {
+        this.ccNro = ccNro;
+    }
+
+    public void setEstadoCivil(EstadoCivil estadoCivil) {
+        this.estadoCivil = estadoCivil;
+    }
+
+    public void setDomicilio(String domicilio) {
+        this.domicilio = domicilio;
+    }
+
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
+    }
+
+    public void setLocalidad(String localidad) {
+        this.localidad = localidad;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setDerecha(int derecha) {
+        this.derecha = derecha;
+    }
+
+    public void setHijos(int hijos) {
+        this.hijos = hijos;
+    }
+
+    public void setRepitiente(boolean repitiente) {
+        this.repitiente = repitiente;
+    }
+
+    public void setLmga(boolean lmga) {
+        this.lmga = lmga;
+    }
+
+    public void setPaseDirecto(boolean paseDirecto) {
+        this.paseDirecto = paseDirecto;
+    }
+
+    public void setNotaPaseDirecto(double notaPaseDirecto) {
+        this.notaPaseDirecto = notaPaseDirecto;
+    }
+
+    public void setFamiliares(ArrayList<Familiar> familiares) {
+        this.familiares = familiares;
+    }
     
     
     

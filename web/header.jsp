@@ -94,6 +94,11 @@
                                                             }
                                                         %>
                                                         <li>
+                                                            <form action="AgregarPersonal" method="POST" style="font-size: 100%">
+                                                                <a align="center"><input type="submit" value="Agregar Personal"/></a>
+                                                            </form>
+                                                        </li>
+                                                        <li>
                                                             <form action="logout" method="POST" style="font-size: 100%">
                                                                 <a align="center"><input type="submit" value="SALIR"/></a>
                                                             </form>
