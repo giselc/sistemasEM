@@ -5,7 +5,7 @@
  */
 package Servlets;
 
-import Classes.ManejadorPersonal;
+import Classes.ManejadorPersonalBD;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -30,7 +30,7 @@ public class AgregarPersonal extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ManejadorPersonal mp = new ManejadorPersonal();
+        ManejadorPersonalBD mp = new ManejadorPersonalBD();
         mp.AgregarCadetesTXT();
     }
 
