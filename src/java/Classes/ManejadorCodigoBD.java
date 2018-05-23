@@ -517,6 +517,21 @@ public class ManejadorCodigoBD {
         }
         out.print("</table>");
     }
+
+    public HashMap<Integer, Carrera> getCarreras() {
+        HashMap<Integer,Carrera> al= new HashMap<>();
+        try {
+            Statement s= connection.createStatement();
+            String sql="Select * from sistemasEM.carreras order by descripcion asc";
+            ResultSet rs=s.executeQuery(sql);
+            while (rs.next()){
+                al.put(rs.getInt("codigo"),new Carrera(rs.getInt("codigo"), rs.getString("descripcion")));
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return al;
+    }
     
     
 }

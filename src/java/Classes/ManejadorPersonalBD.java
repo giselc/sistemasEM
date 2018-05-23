@@ -28,8 +28,44 @@ public class ManejadorPersonalBD {
     public ManejadorPersonalBD() {
         connection = ConexionDB.GetConnection();
     }
+    private int ConvertirDepartamento(int deptoViejo){
+        int dptoNuevo =0;
+        switch(deptoViejo){
+            case 1: dptoNuevo = 2; break; 
+            case 2: dptoNuevo = 9; break;
+            case 3: dptoNuevo = 14; break; 
+            case 4: dptoNuevo = 19; break;
+            case 5: dptoNuevo = 3; break; 
+            case 6: dptoNuevo = 13; break;
+            case 7: dptoNuevo = 1; break; 
+            case 8: dptoNuevo = 15; break; 
+            case 9: dptoNuevo = 11; break; 
+            case 10: dptoNuevo = 12; break; 
+            case 11: dptoNuevo = 17; break; 
+            case 12: dptoNuevo = 4; break;     
+            case 13: dptoNuevo = 16; break; 
+            case 14: dptoNuevo = 6; break; 
+            case 15: dptoNuevo = 7; break;   
+            case 16: dptoNuevo = 8; break;     
+            case 17: dptoNuevo = 5; break; 
+            case 18: dptoNuevo = 18; break; 
+            case 19: dptoNuevo = 10; break; 
+        }
+        return dptoNuevo;
+    }
+    private int convertirEstadoCivil(int estadoCivilViejo){
+        int estadoCivilNuevo=0;
+        switch(estadoCivilViejo){
+            case 1: estadoCivilNuevo=1; break;
+            case 2: estadoCivilNuevo=2; break;
+            case 3: estadoCivilNuevo=5; break;
+            case 5: estadoCivilNuevo=4; break;
+            case 6: estadoCivilNuevo=3; break;
+        }
+        return estadoCivilNuevo;
+    }
     public boolean AgregarCadetesTXT(){
-        File archivo = null;
+      File archivo = null;
       FileReader fr = null;
       BufferedReader br = null;
 
@@ -43,13 +79,64 @@ public class ManejadorPersonalBD {
 
          // Lectura del fichero
          String linea;
-         int i=0;
+         String sql="INSERT INTO personal (numero,ci,idGrado,idArma,primerNombre,segundoNombre,primerApellido,segundoApellido,observaciones,profesor,fechaAltaSistema) values (?,?,?,?,?,?,?,?,?,?,?)";
+         PreparedStatement s = connection.prepareStatement(sql);
+         
+         String sql1="INSERT INTO cadetes (ci,numero,) values (?,?,?,?,?,?,?,?,?,?,?)";
+         PreparedStatement c = connection.prepareStatement(sql1);
+         int i;
          String [] campos;
          ManejadorCodigos mc= ManejadorCodigos.getInstance();
+         int curso = 0;
          while((linea=br.readLine())!=null){
+            i=0;
             campos= linea.split(";");
+            s.setInt(i++, Integer.valueOf(campos[0]));
+            s.setInt(i++, Integer.valueOf(campos[14]));
             
+            switch (Integer.valueOf(campos[10])){
+                case 23: 
+                    s.setInt(i++, 21); //grado
+                    s.setInt(i++,6); //arma
+                    curso=6;
+                    break;
+                case 24:
+                    s.setInt(i++, 20);//grado
+                    s.setInt(i++,6);//arma
+                    curso=6;
+                    break;
+                default:
+                    s.setInt(i++,Integer.valueOf(campos[10]));// grado
+                    switch (Integer.valueOf(campos[2])){ //arma
+                        case 6:
+                            s.setInt(i++,0);
+                            curso=7;
+                        case 7:
+                            s.setInt(i++,6);
+                            curso=6;
+                        default:
+                            s.setInt(i++,Integer.valueOf(campos[2]));
+                            curso=Integer.valueOf(campos[2]);
+                    }
+                    break;
+                        
+            }
+             s.setString(i++,campos[20]);//primer nombre
+             s.setString(i++,campos[22]);//segundo nombre
+             s.setString(i++,campos[23]);//primer apellido
+             s.setString(i++,campos[21]);//segundo apellido
+             s.setString(i++,"");//observaciones
+             s.setBoolean(i++, false);//profesor
+             
+             java.util.Calendar fecha1 = java.util.Calendar.getInstance();
+             int mes = fecha1.get(java.util.Calendar.MONTH)+1;
+             String fecha=  fecha1.get(java.util.Calendar.YEAR)+"-"+mes+"-"+fecha1.get(java.util.Calendar.DATE); //usada para log
+            
+             s.setString(i++,fecha);//fecha Alta
+             s.addBatch();
          }
+         s.executeBatch();
+         s.close();
       }
       catch(Exception e){
          e.printStackTrace();
@@ -244,7 +331,7 @@ public class ManejadorPersonalBD {
             while (rs.next()){
                 switch (rs.getInt("idTipoPersonal")) {
                     case 1:
-                        p.get(1).put(rs.getInt("ci"),new Cadete(mc.getCurso(rs.getInt("idCurso")),rs.getDate("fechaNac"),rs.getString("sexo"),mc.getDepartamento(rs.getInt("idDepartamentoNac")),rs.getString("localidadNac"),rs.getString("cc"),rs.getInt("ccNro"),mc.getEstadoCivil(rs.getInt("idEstadoCivil")),rs.getString("domicilio"),mc.getDepartamento(rs.getInt("idDepartamentoDom")),rs.getString("localidadDom"),rs.getString("telefono"),rs.getString("email"),rs.getInt("derecha"),rs.getInt("hijos"),rs.getBoolean("repitiente"),rs.getBoolean("lmga"),rs.getBoolean("paseDirecto"),rs.getDouble("notaPaseDirecto"),null,rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),null,rs.getString("observaciones"),rs.getBoolean("profesor")));
+                        p.get(1).put(rs.getInt("ci"),new Cadete(mc.getCurso(rs.getInt("idCurso")),mc.getCarrera(rs.getInt("idCarrera")), rs.getDate("fechaNac"),rs.getString("sexo"),mc.getDepartamento(rs.getInt("idDepartamentoNac")),rs.getString("localidadNac"),rs.getString("cc"),rs.getInt("ccNro"),mc.getEstadoCivil(rs.getInt("idEstadoCivil")),rs.getString("domicilio"),mc.getDepartamento(rs.getInt("idDepartamentoDom")),rs.getString("localidadDom"),rs.getString("telefono"),rs.getString("email"),rs.getInt("derecha"),rs.getInt("hijos"),rs.getBoolean("repitiente"),rs.getBoolean("lmga"),rs.getBoolean("paseDirecto"),rs.getDouble("notaPaseDirecto"),null,rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),null,rs.getString("observaciones"),rs.getBoolean("profesor")));
                         break;
                     case 2:
                         p.get(2).put(rs.getInt("ci"),new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),null,rs.getString("observaciones"),rs.getBoolean("profesor")));

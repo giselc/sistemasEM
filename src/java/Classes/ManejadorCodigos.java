@@ -17,6 +17,7 @@ public class ManejadorCodigos {
     private HashMap<Integer,EstadoCivil> estadosCiviles;
     private HashMap<Integer,Curso> cursos;
     private HashMap<Integer,Arma> armas;
+    private HashMap<Integer,Carrera> carreras;
     private HashMap<Integer,Grado> grados;
     private ManejadorCodigos() {
         ManejadorCodigoBD mc= new ManejadorCodigoBD();
@@ -24,6 +25,7 @@ public class ManejadorCodigos {
         estadosCiviles = mc.getEstadosCiviles();
         cursos = mc.getCursos();
         armas = mc.getArmas();
+        carreras = mc.getCarreras();
     }
     
     public static ManejadorCodigos getInstance() {
@@ -66,6 +68,9 @@ public class ManejadorCodigos {
     }
     public Arma getArma(int codigo){
         return armas.get(codigo);
+    }
+    public Carrera getCarrera(int codigo){
+        return carreras.get(codigo);
     }
     public Grado getGrado(int codigo){
         return grados.get(codigo);

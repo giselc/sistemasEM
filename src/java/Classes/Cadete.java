@@ -14,6 +14,7 @@ import java.util.ArrayList;
  */
 public class Cadete extends Personal{
     private Curso curso;
+    private Carrera carrera;
     private Date fechaNac;
     private String sexo;
     private Departamento departamentoNac;
@@ -34,9 +35,10 @@ public class Cadete extends Personal{
     private double notaPaseDirecto;
     private ArrayList<Familiar> familiares;
 
-    public Cadete(Curso curso, Date fechaNac, String sexo, Departamento departamentoNac, String localidadNac, String cc, int ccNro, EstadoCivil estadoCivil, String domicilio, Departamento departamento, String localidad, String telefono, String email, int derecha, int hijos, boolean repitiente, boolean lmga, boolean paseDirecto, double notaPaseDirecto, ArrayList<Familiar> familiares, int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, ArrayList<Documento> documentos, String observaciones, boolean profesor) {
+    public Cadete(Curso curso, Carrera carrera, Date fechaNac, String sexo, Departamento departamentoNac, String localidadNac, String cc, int ccNro, EstadoCivil estadoCivil, String domicilio, Departamento departamento, String localidad, String telefono, String email, int derecha, int hijos, boolean repitiente, boolean lmga, boolean paseDirecto, double notaPaseDirecto, ArrayList<Familiar> familiares, int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, ArrayList<Documento> documentos, String observaciones, boolean profesor) {
         super(nroInterno, ci, grado, arma, primerNombre, segundoNombre, primerApellido, segundoApellido, documentos, observaciones, profesor);
         this.curso = curso;
+        this.carrera = carrera;
         this.fechaNac = fechaNac;
         this.sexo = sexo;
         this.departamentoNac = departamentoNac;
@@ -218,6 +220,14 @@ public class Cadete extends Personal{
 
     public void setFamiliares(ArrayList<Familiar> familiares) {
         this.familiares = familiares;
+    }
+
+    public Carrera getCarrera() {
+        return carrera;
+    }
+
+    public void setCarrera(Carrera carrera) {
+        this.carrera = carrera;
     }
     
     
