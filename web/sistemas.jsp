@@ -53,7 +53,7 @@
 			}
 			
     </style> 
-<% if(u.isAdmin()){%>
+<% if(u!=null && u.isAdmin()){%>
     <p id="mensaje" style="color: #ffffff"><% if(session.getAttribute("Mensaje")!=null){out.print("<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+session.getAttribute("Mensaje"));}%></p>
     <%
         session.setAttribute("Mensaje",null);

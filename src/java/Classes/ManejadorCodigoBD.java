@@ -74,7 +74,7 @@ public class ManejadorCodigoBD {
             String sql="Select * from sistemasEM.cursos where codigo="+ codigo;
             ResultSet rs=s.executeQuery(sql);
             if (rs.next()){
-                d = new Curso(codigo, rs.getString("descripcion"));
+                d = new Curso(codigo, rs.getString("descripcion"),rs.getString("abreviacion"));
             }
         } catch (Exception ex) {
             Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -88,7 +88,7 @@ public class ManejadorCodigoBD {
             String sql="Select * from sistemasEM.cursos order by descripcion asc";
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                al.put(rs.getInt("codigo"),new Curso(rs.getInt("codigo"), rs.getString("descripcion")));
+                al.put(rs.getInt("codigo"),new Curso(rs.getInt("codigo"), rs.getString("descripcion"),rs.getString("abreviacion")));
             }
         } catch (Exception ex) {
             Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -522,7 +522,7 @@ public class ManejadorCodigoBD {
         HashMap<Integer,Carrera> al= new HashMap<>();
         try {
             Statement s= connection.createStatement();
-            String sql="Select * from sistemasEM.carreras order by descripcion asc";
+            String sql="Select * from sistemasEM.carrera order by descripcion asc";
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
                 al.put(rs.getInt("codigo"),new Carrera(rs.getInt("codigo"), rs.getString("descripcion")));

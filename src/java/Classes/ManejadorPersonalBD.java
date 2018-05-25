@@ -7,7 +7,9 @@ package Classes;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -64,6 +66,10 @@ public class ManejadorPersonalBD {
         }
         return estadoCivilNuevo;
     }
+    private String convertirFecha(String fechaVieja){
+        String [] campos= fechaVieja.split("/");
+        return campos[2]+"-"+campos[1]+"-"+campos[0];
+    }
     public boolean AgregarCadetesTXT(){
       File archivo = null;
       FileReader fr = null;
@@ -74,22 +80,22 @@ public class ManejadorPersonalBD {
          // hacer una lectura comoda (disponer del metodo readLine()).
          archivo = new File ("C:\\Consulta1.txt");
          
-         fr = new FileReader (archivo);
-         br = new BufferedReader(fr);
+         br = new BufferedReader(new InputStreamReader(new FileInputStream(archivo),"UTF-8"));
 
          // Lectura del fichero
          String linea;
-         String sql="INSERT INTO personal (numero,ci,idGrado,idArma,primerNombre,segundoNombre,primerApellido,segundoApellido,observaciones,profesor,fechaAltaSistema) values (?,?,?,?,?,?,?,?,?,?,?)";
+         String sql="INSERT INTO sistemasem.personal (numero,ci,idGrado,idArma,primerNombre,segundoNombre,primerApellido,segundoApellido,observaciones,profesor,fechaAltaSistema) values (?,?,?,?,?,?,?,?,?,?,?)";
          PreparedStatement s = connection.prepareStatement(sql);
          
-         String sql1="INSERT INTO cadetes (ci,numero,) values (?,?,?,?,?,?,?,?,?,?,?)";
+         String sql1="INSERT INTO sistemasem.cadetes (ci,numero,idCurso,fechaNac,sexo,idDepartamentoNac,localidadNac,cc,ccNro,idEstadoCivil,domicilio,idDepartamentoDom,localidadDom,telefono,email,derecha,idCarrera) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
          PreparedStatement c = connection.prepareStatement(sql1);
+         
          int i;
          String [] campos;
          ManejadorCodigos mc= ManejadorCodigos.getInstance();
          int curso = 0;
          while((linea=br.readLine())!=null){
-            i=0;
+            i=1;
             campos= linea.split(";");
             s.setInt(i++, Integer.valueOf(campos[0]));
             s.setInt(i++, Integer.valueOf(campos[14]));
@@ -111,12 +117,17 @@ public class ManejadorPersonalBD {
                         case 6:
                             s.setInt(i++,0);
                             curso=7;
-                        case 7:
+                            break;
+                        case 7: //apoyo
                             s.setInt(i++,6);
-                            curso=6;
+                            if(Integer.valueOf(campos[10])==22){//aspirante
+                                curso=7;
+                            }
+                            break;
                         default:
                             s.setInt(i++,Integer.valueOf(campos[2]));
                             curso=Integer.valueOf(campos[2]);
+                            break;
                     }
                     break;
                         
@@ -134,8 +145,37 @@ public class ManejadorPersonalBD {
             
              s.setString(i++,fecha);//fecha Alta
              s.addBatch();
+             i=1;
+             
+             //(ci,numero,idCurso,fechaNac,sexo,idDepartamentoNac,localidadNac,cc,ccNro,idEstadoCivil,domicilio,idDepartamentoDom,localidadDom,telefono,email,derecha,idCarrera)
+            
+             c.setInt(i++, Integer.valueOf(campos[14])); //ci
+             c.setInt(i++, Integer.valueOf(campos[0])); //nro
+             c.setInt(i++,curso); //curso
+             c.setString(i++, this.convertirFecha(campos[7])); //fechaNAC
+             c.setString(i++, campos[9]); //SEXO
+             c.setInt(i++,this.ConvertirDepartamento(Integer.valueOf(campos[5]))); //idDeptoNac
+             c.setString(i++, ""); //localidadNac
+             c.setString(i++, campos[13]); //cc
+             c.setInt(i++, Integer.valueOf(campos[11])); //ccNro
+             c.setInt(i++, this.convertirEstadoCivil(Integer.valueOf(campos[11]))); //idEstadoCivil
+             c.setString(i++, campos[19]); //domicilio
+             c.setInt(i++,this.ConvertirDepartamento(Integer.valueOf(campos[16]))); //dptoDom
+             c.setString(i++, campos[18]); //localidadDom
+             c.setString(i++, campos[17]); //telefono
+             c.setString(i++, ""); //email
+             c.setInt(i++, Integer.valueOf(campos[4])); //derecha
+             if(Integer.valueOf(campos[8])==7){
+                c.setInt(i++,2);//apoyo
+             }else{
+                c.setInt(i++,1); //comando
+             }
+             
+             
+             c.addBatch();
          }
          s.executeBatch();
+         c.executeBatch();
          s.close();
       }
       catch(Exception e){
@@ -306,7 +346,7 @@ public class ManejadorPersonalBD {
             String sql = "";
             String filtro = getFiltroSQL(rf);
             if(u.isAdmin() || u.getPermisosPersonal().getId()==1){
-                sql="SELECT * FROM personal left-join grado on personal.idgrado = grado.codigo where tipoPersonal = "+tp.getId()+ " order by grado.codigo asc";
+                sql="SELECT * FROM sistemasem.personal left-join sistemasem.grado on personal.idgrado = grado.codigo where tipoPersonal = "+tp.getId()+ " order by grado.codigo asc";
             }
             else{
                 return null;
@@ -317,30 +357,32 @@ public class ManejadorPersonalBD {
         return al;
     }
     
-    public HashMap<Integer,HashMap<Integer,Personal>> obtenerPersonalEM(){
-        HashMap<Integer,HashMap<Integer,Personal>> p= new HashMap<>();
+    public HashMap<Integer,ArrayList<Personal>> obtenerPersonalEM(){
+        HashMap<Integer,ArrayList<Personal>> p= new HashMap<>();
         for (int i=1;i<=4;i++){
-            p.put(i, new HashMap<>());
+            p.put(i, new ArrayList<Personal>());
         }
         try {
             Statement s= connection.createStatement();
             String sql = "";
             ManejadorCodigos mc = ManejadorCodigos.getInstance();
-            sql="SELECT * FROM personal left join grado on personal.idgrado = grado.codigo left join cadetes on personal.ci = cadetes.ci order by idTipoPersonal asc, grado.codigo asc, idArma asc";
+            sql="SELECT * FROM sistemasem.personal left join sistemasem.grado on personal.idgrado = grado.codigo left join sistemasem.cadetes on personal.ci = cadetes.ci order by idTipoPersonal asc, grado.codigo asc, idCurso asc, idArma asc";
             ResultSet rs=s.executeQuery(sql);
+            int i=0;
             while (rs.next()){
                 switch (rs.getInt("idTipoPersonal")) {
                     case 1:
-                        p.get(1).put(rs.getInt("ci"),new Cadete(mc.getCurso(rs.getInt("idCurso")),mc.getCarrera(rs.getInt("idCarrera")), rs.getDate("fechaNac"),rs.getString("sexo"),mc.getDepartamento(rs.getInt("idDepartamentoNac")),rs.getString("localidadNac"),rs.getString("cc"),rs.getInt("ccNro"),mc.getEstadoCivil(rs.getInt("idEstadoCivil")),rs.getString("domicilio"),mc.getDepartamento(rs.getInt("idDepartamentoDom")),rs.getString("localidadDom"),rs.getString("telefono"),rs.getString("email"),rs.getInt("derecha"),rs.getInt("hijos"),rs.getBoolean("repitiente"),rs.getBoolean("lmga"),rs.getBoolean("paseDirecto"),rs.getDouble("notaPaseDirecto"),null,rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),null,rs.getString("observaciones"),rs.getBoolean("profesor")));
+                        //System.out.print(i++);
+                        p.get(1).add(new Cadete(mc.getCurso(rs.getInt("idCurso")),mc.getCarrera(rs.getInt("idCarrera")), rs.getDate("fechaNac"),rs.getString("sexo"),mc.getDepartamento(rs.getInt("idDepartamentoNac")),rs.getString("localidadNac"),rs.getString("cc"),rs.getInt("ccNro"),mc.getEstadoCivil(rs.getInt("idEstadoCivil")),rs.getString("domicilio"),mc.getDepartamento(rs.getInt("idDepartamentoDom")),rs.getString("localidadDom"),rs.getString("telefono"),rs.getString("email"),rs.getInt("derecha"),rs.getInt("hijos"),rs.getBoolean("repitiente"),rs.getBoolean("lmga"),rs.getBoolean("paseDirecto"),rs.getDouble("notaPaseDirecto"),null,rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),null,rs.getString("observaciones"),rs.getBoolean("profesor")));
                         break;
                     case 2:
-                        p.get(2).put(rs.getInt("ci"),new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),null,rs.getString("observaciones"),rs.getBoolean("profesor")));
+                        p.get(2).add(new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),null,rs.getString("observaciones"),rs.getBoolean("profesor")));
                         break;
                     case 3:
-                        p.get(3).put(rs.getInt("ci"),new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),null,rs.getString("observaciones"),rs.getBoolean("profesor")));
+                        p.get(3).add(new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),null,rs.getString("observaciones"),rs.getBoolean("profesor")));
                         break;
                     case 4:
-                        p.get(4).put(rs.getInt("ci"),new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),null,rs.getString("observaciones"),rs.getBoolean("profesor")));
+                        p.get(4).add(new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),null,rs.getString("observaciones"),rs.getBoolean("profesor")));
                         break;
                 }
             }

@@ -25,6 +25,7 @@ public class ManejadorCodigos {
         estadosCiviles = mc.getEstadosCiviles();
         cursos = mc.getCursos();
         armas = mc.getArmas();
+        grados = mc.getGrados();
         carreras = mc.getCarreras();
     }
     
@@ -55,6 +56,9 @@ public class ManejadorCodigos {
 
     public HashMap<Integer, Grado> getGrados() {
         return grados;
+    }
+    public HashMap<Integer, Carrera> getCarreras() {
+        return carreras;
     }
 
     public Departamento getDepartamento(int codigo){

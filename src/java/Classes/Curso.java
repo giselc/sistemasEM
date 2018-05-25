@@ -10,9 +10,18 @@ package Classes;
  * @author Gisel
  */
 public class Curso extends Tipo{
-
-    public Curso(int id, String descripcion) {
+    private String abreviacion;
+    public Curso(int id, String descripcion, String abreviacion) {
         super(id, descripcion);
+        this.abreviacion=abreviacion;
+    }
+
+    public String getAbreviacion() {
+        return abreviacion;
+    }
+
+    public void setAbreviacion(String abreviacion) {
+        this.abreviacion = abreviacion;
     }
     
 }

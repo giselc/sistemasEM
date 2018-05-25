@@ -5,6 +5,7 @@
  */
 package Classes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -13,7 +14,7 @@ import java.util.HashMap;
  */
 public class ManejadorPersonal {
     
-    private HashMap<Integer,HashMap<Integer,Personal>> personal;//hashmap idTipoPersoanal -- 0-Cadetes,1-PSubalterno,2-Oficiales,3-Profesores
+    private HashMap<Integer,ArrayList<Personal>> personal;//hashmap idTipoPersoanal -- 0-Cadetes,1-PSubalterno,2-Oficiales,3-Profesores
     
     private ManejadorPersonal() {
         ManejadorPersonalBD mp = new ManejadorPersonalBD();
@@ -29,17 +30,30 @@ public class ManejadorPersonal {
         private static final ManejadorPersonal INSTANCE = new ManejadorPersonal();
     }
     
-    public HashMap<Integer,Personal> obtenerCadetes(){
+    public ArrayList<Personal> obtenerCadetes(){
         return personal.get(1);
     }
-    public HashMap<Integer,Personal> obtenerPersonalSubalterno(){
+    public ArrayList<Personal> obtenerPersonalSubalterno(){
         return personal.get(2);
     }
-    public HashMap<Integer,Personal> obtenerOficiales(){
+    public ArrayList<Personal> obtenerOficiales(){
         return personal.get(3);
     }
-    public HashMap<Integer,Personal> obtenerProfesores(){
+    public ArrayList<Personal> obtenerProfesores(){
         return personal.get(4);
     }
-    
+    public Personal getPersonal(int ci, int tipoPersonal){
+        boolean encontre=false;
+        int i=0;
+        int size= personal.get(tipoPersonal).size();
+        while(!encontre && i<size){
+            if(personal.get(tipoPersonal).get(i).getCi()==ci){
+                return personal.get(tipoPersonal).get(i);
+            }
+            else{
+                i++;
+            }
+        }
+        return null;
+    }
 }
