@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -357,10 +358,10 @@ public class ManejadorPersonalBD {
         return al;
     }
     
-    public HashMap<Integer,ArrayList<Personal>> obtenerPersonalEM(){
-        HashMap<Integer,ArrayList<Personal>> p= new HashMap<>();
+    public HashMap<Integer,LinkedList<Personal>> obtenerPersonalEM(){
+        HashMap<Integer,LinkedList<Personal>> p= new HashMap<>();
         for (int i=1;i<=4;i++){
-            p.put(i, new ArrayList<Personal>());
+            p.put(i, new LinkedList<>());
         }
         try {
             Statement s= connection.createStatement();

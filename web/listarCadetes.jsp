@@ -4,6 +4,7 @@
     Author     : Gisel
 --%>
 
+<%@page import="java.util.LinkedList"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Set"%>
 <%@page import="Classes.Personal"%>
@@ -13,6 +14,7 @@
 <div id='dialog1' style="display:none" title="Filtro">
     <%@include file="filtroCadetes.jsp" %>
 </div>
+    
 <%
 ManejadorPersonal mp = ManejadorPersonal.getInstance();
 %>   
@@ -26,35 +28,28 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
             <td style="width: 15%"><input type="image" width="30%" title="Imprimir"src="images/imprimir.png" alt="Submit Form" /></td>
             
         </tr>
-    </table>
-    
-    <table style="width: 100%;">
         <tr>
             <td colspan="8">
                 <p style="font-size: 70%" id="filtroTexto"></p>
             </td>   
 
         </tr>
-        <tr>
-            <td>
-                <input name="carreraListar" hidden="hidden" value="Comando"/>
-            </td>
-        </tr>
+    </table>
+    
             <%
-                ArrayList<Personal> hmp = mp.obtenerCadetes();
-                sesion.setAttribute("listaTodosC", hmp);
-                sesion.setAttribute("filtroMostrarC", "");
-                out.print("<tr style='background-color:#ffcc66'>");
-                            out.print("<td style='width: 5%' align='center'></td>");
-                            out.print("<td style='width: 5%' align='center'><input type='checkbox' onclick='seleccionar_todo_comando()' id='selTodo'></td>");
-                            out.print("<td style='width: 5%' align='center'>Nro.</td>");
-                            out.print("<td style='width: 10%' align='center'>Grado</td>");
-                            out.print("<td colspan=2 style='width: 20%' align='center'>Nombres</td>");
-                            out.print("<td colspan=2 style='width: 20%' align='center'>Apellidos</td>");
-                            out.print("<td style='width: 10%' align='center'>Cédula</td>");
-                            out.print("<td style='width: 5%' align='center'>Curso</td>");
-                            out.print("<td style='width: 10%' align='center'></td>");
-                out.print("</tr>" );
+                LinkedList<Personal> hmp = mp.getCadetesListarApellido(false);
+                out.print("<table style='width: 100%;' id='tablalistado'>"
+                        + "<tr style='background-color:#ffcc66'>"
+                            +"<td style='width: 5%' align='center'></td>"
+                            +"<td style='width: 5%' align='center'><input type='checkbox' onclick='seleccionar_todo()' id='selTodo'></td>"
+                            +"<td style='width: 5%' align='center'><img src='images/derecha.png' width='30%' onclick='ordenar(1,1)' /> Nro.</td>"
+                            +"<td style='width: 10%' align='center'><img src='images/derecha.png' width='15%' onclick='ordenar(2,1)' />Grado</td>"
+                            +"<td colspan=2 style='width: 20%' align='center'><img src='images/derecha.png' width='6%' onclick='ordenar(3,1)' />Nombres</td>"
+                            +"<td colspan=2 style='width: 20%' align='center'><img src='images/derecha.png' width='6%' onclick='ordenar(4,1)' />Apellidos</td>"
+                            +"<td style='width: 10%' align='center'>Cédula</td>"
+                            +"<td style='width: 5%' align='center'>Curso</td>"
+                            +"<td style='width: 10%' align='center'></td>"
+                +"</tr>" );
                 int i=0;
                 String color;
                 for (  Personal p : hmp){
@@ -66,22 +61,23 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
                         }
                         i++;
                         Cadete c= (Cadete) p;
-                       out.print("<tr style='background-color:"+color+"'>");
-                       out.print("<td style='width: 5%' align='center'>"+i+"</td>");
-                       out.print("<td style='width: 5%' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(c.getCi())+"' /></td>");
-                       out.print("<td style='width: 5%' align='center'>"+c.getNroInterno()+"</td>");
-                       out.print("<td style='width: 10%' align='center'>"+c.getGrado().getAbreviacion()+"</td>");
-                        out.print("<td style='width: 10%' align='center'>"+c.getPrimerNombre()+"</td>");
-                        out.print("<td style='width: 10%' align='center'>"+c.getSegundoNombre()+"</td>");
-                        out.print("<td style='width: 10%' align='center'>"+c.getPrimerApellido()+"</td>");
-                        out.print("<td style='width: 10%' align='center'>"+c.getSegundoApellido()+"</td>");
-                        out.print("<td style='width: 10%' align='center'>"+c.getCi()+"</td>");
-                        out.print("<td style='width: 15%' align='center'>"+c.getCurso().getDescripcion()+"</td>");
-                        out.print("<td style='width: 10%' align='center'><a href='cadete.jsp?ci="+c.getCi()+"'><img src='images/ver.png' width='25%' /></a></td>");
-                        out.print("</tr>");
+                       out.print("<tr style='background-color:"+color+"'>"
+                       +"<td style='width: 5%' align='center'>"+i+"</td>"
+                       +"<td style='width: 5%' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(c.getCi())+"' /></td>"
+                       +"<td style='width: 5%' align='center'>"+c.getNroInterno()+"</td>"
+                       +"<td style='width: 10%' align='center'>"+c.getGrado().getAbreviacion()+"</td>"
+                       +"<td style='width: 10%' align='center'>"+c.getPrimerNombre()+"</td>"
+                       +"<td style='width: 10%' align='center'>"+c.getSegundoNombre()+"</td>"
+                       +"<td style='width: 10%' align='center'>"+c.getPrimerApellido()+"</td>"
+                       +"<td style='width: 10%' align='center'>"+c.getSegundoApellido()+"</td>"
+                       +"<td style='width: 10%' align='center'>"+c.getCi()+"</td>"
+                       +"<td style='width: 15%' align='center'>"+c.getCurso().getAbreviacion()+"</td>"
+                       +"<td style='width: 10%' align='center'><a href='cadete.jsp?ci="+c.getCi()+"'><img src='images/ver.png' width='25%' /></a></td>"
+                       +"</tr>");
                 }
+                out.print("</table>");
             %> 
                 
-            </table>
+            
             
 </form>

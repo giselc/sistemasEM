@@ -28,7 +28,7 @@
                      $(this).parent().attr("id","current");
                      $('#' + $(this).attr('title')).fadeIn();
                  });
-             })();
+             });
     </script>
     <script>
         function abrir_dialog(dialog) {
@@ -39,19 +39,7 @@
         function cerrar_dialog(dialog) {
           $( dialog ).dialog('close');
         };
-        function seleccionar_todo(formulario){ 
-            if (document.getElementById("selTodo").checked){
-                for (i=1;i<document.formulario.elements.length;i++) 
-               if(document.formulario.elements[i].type == "checkbox")	
-                  document.formulario.elements[i].checked=1 ;
-            }
-            else{
-                for (i=1;i<document.formulario.elements.length;i++) 
-               if(document.formulario.elements[i].type == "checkbox")	
-                  document.formulario.elements[i].checked=0;
-            }
         
-        } 
         function listar(form) {//Funcion creada para no perder la sesion luego del submit
             form.submit();
             return false;
@@ -119,6 +107,114 @@
     </script>
 
     <script>
+        function seleccionar_todo(){ 
+            if (document.getElementById("selTodo").checked){
+                for (i=1;i<document.formCadete.elements.length;i++) 
+                    if(document.formCadete.elements[i].type == "checkbox")	
+                       document.formCadete.elements[i].checked=1 ;
+            }
+            else{
+                for (i=1;i<document.formCadete.elements.length;i++) 
+                    if(document.formCadete.elements[i].type == "checkbox")	
+                       document.formCadete.elements[i].checked=0;
+            }
+                    
+        }
+        
+    function ordenar(tipo,orden){
+       // alert(serialize(f));
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                var obj = jQuery.parseJSON( xmlhttp.responseText );
+                var listado = obj.listadoCadetes;
+                var color = "";
+                var datos = "";
+                var j;
+                var imgnro="<img src='images/derecha.png' width='30%' onclick='ordenar(1,1)' />";
+                var imggrado="<img src='images/derecha.png' width='15%' onclick='ordenar(2,1)' />";
+                var imgnombre="<img src='images/derecha.png' width='6%' onclick='ordenar(3,1)' />";
+                var imgapellido="<img src='images/derecha.png' width='6%' onclick='ordenar(4,1)' />";
+                if(tipo==1){
+                    if(orden==0){
+                        imgnro="<img src='images/abajo.png' width='30%' onclick='ordenar(1,1)' />";
+                    }
+                    else{
+                        imgnro="<img src='images/arriba.png' width='30%' onclick='ordenar(1,0)' />";
+                    }
+                }
+                else{
+                    if(tipo==2){
+                        if(orden==0){
+                            imggrado="<img src='images/abajo.png' width='15%' onclick='ordenar(2,1)' />";
+                        }
+                        else{
+                            imggrado="<img src='images/arriba.png' width='15%' onclick='ordenar(2,0)' />";
+                        }
+                    }
+                    else{
+                       if(tipo==3){
+                            if(orden==0){
+                                imgnombre="<img src='images/abajo.png' width='6%' onclick='ordenar(3,1)' />";
+                            }
+                            else{
+                                imgnombre="<img src='images/arriba.png' width='6%' onclick='ordenar(3,0)' />";
+                            }
+                        }
+                        else{
+                          if(tipo==4){
+                                if(orden==0){
+                                    imgapellido="<img src='images/abajo.png' width='6%' onclick='ordenar(4,1)' />";
+                                }
+                                else{
+                                    imgapellido="<img src='images/arriba.png' width='6%' onclick='ordenar(4,0)' />";
+                                }
+                            }  
+                        }
+                    }
+                }
+                
+                datos +="<tr style='background-color:#ffcc66'>"
+                            +"<td style='width: 5%' align='center'></td>"
+                            +"<td style='width: 5%' align='center'><input type='checkbox' onclick='seleccionar_todo()' id='selTodo'></td>"
+                            +"<td style='width: 5%' align='center'>"+imgnro+"Nro.</td>"
+                            +"<td style='width: 10%' align='center'>"+imggrado+"Grado</td>"
+                            +"<td colspan=2 style='width: 20%' align='center'>"+imgnombre+"Nombres</td>"
+                            +"<td colspan=2 style='width: 20%' align='center'>"+imgapellido+"Apellidos</td>"
+                            +"<td style='width: 10%' align='center'>Cédula</td>"
+                            +"<td style='width: 5%' align='center'>Curso</td>"
+                            +"<td style='width: 10%' align='center'></td>"
+                +"</tr>";
+                for (var i=0; i<listado.length;i++) {
+                    if ((i%2)==0){
+                        color=" #ccccff";
+                    }
+                    else{
+                        color=" #ffff99";
+                    }
+                    j=i+1;
+                    datos += "<tr style='background-color:"+color+"'>"
+                       +"<td style='width: 5%' align='center'>"+i+"</td>"
+                       +"<td style='width: 5%' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(listado[i].ci)+"' /></td>"
+                       +"<td style='width: 5%' align='center'>"+listado[i].Nro+"</td>"
+                       +"<td style='width: 10%' align='center'>"+listado[i].grado+"</td>"
+                       +"<td style='width: 10%' align='center'>"+listado[i].primerNombre+"</td>"
+                       +"<td style='width: 10%' align='center'>"+listado[i].segundoNombre+"</td>"
+                       +"<td style='width: 10%' align='center'>"+listado[i].primerApellido+"</td>"
+                       +"<td style='width: 10%' align='center'>"+listado[i].segundoApellido+"</td>"
+                       +"<td style='width: 10%' align='center'>"+listado[i].ci+"</td>"
+                       +"<td style='width: 15%' align='center'>"+listado[i].curso+"</td>"
+                       +"<td style='width: 10%' align='center'><a href='cadete.jsp?ci="+listado[i].ci+"'><img src='images/ver.png' width='25%' /></a></td>"
+                       +"</tr>";
+
+                }
+                document.getElementById("tablalistado").innerHTML = datos;
+            };
+        };
+        xmlhttp.open("POST","ListarCadetes?tipo="+tipo+"&orden="+orden);
+        xmlhttp.send();
+        return false;
+    }
     function aplicarFiltro(f,idDatos){
        // alert(serialize(f));
         xmlhttp=new XMLHttpRequest();
