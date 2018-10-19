@@ -10,7 +10,7 @@
 <%@page import="Classes.Personal"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="Classes.Cadete"%>
-<%@page import="Classes.ManejadorPersonal"%>
+<%@page import="Manejadores.ManejadorPersonal"%>
 <div id='dialog1' style="display:none" title="Filtro">
     <%@include file="filtroCadetes.jsp" %>
 </div>
@@ -23,7 +23,7 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
     <table style="float: right">
         <tr>
             <td style="width: 55%"><h3 style="float: left; font-family: sans-serif">Cadetes</h3></td>
-            <td style="width: 15%"><a onclick='cadete.jsp?ci=0' title="Agregar"><img width="30%" src='images/agregarLista.png' /></a> </td>
+            <td style="width: 15%"><a href="cadete.jsp" title="Agregar"><img width="30%" src='images/agregarLista.png' /></a> </td>
             <td style="width: 15%"><a onclick='abrir_dialog(dialog1)' title="Aplicar filtro"><img width="35%" src='images/filtro_1.png' /></a> </td>
             <td style="width: 15%"><input type="image" width="30%" title="Imprimir"src="images/imprimir.png" alt="Submit Form" /></td>
             

@@ -6,8 +6,8 @@
 package Servlets;
 
 import Classes.Cadete;
-import Classes.ManejadorPersonal;
-import Classes.ManejadorPersonalBD;
+import Manejadores.ManejadorPersonal;
+import Manejadores.ManejadorPersonalBD;
 import Classes.Personal;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -47,7 +47,7 @@ public class ListarCadetes extends HttpServlet {
                 orden=true;
             };
             LinkedList<Personal> per=null;
-            System.out.print("tipo="+tipo+";orden="+orden);
+           // System.out.print("tipo="+tipo+";orden="+orden);
             switch(tipo){
                 case 1: per=mp.getCadetesListarNro(orden); break ;
                 case 2: per=mp.getCadetesListarGrado(orden); break ;

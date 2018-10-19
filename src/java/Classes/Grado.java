@@ -10,14 +10,20 @@ package Classes;
  * @author Gisel
  */
 public class Grado extends Tipo{
-    String abreviacion;
-    public Grado(int id, String descripcion, String abreviacion) {
+    private String abreviacion;
+    private TipoPersonal idTipoPersonal;
+    public Grado(int id, String descripcion, String abreviacion, TipoPersonal idTipoPersonal) {
         super(id,descripcion);
         this.abreviacion = abreviacion;
+        this.idTipoPersonal = idTipoPersonal;
     }
 
     public String getAbreviacion() {
         return abreviacion;
+    }
+
+    public TipoPersonal getIdTipoPersonal() {
+        return idTipoPersonal;
     }
     
 }

@@ -5,7 +5,7 @@
  */
 package Servlets;
 
-import Classes.ManejadorCodigoBD;
+import Manejadores.ManejadorCodigoBD;
 import Classes.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;

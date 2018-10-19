@@ -9,6 +9,7 @@
 <!-- in the project's Project Properties dialog box.-->
 <project name="Sistemas_EM" default="default" basedir=".">
     <description>Builds, tests, and runs the project Sistemas EM.</description>
+	<property name="libs.CopyLibs.classpath" value="C:/Program Files/NetBeans 8.0.2/java/ant/extra/org-netbeans-modules-java-j2seproject-copylibstask.jar"/>
     <import file="nbproject/build-impl.xml"/>
     <!--
 

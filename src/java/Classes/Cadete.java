@@ -7,12 +7,14 @@ package Classes;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
  * @author Gisel
  */
 public class Cadete extends Personal{
+    private String foto;
     private Curso curso;
     private Carrera carrera;
     private Date fechaNac;
@@ -33,9 +35,10 @@ public class Cadete extends Personal{
     private boolean lmga;
     private boolean paseDirecto;
     private double notaPaseDirecto;
-    private ArrayList<Familiar> familiares;
+    private Familiar madre;
+    private Familiar padre;
 
-    public Cadete(Curso curso, Carrera carrera, Date fechaNac, String sexo, Departamento departamentoNac, String localidadNac, String cc, int ccNro, EstadoCivil estadoCivil, String domicilio, Departamento departamento, String localidad, String telefono, String email, int derecha, int hijos, boolean repitiente, boolean lmga, boolean paseDirecto, double notaPaseDirecto, ArrayList<Familiar> familiares, int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, ArrayList<Documento> documentos, String observaciones, boolean profesor) {
+    public Cadete(String foto,Curso curso, Carrera carrera, Date fechaNac, String sexo, Departamento departamentoNac, String localidadNac, String cc, int ccNro, EstadoCivil estadoCivil, String domicilio, Departamento departamento, String localidad, String telefono, String email, int derecha, int hijos, boolean repitiente, boolean lmga, boolean paseDirecto, double notaPaseDirecto, Familiar madre,Familiar padre, int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String observaciones, boolean profesor) {
         super(nroInterno, ci, grado, arma, primerNombre, segundoNombre, primerApellido, segundoApellido, documentos, observaciones, profesor);
         this.curso = curso;
         this.carrera = carrera;
@@ -57,14 +60,31 @@ public class Cadete extends Personal{
         this.lmga = lmga;
         this.paseDirecto = paseDirecto;
         this.notaPaseDirecto = notaPaseDirecto;
-        this.familiares = familiares;
+        this.madre = madre;
+        this.padre = padre;
+        this.foto=foto;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+
+    
+    public Familiar getMadre() {
+        return madre;
+    }
+
+    public Familiar getPadre() {
+        return padre;
     }
 
     
 
-    public ArrayList<Familiar> getFamiliares() {
-        return familiares;
-    }
+    
 
     public Curso getCurso() {
         return curso;
@@ -218,9 +238,15 @@ public class Cadete extends Personal{
         this.notaPaseDirecto = notaPaseDirecto;
     }
 
-    public void setFamiliares(ArrayList<Familiar> familiares) {
-        this.familiares = familiares;
+    public void setMadre(Familiar madre) {
+        this.madre = madre;
     }
+
+    public void setPadre(Familiar padre) {
+        this.padre = padre;
+    }
+
+    
 
     public Carrera getCarrera() {
         return carrera;

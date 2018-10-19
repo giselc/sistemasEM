@@ -7,6 +7,7 @@ package Classes;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -21,11 +22,11 @@ public class Personal {
     private String segundoNombre;
     private String primerApellido;
     private String segundoApellido;
-    private ArrayList<Documento> documentos;
+    private HashMap<Integer,Documento> documentos;
     private String observaciones;
     private boolean profesor;
 
-    public Personal(int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, ArrayList<Documento> documentos, String observaciones, boolean profesor) {
+    public Personal(int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String observaciones, boolean profesor) {
         this.nroInterno = nroInterno;
         this.ci = ci;
         this.grado = grado;
@@ -75,7 +76,7 @@ public class Personal {
         return segundoApellido;
     }
 
-    public ArrayList<Documento> getDocumentos() {
+    public HashMap<Integer,Documento> getDocumentos() {
         return documentos;
     }
 
@@ -115,7 +116,7 @@ public class Personal {
         this.segundoApellido = segundoApellido;
     }
 
-    public void setDocumentos(ArrayList<Documento> documentos) {
+    public void setDocumentos(HashMap<Integer,Documento> documentos) {
         this.documentos = documentos;
     }
 
@@ -125,6 +126,10 @@ public class Personal {
 
     public void setProfesor(boolean profesor) {
         this.profesor = profesor;
+    }
+
+    public void agregarDocumento(Documento doc) {
+        documentos.put(doc.getId(), doc);
     }
 
     

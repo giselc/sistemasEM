@@ -4,8 +4,9 @@
     Author     : Gisel
 --%>
 
+<%@page import="Manejadores.ManejadorCodigos"%>
 <%@page import="Classes.Usuario"%>
-<%@page import="Classes.ManejadorCodigoBD"%>
+<%@page import="Manejadores.ManejadorCodigoBD"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -74,7 +75,7 @@
                         <tr>
                             <td style="width: 20%; vertical-align: top" >
                                 <p style="color: #000000; margin: 0px"><%
-                                    ManejadorCodigoBD mc = new ManejadorCodigoBD();
+                                    ManejadorCodigos mc = ManejadorCodigos.getInstance();
                                     Usuario u= (Classes.Usuario)sesion.getAttribute("usuario");
                                     out.print("Bienvenido ");out.print(u.getNombreMostrar());
                                     %></p>

@@ -5,7 +5,7 @@
  */
 package Servlets;
 
-import Classes.ManejadorPersonalBD;
+import Manejadores.ManejadorPersonalBD;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
