@@ -8,7 +8,9 @@ package Manejadores;
 import Classes.Cadete;
 import Classes.Documento;
 import Classes.Personal;
+import Classes.Tipo;
 import Classes.TipoDocumento;
+import Classes.TipoPersonal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,10 +24,18 @@ import javax.servlet.http.Part;
 public class ManejadorPersonal {
     
     private HashMap<Integer,LinkedList<Personal>> personal;//hashmap idTipoPersoanal -- 1-Cadetes,2-PSubalterno,3-Oficiales,4-Profesores
-    
+    //private HashMap<Integer,Personal>personalTodos;
     private ManejadorPersonal() {
         ManejadorPersonalBD mp = new ManejadorPersonalBD();
         personal= mp.obtenerPersonalEM();
+        /*LinkedList<Personal> lp = null;
+        personalTodos = new HashMap<>();
+        for(int i=1 ; i<=4;i++){
+           lp=personal.get(i);
+           for(Personal p:lp){
+               personalTodos.put(p.getCi(), p);
+           }
+        }*/
     }
     
     public static ManejadorPersonal getInstance() {
@@ -343,13 +353,29 @@ public class ManejadorPersonal {
     public Documento getDocumento(int ci, int tipoPersonal, int id){
         return personal.get(tipoPersonal).get(ci).getDocumentos().get(id);
     }
-    /*public boolean agregarDocumento(String path,int tipoDocumento, int idPersonal, Part archivo){
-        ManejadorDocumentosBD md= new ManejadorDocumentosBD();
-        Documento doc = md.crearDocumento(path, tipoDocumento, idPersonal, archivo);
-        if(doc!=null){
-            
+    //path -> Path context Servlet
+    public boolean altaDocumento(String path,Tipo tipoDocumento, int ci, Tipo tipoPersonal,Part archivo){
+        ManejadorDocumentosBD md = new ManejadorDocumentosBD();
+        Documento d = md.crearDocumento(path, tipoDocumento, ci, archivo); //sube el archivo y lo agrega a la base de datos
+        if(d!=null){
+            this.getPersonal(ci, tipoPersonal.getId()).agregarDocumento(d); //lo agrega a memoria
+            return true;
         }
-    }*/
+        return false;
+    }
+    //path -> Path context Servlet
+    public boolean bajaDocumento(String path,int ci, Tipo tipoPersonal,int idDocumento){
+        ManejadorDocumentosBD md = new ManejadorDocumentosBD();
+        Documento d = this.getPersonal(ci, tipoPersonal.getId()).getDocumentos().get(idDocumento);
+        if(d!=null){
+            if(md.eliminarDocumento(path, d, ci)){ //lo elimina del disco duro y de la base de datos
+                this.getPersonal(ci, tipoPersonal.getId()).agregarDocumento(d); //lo elimina de la memoria
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public Cadete getCadete(int ci){
         Cadete c= null;
         for(Personal p : personal.get(1)){

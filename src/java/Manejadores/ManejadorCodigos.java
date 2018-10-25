@@ -98,4 +98,7 @@ public class ManejadorCodigos {
     public Tipo getTipoDocumento(int codigo){
         return tipoDocumentos.get(codigo);
     }
+    public Tipo getTipoPersonal(int codigo){
+        return tipoPersonal.get(codigo);
+    }
 }

@@ -15,11 +15,11 @@ import java.sql.Date;
 
 public class Documento {
     private int id;
-    private TipoDocumento tipo;
+    private Tipo tipo;
     private String nombre;
     
     
-    public Documento(int id, TipoDocumento tipo,String nombre) {
+    public Documento(int id, Tipo tipo,String nombre) {
         this.id = id;
         this.tipo = tipo;
         this.nombre=nombre;
@@ -34,7 +34,7 @@ public class Documento {
         return id;
     }
 
-    public TipoDocumento getTipo() {
+    public Tipo getTipo() {
         return tipo;
     }
 

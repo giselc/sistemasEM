@@ -131,6 +131,9 @@ public class Personal {
     public void agregarDocumento(Documento doc) {
         documentos.put(doc.getId(), doc);
     }
+    public void eliminarDocumento(int idDoc) {
+        documentos.remove(idDoc);
+    }
 
     
     

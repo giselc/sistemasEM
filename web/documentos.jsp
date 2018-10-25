@@ -4,12 +4,15 @@
     Author     : Gisel
 --%>
 
+<%@page import="Manejadores.ManejadorPersonal"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="Classes.Documento"%>
+<%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%
-    if(request.getParameter("id")!=null){
-        int ci=Integer.valueOf(request.getParameter("id"));
-        ManejadorPersonal mp = new ManejadorPersonal();
+    if(request.getParameter("ci")!=null){
+        int ci=Integer.valueOf(request.getParameter("ci"));
 %>
 <table style="float: right" >
         <tr>
@@ -22,7 +25,7 @@
         </tr>
         <tr>
             <td style="width: 55%"><h3 style="float: left; font-family: sans-serif">Documentos:</h3></td>
-            <td style="width: 15%"><a href="documento.jsp?ci=<%=ci%>" title="Agregar"><img width="30%" src='images/agregarLista.png' /></a> </td>
+            <td style="width: 15%"><a href="documento.jsp?ci=<%=ci%>&idTipoPersonal=<%=idTipoPersonal%>" title="Agregar"><img width="30%" src='images/agregarLista.png' /></a> </td>
         </tr>
     </table>
             
@@ -30,17 +33,16 @@
     <table style="width: 80%;" align='center'>
             <%
                
-                ArrayList<Documento> a = mp.getDocumentosListar(ci);
-                mp.CerrarConexionManejador();
+                HashMap<Integer,Documento> a = mp.getPersonal(ci, idTipoPersonal).getDocumentos();
                 out.print("<tr style='background-color:#ffcc66'>");
                             out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Tipo Documento</h3></td>");
                             out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Archivo</h3></td>");
                             out.print("<td style='width: 10%' align='center'></td>");
                             out.print("<td style='width: 10%' align='center'></td>");
                        out.print("</tr>" );
-                int i=0;
+                i=0;
                 String color;
-                for (Documento s: a){
+                for (Documento s1: a.values()){
                         if ((i%2)==0){
                             color=" #ccccff";
                         }
@@ -50,14 +52,14 @@
                         i++;
 
                     out.print("<tr style='background-color:"+color+"'>");
-                    out.print("<td style='width: 10%' align='center'>"+s.getTipo().getDescripcion()+"</td>");
+                    out.print("<td style='width: 10%' align='center'>"+s1.getTipo().getDescripcion()+"</td>");
                     out.print("<td style='width: 10%' align='center'>");
-                    if(!s.getNombre().equals("")){
-                        out.print("<a href='Documentos/"+request.getParameter("id")+"-"+s.getId()+s.getNombre().substring(s.getNombre().indexOf("."))+"'>"+s.getNombre()+"</a>");
+                    if(!s1.getNombre().equals("")){
+                        out.print("<a href='Documentos/"+ci+"-"+s1.getId()+s1.getNombre().substring(s1.getNombre().indexOf("."))+"'>"+s1.getNombre()+"</a>");
                     }
                     out.print("</td>");
-                    out.print("<td style='width: 10%' align='center'><a href='documento.jsp?id="+String.valueOf(s.getId())+"&ci="+request.getParameter("id")+"'><img title='Editar' src='images/ver.png' width='25%' /></a></td>");
-                    out.print("<td style='width: 10%' align='center'><form method='post' onsubmit=\"return confirmar(this,'')\" action='Documento?elim="+s.getId()+"&ci="+request.getParameter("id")+"'><input type='image' width='25%' title='Eliminar' src='images/eliminar.png' alt='Submit Form' /> </form></td>");
+                    out.print("<td style='width: 10%' align='center'><a href='documento.jsp?id="+String.valueOf(s1.getId())+"&ci="+ci+"&idTipoPersonal="+idTipoPersonal+"'><img title='Editar' src='images/ver.png' width='25%' /></a></td>");
+                    out.print("<td style='width: 10%' align='center'><form method='post' onsubmit=\"return confirmar(this,'')\" action='Documento?elim="+s1.getId()+"&ci="+ci+"'><input type='image' width='25%' title='Eliminar' src='images/eliminar.png' alt='Submit Form' /> </form></td>");
                     out.print("</tr>");
                 }
             %> 

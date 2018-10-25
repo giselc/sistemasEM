@@ -64,28 +64,13 @@ public class ManejadorDocumentosBD {
         }
         return p;
     }
-    public boolean modificarDocumento(String path, int idDoc, int idPersonal, Part archivo, Documento doc, String nombre){
-        boolean ret=false;
-        try {
-            String sql= "update documentos set idTipoDocumento=?, nombre=? where id="+idDoc;
-            PreparedStatement s= connection.prepareStatement(sql);
-            s.setInt(1,doc.getId());
-            s.setString(2,nombre);
-            int result = s.executeUpdate();
-            if(result>0){
-               ret=this.modificarArchivo(path, archivo, doc, idPersonal);
-            }
-        } catch (Exception ex) {
-        }
-        return ret;
-    }
-    public Documento crearDocumento(String path,int tipoDocumento, int idPersonal, Part archivo){
-        ManejadorCodigos mc = ManejadorCodigos.getInstance();
+  
+    public Documento crearDocumento(String path,Tipo tipoDocumento, int idPersonal, Part archivo){
         int clave = -1;
         boolean ret=false;
         String nombre=this.getFileName(archivo);
         try {
-            String sql= "insert into documentos (idPersonal, idTipoDocumento, nombre) values("+idPersonal+","+tipoDocumento+",'"+nombre+"')";
+            String sql= "insert into documentos (idPersonal, idTipoDocumento, nombre) values("+idPersonal+","+tipoDocumento.getId()+",'"+nombre+"')";
             Statement s= connection.createStatement();
             int result = s.executeUpdate(sql,Statement.RETURN_GENERATED_KEYS);
             if(result>0){
@@ -93,18 +78,21 @@ public class ManejadorDocumentosBD {
                 if(rs.next()){ 
                     clave=rs.getInt(1);
                     if(clave!=-1){
-                        ret=this.subirArchivo(path,archivo, tipoDocumento, idPersonal);
+                        ret=this.subirArchivo(path,archivo, clave, idPersonal);
+                        if(ret){
+                            return new Documento(clave, tipoDocumento, nombre); 
+                        }
+                        else{
+                            sql="delete * from documentos where id="+clave; //si se produce un error al cargar el archivo, debo eliiminarlo de la base para que no tengan accesibilidad
+                            s.executeUpdate(sql);
+                        }
                     }
                 }
             }
         } catch (Exception ex) {
+            
         }
-        if(ret){
-            return new Documento(clave, (TipoDocumento)mc.getTipoDocumento(tipoDocumento), nombre);
-        }
-        else{
-            return null; 
-        }
+        return null;
     }
     public boolean eliminarDocumento(String path, Documento doc, int idPersonal){
         try {
@@ -112,42 +100,23 @@ public class ManejadorDocumentosBD {
             String sql="delete from documentos where id="+doc.getId();
             int i= s.executeUpdate(sql);
             if (i>0){
-                this.eliminarArchivo(path, doc.getNombre(), idPersonal, doc.getId());
-            };
+                this.eliminarArchivo(path, idPersonal, doc); //si sale de la base de datos y el archivo no se borro de la compu, se retorna true igual debido a que ese archivo deja de ser accesible
+                return true;
+            }
         } catch (SQLException ex) {
         }
         return false;
     }
     
     
-    private boolean modificarArchivo(String path, Part archivo, Documento doc, int ciPersonal){
-        String name = this.getFileName(archivo);
-        boolean b=true;
-        if(name!=null && !name.equals("") ){
-            if(doc.getNombre().equals("")){
-                b=this.subirArchivo(path, archivo, doc.getId(),ciPersonal);
-            }
-            else{
-                String archivoViejo = ciPersonal+"-"+doc.getId()+doc.getNombre().substring(doc.getNombre().lastIndexOf("."));
-                String archivoNuevo = ciPersonal+"-"+doc.getId()+name.substring(name.lastIndexOf("."));
-                if(archivoNuevo.equals(archivoViejo)){
-                    b=this.subirArchivo(path, archivo, doc.getId(),ciPersonal);
-                }
-                else{
-                    b=this.eliminarArchivo(path, archivoViejo, ciPersonal,doc.getId());
-                    b= b && this.subirArchivo(path, archivo, doc.getId(),ciPersonal);
-                }
-            }
-        }
-        return b;
-    }
+    
     //path getServletContext().getRealPath("/")
-    private boolean eliminarArchivo(String path, String nombre, int ciPersonal, int idDocumento){
-        if(!nombre.equals("")){
-            File f = new File(path+"/Documentos/"+ciPersonal+"-"+idDocumento+nombre.substring(nombre.lastIndexOf(".")));
+    private boolean eliminarArchivo(String path, int ciPersonal, Documento documento){
+        if(!documento.getNombre().equals("")){
+            String extension = documento.getNombre().substring(documento.getNombre().lastIndexOf("."));
+            File f = new File(path+"/Documentos/"+ciPersonal+"-"+documento.getId()+extension);
             if(f.exists()){
                 return f.delete();
-                
             }
             return true;
         }
@@ -190,12 +159,49 @@ public class ManejadorDocumentosBD {
         return false;
     }
     private String getFileName(Part part) {
-		for (String cd : part.getHeader("content-disposition").split(";")) {
-			if (cd.trim().startsWith("filename")) {
-				return cd.substring(cd.indexOf('=') + 1).trim()
-						.replace("\"", "");
-			}
-		}
-		return null;
+        for (String cd : part.getHeader("content-disposition").split(";")) {
+                if (cd.trim().startsWith("filename")) {
+                        return cd.substring(cd.indexOf('=') + 1).trim()
+                                        .replace("\"", "");
+                }
+        }
+        return null;
     }
+    
+      /*public boolean modificarDocumento(String path, int idDoc, int idPersonal, Part archivo, Documento doc, String nombre){
+        boolean ret=false;
+        try {
+            String sql= "update documentos set idTipoDocumento=?, nombre=? where id="+idDoc;
+            PreparedStatement s= connection.prepareStatement(sql);
+            s.setInt(1,doc.getId());
+            s.setString(2,nombre);
+            int result = s.executeUpdate();
+            if(result>0){
+               ret=this.modificarArchivo(path, archivo, doc, idPersonal);
+            }
+        } catch (Exception ex) {
+        }
+        return ret;
+    }*/
+    /*private boolean modificarArchivo(String path, Part archivo, Documento doc, int ciPersonal){
+        String name = this.getFileName(archivo);
+        boolean b=true;
+        if(name!=null && !name.equals("") ){
+            if(doc.getNombre().equals("")){
+                b=this.subirArchivo(path, archivo, doc.getId(),ciPersonal);
+            }
+            else{
+                String archivoViejo = ciPersonal+"-"+doc.getId()+doc.getNombre().substring(doc.getNombre().lastIndexOf("."));
+                String archivoNuevo = ciPersonal+"-"+doc.getId()+name.substring(name.lastIndexOf("."));
+                if(archivoNuevo.equals(archivoViejo)){
+                    b=this.subirArchivo(path, archivo, doc.getId(),ciPersonal);
+                }
+                else{
+                    b=this.eliminarArchivo(path, archivoViejo, ciPersonal,doc.getId());
+                    b= b && this.subirArchivo(path, archivo, doc.getId(),ciPersonal);
+                }
+            }
+        }
+        return b;
+    }*/
 }
