@@ -354,9 +354,9 @@ public class ManejadorPersonal {
         return personal.get(tipoPersonal).get(ci).getDocumentos().get(id);
     }
     //path -> Path context Servlet
-    public boolean altaDocumento(String path,Tipo tipoDocumento, int ci, Tipo tipoPersonal,Part archivo){
+    public boolean altaDocumento(Tipo tipoDocumento, int ci, Tipo tipoPersonal,Part archivo){
         ManejadorDocumentosBD md = new ManejadorDocumentosBD();
-        Documento d = md.crearDocumento(path, tipoDocumento, ci, archivo); //sube el archivo y lo agrega a la base de datos
+        Documento d = md.crearDocumento(tipoDocumento, ci, archivo); //sube el archivo y lo agrega a la base de datos
         if(d!=null){
             this.getPersonal(ci, tipoPersonal.getId()).agregarDocumento(d); //lo agrega a memoria
             return true;
@@ -364,12 +364,12 @@ public class ManejadorPersonal {
         return false;
     }
     //path -> Path context Servlet
-    public boolean bajaDocumento(String path,int ci, Tipo tipoPersonal,int idDocumento){
+    public boolean bajaDocumento(int ci, Tipo tipoPersonal,int idDocumento){
         ManejadorDocumentosBD md = new ManejadorDocumentosBD();
         Documento d = this.getPersonal(ci, tipoPersonal.getId()).getDocumentos().get(idDocumento);
         if(d!=null){
-            if(md.eliminarDocumento(path, d, ci)){ //lo elimina del disco duro y de la base de datos
-                this.getPersonal(ci, tipoPersonal.getId()).agregarDocumento(d); //lo elimina de la memoria
+            if(md.eliminarDocumento(d, ci)){ //lo elimina del disco duro y de la base de datos
+                this.getPersonal(ci, tipoPersonal.getId()).eliminarDocumento(idDocumento); //lo elimina de la memoria
                 return true;
             }
         }

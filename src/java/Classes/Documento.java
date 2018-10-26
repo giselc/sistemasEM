@@ -17,14 +17,21 @@ public class Documento {
     private int id;
     private Tipo tipo;
     private String nombre;
+    private String extension;
     
     
-    public Documento(int id, Tipo tipo,String nombre) {
+    public Documento(int id, Tipo tipo,String nombre,String extension) {
         this.id = id;
         this.tipo = tipo;
         this.nombre=nombre;
+        this.extension=extension;
     }
 
+    public String getExtension() {
+        return extension;
+    }
+    
+    
     public String getNombre() {
         return nombre;
     }

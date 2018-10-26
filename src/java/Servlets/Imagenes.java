@@ -5,28 +5,26 @@
  */
 package Servlets;
 
-import Manejadores.ManejadorCodigos;
+import Classes.Personal;
+import Classes.Usuario;
 import Manejadores.ManejadorPersonal;
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
 
 /**
  *
  * @author Gisel
  */
-@MultipartConfig
-public class Documento extends HttpServlet {
+public class Imagenes extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,52 +35,58 @@ public class Documento extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        HttpSession sesion = request.getSession();
-        try (PrintWriter out = response.getWriter()) {
+        
             /* TODO output your page here. You may use following sample code. */
-            ManejadorPersonal mp = ManejadorPersonal.getInstance();
-            ManejadorCodigos mc = ManejadorCodigos.getInstance();
-            int ci= Integer.valueOf(request.getParameter("ci"));
-            int idTipoPersonal= Integer.valueOf(request.getParameter("idTipoPersonal"));
-            if(request.getParameter("id")!= null){ //alta
-                int id= Integer.valueOf(request.getParameter("id"));
-                Part documento = request.getPart("documento");
-                int tipoDocumento= Integer.valueOf(request.getParameter("tipoDocumento"));
-                if(id==-1){ //alta
-                    boolean exito = mp.altaDocumento(mc.getTipoDocumento(tipoDocumento), ci,mc.getTipoPersonal(idTipoPersonal), documento);
-                    if(exito){
-                        sesion.setAttribute("mensaje", "Documento agregado correctamente.");
+            HttpSession sesion = request.getSession();
+            Usuario u = (Usuario)sesion.getAttribute("usuario");
+            if(u.isAdmin()||u.getPermisosPersonal().getId()!=0){
+                String path="";
+                ManejadorPersonal mp = ManejadorPersonal.getInstance();
+                if(request.getParameter("foto")!=null){
+                    int ci = Integer.valueOf(request.getParameter("foto"));
+                    Classes.Cadete c = mp.getCadete(ci);
+                    path= "c:/SEM-Documentos/Fotos/"+c.getFoto();
+                    response.setContentType("image/*");
+                }
+                else{
+                    int ci = Integer.valueOf(request.getParameter("ci"));
+                    String ext = request.getParameter("ext");
+                    int idDoc = Integer.valueOf(request.getParameter("idDoc"));
+                    if(ext.equals(".doc")||ext.equals(".docx")){
+                        response.setContentType("application/msword");
+                    }
+                    else if(ext.equals(".xls")||ext.equals(".xlsx")){
+                        response.setContentType("application/vnd.ms-excel");
+                    }
+                    else if(ext.equals(".ppt")||ext.equals(".pptx")){
+                        response.setContentType("application/vnd.ms-powerpoint");
+                    }
+                    else if(ext.equals(".ppt")||ext.equals(".pdf")){
+                        response.setContentType("application/pdf");
                     }
                     else{
-                        sesion.setAttribute("mensaje", "ERROR al agregar el documento.");
+                        response.setContentType("image/"+ext.substring(1));
                     }
+                    System.out.print(response.getContentType());
+                    path= "c:/SEM-Documentos/"+ci+"-"+idDoc+ext;
+                }
+                File f=new File(path);
+                int   size=(int) f.length();
+                byte[] resultado=new byte[size];
+                BufferedInputStream   stream = new BufferedInputStream(new FileInputStream(f));
+                stream.read(resultado);
+
+                try (OutputStream sos = response.getOutputStream()) {
+                    sos.write(resultado);
+                    sos.flush();
                 }
             }
             else{
-                if(request.getParameter("elim")!= null){
-                    int idDocumento=Integer.valueOf(request.getParameter("elim"));
-                    if(mp.bajaDocumento(ci, mc.getTipoPersonal(idTipoPersonal), idDocumento)){
-                        sesion.setAttribute("mensaje", "Documento eliminado correctamente.");
-                    }
-                    else{
-                        sesion.setAttribute("mensaje", "ERROR al eliminar el documento.");
-                    }
-                }
+                response.sendRedirect("");
             }
-            if(idTipoPersonal==1){
-                response.sendRedirect("cadete.jsp?ci="+request.getParameter("ci"));
-            }
-            else{
-                response.sendRedirect("personal.jsp?ci="+request.getParameter("ci"));
-            }
-        }
     }
-    
-    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

@@ -38,7 +38,6 @@
                             out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Tipo Documento</h3></td>");
                             out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Archivo</h3></td>");
                             out.print("<td style='width: 10%' align='center'></td>");
-                            out.print("<td style='width: 10%' align='center'></td>");
                        out.print("</tr>" );
                 i=0;
                 String color;
@@ -55,11 +54,10 @@
                     out.print("<td style='width: 10%' align='center'>"+s1.getTipo().getDescripcion()+"</td>");
                     out.print("<td style='width: 10%' align='center'>");
                     if(!s1.getNombre().equals("")){
-                        out.print("<a href='Documentos/"+ci+"-"+s1.getId()+s1.getNombre().substring(s1.getNombre().indexOf("."))+"'>"+s1.getNombre()+"</a>");
+                        out.print("<a target='_blank' href='"+request.getContextPath()+"/Imagenes?ci="+ci+"&ext="+s1.getExtension()+"&idDoc="+s1.getId()+"'>"+s1.getNombre()+"</a>");
                     }
                     out.print("</td>");
-                    out.print("<td style='width: 10%' align='center'><a href='documento.jsp?id="+String.valueOf(s1.getId())+"&ci="+ci+"&idTipoPersonal="+idTipoPersonal+"'><img title='Editar' src='images/ver.png' width='25%' /></a></td>");
-                    out.print("<td style='width: 10%' align='center'><form method='post' onsubmit=\"return confirmar(this,'')\" action='Documento?elim="+s1.getId()+"&ci="+ci+"'><input type='image' width='25%' title='Eliminar' src='images/eliminar.png' alt='Submit Form' /> </form></td>");
+                    out.print("<td style='width: 10%' align='center'><form method='post' onsubmit=\"return confirmar(this,'')\" action='Documento?elim="+s1.getId()+"&ci="+ci+"&idTipoPersonal="+idTipoPersonal+"'><input type='image' width='25%' title='Eliminar' src='images/eliminar.png' alt='Submit Form' /> </form></td>");
                     out.print("</tr>");
                 }
             %> 

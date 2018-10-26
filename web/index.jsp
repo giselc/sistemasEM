@@ -67,6 +67,14 @@
                                     </script>
                                      <%
                                  }
+                                 else if(loginStatus!=null && loginStatus.equals("sinpermisos")){
+                                     out.println("<td><h4 style='margin:0px;color: #ffff33;font-size: 100%'>DEBE INICAR SESI&Oacute;N</h4></td>");
+                                     %>
+                                    <script>
+                                        alert("USUARIO SIN PERMISOS para operar en el sistema")
+                                    </script>
+                                     <%
+                                 }
 
                     %>
                 </tr>

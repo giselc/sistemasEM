@@ -62,7 +62,7 @@
                             <b>Seleccione el archivo a subir:</b>
                         </td>
                         <td style="width: 50%">
-                            <input type="file" name="documento" id="uploadImage" required="required" onchange="PreviewImage();"/> 
+                            <input type="file" accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,application/pdf, image/*" name="documento" id="uploadImage" required="required" onchange="PreviewImage();"/> 
                         </td>
                     </tr>
                     <tr>

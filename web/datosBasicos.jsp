@@ -61,12 +61,12 @@
                 <%
                 if(c!=null){
                     %>
-                    <p align="center"><label for="uploadImage" ><img src="Documentos/Fotos/<%= c.getFoto() %>" id="uploadPreview" style="width: 20%" onclick=""/></label></p>
+                    <p align="center"><label for="uploadImage" ><img src="<%=request.getContextPath()%>/Imagenes?foto=<%=c.getCi()%>" id="uploadPreview" style="width: 20%" onclick=""/></label></p>
                     <%
                 }
                 else{
                     %>
-                    <p align="center"><label for="uploadImage" ><img src="Documentos/Fotos/silueta.jpg" id="uploadPreview" style="width: 20%" onclick=""/></label></p>
+                    <p align="center"><label for="uploadImage" ><img src="images/silueta.jpg" id="uploadPreview" style="width: 20%" onclick=""/></label></p>
                 <%}
                 %>
                 

@@ -35,17 +35,17 @@ public class ManejadorDocumentosBD {
     public HashMap<Integer,Documento> getDocumentos(int ci){ //sin la imagen
         HashMap<Integer,Documento> as= new HashMap<>();
         try {
-            String sql= "Select * from documentos where idPersonal="+ci;
+            String sql= "Select * from sistemasem.documentos where idPersonal="+ci;
             Statement s= connection.createStatement();
             ResultSet rs = s.executeQuery(sql);
             Documento documento;
             ManejadorCodigos mc = ManejadorCodigos.getInstance();
             while(rs.next()){
-                documento=new Documento(rs.getInt("id"),(TipoDocumento)mc.getTipoDocumento(rs.getInt("idTipoDocumento")),rs.getString("nombre"));
+                documento=new Documento(rs.getInt("id"),(TipoDocumento)mc.getTipoDocumento(rs.getInt("idTipoDocumento")),rs.getString("nombre"),rs.getString("extension"));
                 as.put(rs.getInt("id"),documento);
             }
         } catch (SQLException ex) {
-           
+           System.out.print(ex.getMessage());
         }
         
         return as;
@@ -58,19 +58,19 @@ public class ManejadorDocumentosBD {
             ResultSet rs = s.executeQuery(sql);
             ManejadorCodigos mc = ManejadorCodigos.getInstance();
             if(rs.next()){
-                p= new Documento(id,(TipoDocumento) mc.getTipoDocumento(rs.getInt("idTipoDocumento")), rs.getString("nombre"));
+                p= new Documento(id,(TipoDocumento) mc.getTipoDocumento(rs.getInt("idTipoDocumento")), rs.getString("nombre"), rs.getString("extension"));
             }
         } catch (SQLException ex) {
         }
         return p;
     }
   
-    public Documento crearDocumento(String path,Tipo tipoDocumento, int idPersonal, Part archivo){
+    public Documento crearDocumento(Tipo tipoDocumento, int idPersonal, Part archivo){
         int clave = -1;
         boolean ret=false;
         String nombre=this.getFileName(archivo);
         try {
-            String sql= "insert into documentos (idPersonal, idTipoDocumento, nombre) values("+idPersonal+","+tipoDocumento.getId()+",'"+nombre+"')";
+            String sql= "insert into sistemasem.documentos (idPersonal, idTipoDocumento, nombre,extension) values("+idPersonal+","+tipoDocumento.getId()+",'"+nombre+"','"+nombre.substring(nombre.lastIndexOf("."))+"')";
             Statement s= connection.createStatement();
             int result = s.executeUpdate(sql,Statement.RETURN_GENERATED_KEYS);
             if(result>0){
@@ -78,9 +78,9 @@ public class ManejadorDocumentosBD {
                 if(rs.next()){ 
                     clave=rs.getInt(1);
                     if(clave!=-1){
-                        ret=this.subirArchivo(path,archivo, clave, idPersonal);
+                        ret=this.subirArchivo(archivo, clave, idPersonal);
                         if(ret){
-                            return new Documento(clave, tipoDocumento, nombre); 
+                            return new Documento(clave, tipoDocumento, nombre,nombre.substring(nombre.lastIndexOf("."))); 
                         }
                         else{
                             sql="delete * from documentos where id="+clave; //si se produce un error al cargar el archivo, debo eliiminarlo de la base para que no tengan accesibilidad
@@ -90,20 +90,21 @@ public class ManejadorDocumentosBD {
                 }
             }
         } catch (Exception ex) {
-            
+            System.out.print(ex.getMessage());
         }
         return null;
     }
-    public boolean eliminarDocumento(String path, Documento doc, int idPersonal){
+    public boolean eliminarDocumento(Documento doc, int idPersonal){
         try {
             Statement s= connection.createStatement();
-            String sql="delete from documentos where id="+doc.getId();
+            String sql="delete from sistemasem.documentos where id="+doc.getId();
             int i= s.executeUpdate(sql);
             if (i>0){
-                this.eliminarArchivo(path, idPersonal, doc); //si sale de la base de datos y el archivo no se borro de la compu, se retorna true igual debido a que ese archivo deja de ser accesible
+                this.eliminarArchivo(idPersonal, doc); //si sale de la base de datos y el archivo no se borro de la compu, se retorna true igual debido a que ese archivo deja de ser accesible
                 return true;
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
+            System.out.print(ex.getMessage());
         }
         return false;
     }
@@ -111,10 +112,10 @@ public class ManejadorDocumentosBD {
     
     
     //path getServletContext().getRealPath("/")
-    private boolean eliminarArchivo(String path, int ciPersonal, Documento documento){
+    private boolean eliminarArchivo(int ciPersonal, Documento documento){
         if(!documento.getNombre().equals("")){
             String extension = documento.getNombre().substring(documento.getNombre().lastIndexOf("."));
-            File f = new File(path+"/Documentos/"+ciPersonal+"-"+documento.getId()+extension);
+            File f = new File("c:/SEM-Documentos/"+ciPersonal+"-"+documento.getId()+extension);
             if(f.exists()){
                 return f.delete();
             }
@@ -122,7 +123,7 @@ public class ManejadorDocumentosBD {
         }
         return true;
     }
-    private boolean subirArchivo(String path, Part archivo, int idDocumento, int ciPersonal){
+    private boolean subirArchivo(Part archivo, int idDocumento, int ciPersonal){
         try{
             FileOutputStream output = null;
             String name = this.getFileName(archivo);
@@ -130,7 +131,7 @@ public class ManejadorDocumentosBD {
                 String extension = name.substring(name.lastIndexOf("."));
                 InputStream input = archivo.getInputStream();
                 try {
-                    output = new FileOutputStream( path+"/Documentos/"+ciPersonal+"-"+idDocumento+extension);
+                    output = new FileOutputStream( "c:/SEM-Documentos/"+ciPersonal+"-"+idDocumento+extension);
                     int leido = 0;
                     leido = input.read();
                     while (leido != -1) {

@@ -66,9 +66,15 @@ public class login extends HttpServlet {
                                 response.sendRedirect("notas.jsp");
                             }
                             else{
-                                if(u.isNotas()){
+                                if(u.isHabilitacion()){
                                     sesion.setAttribute("inicio", "habilitacion.jsp");
                                     response.sendRedirect("habilitacion.jsp");
+                                }
+                                else{
+                                    sesion.setAttribute("usuarioID", null);
+                                    sesion.setAttribute("usuario", null);
+                                    sesion.setAttribute("login", "sinpermisos");
+                                    response.sendRedirect("");
                                 }
                             }
                         }
