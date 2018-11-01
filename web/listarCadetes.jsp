@@ -47,7 +47,7 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
                             +"<td colspan=2 style='width: 20%' align='center'><img src='images/derecha.png' width='6%' onclick='ordenar(3,1)' />Nombres</td>"
                             +"<td colspan=2 style='width: 20%' align='center'><img src='images/derecha.png' width='6%' onclick='ordenar(4,1)' />Apellidos</td>"
                             +"<td style='width: 10%' align='center'>Cédula</td>"
-                            +"<td style='width: 5%' align='center'>Curso</td>"
+                            +"<td style='width: 15%' align='center'>Curso</td>"
                             +"<td style='width: 10%' align='center'></td>"
                 +"</tr>" );
                 int i=0;

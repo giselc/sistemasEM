@@ -20,7 +20,7 @@
                 document.getElementById("uploadPreview").src = oFREvent.target.result;
             };   
         };
-        function canvasimage(input,canv) {
+    function canvasimage(input,canv) {
             var canvas= document.getElementById(canv);
             var ctx = canvas.getContext('2d');
             var img = new Image;
@@ -52,9 +52,51 @@
             };
 
         }
+    function agregarimagenYValidar(f){
+        var r=confirm("¿Seguro que desea guardar los cambios?");
+        if (r==true)
+        {
+            if(f.elements["ci"].value.length == 8 ){
+                var patron=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/;
+                if(f.elements["email"].value.search(patron)==0){
+                    if (f.elements["telefono"].value.length==8 || f.elements["telefono"].value.length==9){
+                        var input = document.createElement('input');input.type = 'hidden';input.name = 'foto2';
+                        if(document.getElementById('uploadImage').value == ""){
+                            input.value = "";
+                        }
+                        else{
+                            var canvas= document.getElementById('canvas6');
+                            var dataURL = canvas.toDataURL();
+                            dataURL = dataURL.split(',');
+                            input.value = dataURL[1];
+                        }
+                        f.appendChild(input);
+                        $('#loader').fadeIn();
+                        f.submit();
+                        return true;
+                    }
+                    else{
+                        alert("Telefono incorrecto.");
+                        return false;
+                    }
+                }
+                else{
+                    alert("Email incorrecto.");
+                    return false;
+                }
+            }
+            else{
+            alert("Cédula incorrecta.");
+                return false;
+        }
+        }
+        else{
+            return false;
+        }
+    }
 </script>
 <div id="loader" style="position: fixed; top:0; left:0; width:100%; height: 100%;background: url('images/loading-verde.gif') center center no-repeat; background-size: 10%"></div>
-<form method="post"  name="formulario" id="formulario" onsubmit="<% if (request.getParameter("ci")==null){out.print("alert('Se habilitó la pestaña de Datos Patronímicos');");} %>;" <% if (request.getParameter("ci")==null){ out.print("action='Cadete'");} else{out.print("action='Cadete?ci"+request.getParameter("ci")+"'");} %> enctype="multipart/form-data">
+<form method="post"  name="formulario" id="formulario" onsubmit="<% if (request.getParameter("ci")==null){out.print("alert('Se habilitó la pestaña de Datos Patronímicos');");} %>return agregarimagenYValidar(this);" <% if (request.getParameter("ci")==null){ out.print("action='Cadete'");} else{out.print("action='Cadete?id="+request.getParameter("ci")+"'");} %> enctype="multipart/form-data">
     <table style="width: 100%; text-align: center">
     <tr>
             <td>
@@ -127,7 +169,7 @@
                     <%
                     HashMap<Integer,Arma> aa = mc.getArmas();
                     String s="";
-                    System.out.print(c.getArma());
+                  // System.out.print(c.getArma());
                     if(c!=null && c.getArma()==null){
                         s="selected";
                     }
@@ -307,8 +349,32 @@
 
         </tr>
         <tr>
+                    <td>Talle Operacional: </td>
+                    <td>
+                        <select name="talleOperacional" form="formulario">
+
+                            <option <%if(c==null){out.print("selected");}%> value=''></option>");
+                            <option <%if(c!=null && c.getTalleOperacional().equals("S")){out.print("selected");}%> value='S'>S</option>");
+                            <option <%if(c!=null && c.getTalleOperacional().equals("M")){out.print("selected");}%> value='M'>M</option>");
+                            <option <%if(c!=null && c.getTalleOperacional().equals("L")){out.print("selected");}%> value='L'>L</option>");
+                            <option <%if(c!=null && c.getTalleOperacional().equals("XL")){out.print("selected");}%> value='XL'>XL</option>");
+                            <option <%if(c!=null && c.getTalleOperacional().equals("XXL")){out.print("selected");}%> value='XXL'>XXL</option>");
+                            <option <%if(c!=null && c.getTalleOperacional().equals("XXXL")){out.print("selected");}%> value='XXXL'>XXXL</option>");
+
+                         </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Talle Quep&iacute;: </td>
+                    <td><input  type=number name="talleQuepi" value="<% if( c!=null){out.print(c.getTalleQuepi());}else{out.print("0");} %>"/></td>
+                </tr>
+                <tr>
+                    <td>Talle Botas: </td>
+                    <td><input  type=number name="talleBotas" value="<% if( c!=null){out.print(c.getTalleBotas());}else{out.print("0");} %>"/></td>
+                </tr>
+        <tr <%if( c==null){ out.print("style='display:none'");} %>>
             <td>Fecha de alta en el sistema: </td>
-            <td><input type=date name="fechaAlta" size="8" value="<%if( c!=null){out.print(c.getFechaNac());} %>"required="required"/></td>
+            <td><input type=date name="fechaAlta" size="8" value="<%if( c!=null){out.print(c.getFechaNac());} %>"/></td>
         </tr>
         <tr>
             <td>Observaciones: </td>

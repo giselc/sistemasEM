@@ -17,12 +17,22 @@
 <%@ include file="header.jsp" %>
 <script type="text/javascript">
         function PreviewImage() {
-            var oFReader = new FileReader();
-            oFReader.readAsDataURL(document.getElementById("uploadImage").files[0]);
-
-            oFReader.onload = function (oFREvent) {
-                document.getElementById("uploadPreview").src = oFREvent.target.result;
-            };
+            var fileInput = document.getElementById('uploadImage');
+            var imagePreview = document.getElementById("uploadPreview");
+            var filePath = fileInput.value;
+            var allowedExtensions = /(.jpg|.jpeg|.png|.gif)$/i;
+            if(!allowedExtensions.exec(filePath)){
+                 imagePreview.src ="images/sinVistaPrevia.png";
+            }else{
+                //Image preview
+                if (fileInput.files && fileInput.files[0]) {
+                    var oFReader = new FileReader();
+                    oFReader.readAsDataURL(fileInput.files[0]);
+                    oFReader.onload = function (oFREvent) {
+                        imagePreview.src = oFREvent.target.result;
+                    };
+                }
+            }            
         };
         function enviandoSubmit(form){
             document.getElementById("enviando").style.display = "block";
@@ -34,7 +44,6 @@
 </script>
 <% 
     if(u.isAdmin() || u.getPermisosPersonal().getId()==1){
-
 %>
 <% 
     Documento d=null;    
@@ -53,7 +62,7 @@
     <table  width='70%' align='center' style="text-align: left">
         <tr>
             <td style="width: 50%">
-                <img width="100%"id="uploadPreview" src="<%if(d!=null && !d.getNombre().equals("")){out.print("Documentos/"+request.getParameter("ci")+"-"+d.getId()+d.getNombre().substring(d.getNombre().indexOf(".")));}else{out.print("images/sinVistaPrevia.png");} %>"/>
+                <img width="100%"id="uploadPreview" src="images/sinVistaPrevia.png"/>
             </td>
             <td>
                 <table>
@@ -85,16 +94,11 @@
                         </td>
                     </tr>
                 </table>
-            </td>
-            
+            </td>            
         </tr>
     </table>  
     <p align='right'><input type="submit"  value="Aceptar" /></p>
 </form>       
-
-
-
-
 <% 
     }
     else{

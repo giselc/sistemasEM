@@ -12,7 +12,9 @@ import Classes.Curso;
 import Classes.Departamento;
 import Classes.Familiar;
 import Classes.Personal;
+import Classes.RecordCadete;
 import Classes.RecordCadetesFiltro;
+import Classes.RecordPersonal;
 import Classes.TipoPersonal;
 import Classes.Usuario;
 import java.io.BufferedReader;
@@ -21,15 +23,14 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.servlet.http.Part;
 
 /**
  *
@@ -389,7 +390,7 @@ public class ManejadorPersonalBD {
                         //System.out.print(i++);
                         madre = new Familiar(rs.getString("MNombreComp"), rs.getDate("MFechaNac"), mc.getDepartamento(rs.getInt("MDepartamentoNac")), rs.getString("MLocalidadNac"), mc.getEstadoCivil(rs.getInt("MEstadoCivil")), rs.getString("MDomicilio"), mc.getDepartamento(rs.getInt("MDepartamento")), rs.getString("MLocalidad"), rs.getString("MTelefono"), rs.getString("MProfesion"), rs.getString("MLugarTrabajo"));
                         padre = new Familiar(rs.getString("PNombreComp"), rs.getDate("PFechaNac"), mc.getDepartamento(rs.getInt("PDepartamentoNac")), rs.getString("PLocalidadNac"), mc.getEstadoCivil(rs.getInt("PEstadoCivil")), rs.getString("PDomicilio"), mc.getDepartamento(rs.getInt("PDepartamento")), rs.getString("PLocalidad"), rs.getString("PTelefono"), rs.getString("PProfesion"), rs.getString("PLugarTrabajo"));
-                        p.get(1).add(new Cadete(rs.getString("fotoPasaporte"),mc.getCurso(rs.getInt("idCurso")),mc.getCarrera(rs.getInt("idCarrera")), rs.getDate("fechaNac"),rs.getString("sexo"),mc.getDepartamento(rs.getInt("idDepartamentoNac")),rs.getString("localidadNac"),rs.getString("cc"),rs.getInt("ccNro"),mc.getEstadoCivil(rs.getInt("idEstadoCivil")),rs.getString("domicilio"),mc.getDepartamento(rs.getInt("idDepartamentoDom")),rs.getString("localidadDom"),rs.getString("telefono"),rs.getString("email"),rs.getInt("derecha"),rs.getInt("hijos"),rs.getBoolean("repitiente"),rs.getBoolean("lmga"),rs.getBoolean("paseDirecto"),rs.getDouble("notaPaseDirecto"),madre,padre,rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor")));
+                        p.get(1).add(new Cadete(rs.getString("fotoPasaporte"),mc.getCurso(rs.getInt("idCurso")),mc.getCarrera(rs.getInt("idCarrera")), rs.getString("fechaNac"),rs.getString("sexo"),mc.getDepartamento(rs.getInt("idDepartamentoNac")),rs.getString("localidadNac"),rs.getString("cc"),rs.getInt("ccNro"),mc.getEstadoCivil(rs.getInt("idEstadoCivil")),rs.getString("domicilio"),mc.getDepartamento(rs.getInt("idDepartamentoDom")),rs.getString("localidadDom"),rs.getString("telefono"),rs.getString("email"),rs.getInt("derecha"),rs.getInt("hijos"),rs.getBoolean("repitiente"),rs.getBoolean("lmga"),rs.getBoolean("paseDirecto"),rs.getDouble("notaPaseDirecto"),madre,padre,rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor"),rs.getString("talleOperacional"),rs.getInt("talleBotas"),rs.getInt("talleQuepi")));
                         break;
                     case 2:
                         p.get(2).add(new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor")));
@@ -409,85 +410,88 @@ public class ManejadorPersonalBD {
         return p;
     }
     
-    public boolean agregarPersonal(Personal p){
+    public Personal agregarPersonal(RecordPersonal rp,Part foto){
+        int clave = -1;
         java.util.Calendar fecha1 = java.util.Calendar.getInstance();
         int mes = fecha1.get(java.util.Calendar.MONTH)+1;
         String fecha=  fecha1.get(java.util.Calendar.YEAR)+"-"+mes+"-"+fecha1.get(java.util.Calendar.DATE); //usada para log
-        String sql = "INSERT INTO sistemasem.personal (numero,ci,idGrado,idArma, PrimerNombre, PrimerApellido, SegundoNombre, SegundoApellido,  OBSERVACIONES, profesor) values (?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO sistemasem.personal (ci,idGrado,idArma, PrimerNombre, PrimerApellido, SegundoNombre, SegundoApellido,  OBSERVACIONES, profesor) values (?,?,?,?,?,?)";
         int i=1;
         try {
             PreparedStatement statement= connection.prepareStatement(sql); // sql a insertar en postulantes
-            statement.setInt(i++,p.getNroInterno());
-            statement.setInt(i++,p.getCi());
-            if(p.getGrado()!=null){
-                statement.setInt(i++,p.getGrado().getId());
-            }
-            else{
-                statement.setInt(i++,-1);
-            }
-            if(p.getArma()!=null){
-                statement.setInt(i++,p.getArma().getId());
-            }
-            else{
-                statement.setInt(i++,-1);
-            }
-            
-            statement.setString(i++,p.getPrimerNombre());
-            statement.setString(i++,p.getPrimerApellido());
-            statement.setString(i++,p.getSegundoNombre());
-            statement.setString(i++,p.getSegundoApellido());
-            statement.setString(i++,p.getObservaciones());
-            statement.setBoolean(i++,p.isProfesor());
+            statement.setInt(i++,rp.ci);
+            statement.setInt(i++,rp.idGrado);
+            statement.setInt(i++,rp.idArma);
+            statement.setString(i++,rp.primerNombre);
+            statement.setString(i++,rp.primerApellido);
+            statement.setString(i++,rp.segundoNombre);
+            statement.setString(i++,rp.segundoApellido);
+            statement.setString(i++,rp.observaciones);
+            statement.setBoolean(i++,rp.profesor);
             statement.setString(i++, fecha);
-            int row=statement.executeUpdate();
+            int row=statement.executeUpdate(sql,Statement.RETURN_GENERATED_KEYS);
             if(row>0){
-                if(p instanceof Cadete){
-                    sql = "INSERT INTO sistemasem.cadetes (ci,numero,idCurso,fechaNac, sexo, idDepartamentoNac, localidadNac, cc,  ccNro, idEstadoCivil,domicilio,idDepartamentoDom,localidadDom,telefono,email,derecha,hijos,repitiente,lmga,paseDirecto,notaPaseDirecto) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-                    i=1;
-                    statement= connection.prepareStatement(sql);
-                    statement.setInt(i++,p.getCi());
-                    statement.setInt(i++,p.getNroInterno());
-                    Cadete c= (Cadete)p;
-                    statement.setInt(i++,c.getCurso().getId());
-                    statement.setDate(i++,c.getFechaNac());
-                    statement.setString(i++,c.getSexo());
-                    statement.setInt(i++,c.getDepartamentoNac().getCodigo());
-                    statement.setString(i++, c.getLocalidadNac());
-                    statement.setString(i++, c.getCc());
-                    statement.setInt(i++, c.getCcNro());
-                    statement.setInt(i++,c.getEstadoCivil().getCodigo());
-                    statement.setString(i++, c.getDomicilio());
-                    statement.setInt(i++,c.getDepartamento().getCodigo());
-                    statement.setString(i++, c.getLocalidad());
-                    statement.setString(i++, c.getTelefono());
-                    statement.setString(i++, c.getEmail());
-                    statement.setInt(i++, c.getDerecha());
-                    statement.setInt(i++, c.getHijos());
-                    statement.setBoolean(i++, c.isRepitiente());
-                    statement.setBoolean(i++, c.isLmga());
-                    statement.setBoolean(i++, c.isPaseDirecto());
-                    statement.setDouble(i++, c.getNotaPaseDirecto());
-                    row=statement.executeUpdate();
-                    if(row>0){
-                        return true;
-                    }
-                    else{
-                        sql = "DELETE FROM sistemasem.PERSONAL WHERE CI="+ p.getCi();
-                        Statement statement1= connection.createStatement();
-                        statement1.execute(sql);
-                        return false;
+                ResultSet rs=statement.getGeneratedKeys(); //obtengo las ultimas llaves generadas
+                if(rs.next()){ 
+                    clave=rs.getInt(1);
+                    if(clave!=-1){
+                        ManejadorCodigos mc= ManejadorCodigos.getInstance();
+                        if(rp.rc!=null){//es cadete
+                            RecordCadete rc= rp.rc;
+                            sql = "INSERT INTO sistemasem.cadetes (fotoPasaporte,ci,numero,idCurso,fechaNac, sexo, idDepartamentoNac, localidadNac, cc,  ccNro, idEstadoCivil,domicilio,idDepartamentoDom,localidadDom,telefono,email,derecha,hijos,repitiente,lmga,paseDirecto,notaPaseDirecto,talleOperacional,talleQuepi,talleBotas) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                            i=1;
+                            statement= connection.prepareStatement(sql);
+                            statement.setString(i++, rc.foto);
+                            statement.setInt(i++,rp.ci);
+                            statement.setInt(i++,clave);
+                            statement.setInt(i++,rc.idcurso);
+                            statement.setString(i++,rc.fechaNac);
+                            statement.setString(i++,rc.sexo);
+                            statement.setInt(i++,rc.iddepartamentoNac);
+                            statement.setString(i++, rc.localidadNac);
+                            statement.setString(i++, rc.cc);
+                            statement.setInt(i++, rc.ccNro);
+                            statement.setInt(i++,rc.idestadoCivil);
+                            statement.setString(i++, rc.domicilio);
+                            statement.setInt(i++,rc.iddepartamento);
+                            statement.setString(i++, rc.localidad);
+                            statement.setString(i++, rc.telefono);
+                            statement.setString(i++, rc.email);
+                            statement.setInt(i++, rc.derecha);
+                            statement.setInt(i++, rc.hijos);
+                            statement.setBoolean(i++, rc.repitiente);
+                            statement.setBoolean(i++, rc.lmga);
+                            statement.setBoolean(i++, rc.paseDirecto);
+                            statement.setDouble(i++, rc.notaPaseDirecto);
+                            statement.setString(i++, rc.talleOperacional);
+                            statement.setInt(i++, rc.talleQuepi);
+                            statement.setInt(i++, rc.talleBotas);
+                            row=statement.executeUpdate();
+                            if(row>0){////// quede aca
+                                ManejadorDocumentosBD.subirArchivo(foto, -1, rp.ci, true);
+                                return new Cadete(rc.foto,mc.getCurso(rc.idcurso),mc.getCarrera(rc.idcarrera),rc.fechaNac,rc.sexo, mc.getDepartamento(rc.iddepartamentoNac),rc.localidadNac,rc.cc,rc.ccNro,mc.getEstadoCivil(rc.idestadoCivil),rc.domicilio,mc.getDepartamento(rc.iddepartamento), rc.localidad, rc.telefono,rc.email,rc.derecha, rc.hijos,rc.repitiente,rc.lmga,rc.paseDirecto,rc.notaPaseDirecto, null, null, clave, rp.ci, mc.getGrado(rp.idGrado),mc.getArma(rp.idArma),rp.primerNombre, rp.segundoNombre, rp.primerApellido,rp.segundoApellido, null, rp.observaciones,rp.profesor,rc.talleOperacional,rc.talleBotas,rc.talleQuepi);
+                            }
+                            else{
+                                sql = "DELETE FROM sistemasem.PERSONAL WHERE CI="+ rp.ci;
+                                Statement statement1= connection.createStatement();
+                                statement1.execute(sql);
+                                return null;
+                            }
+                        }
+                        return new Personal(clave,rp.ci,mc.getGrado(rp.idGrado),mc.getArma(rp.idArma),rp.primerNombre,rp.segundoNombre,rp.primerApellido,rp.segundoApellido, null, rp.observaciones, rp.profesor);
+                        
                     }
                 }
-                return true;
             }
             else{
-                return false;
+                return null;
             }
             
         } catch (Exception ex) {
             System.out.print(ex);
-            return false;
+            return null;
         }
+        return null;
     }
     
 }

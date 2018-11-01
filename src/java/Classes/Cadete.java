@@ -17,7 +17,7 @@ public class Cadete extends Personal{
     private String foto;
     private Curso curso;
     private Carrera carrera;
-    private Date fechaNac;
+    private String fechaNac;
     private String sexo;
     private Departamento departamentoNac;
     private String localidadNac;
@@ -35,10 +35,13 @@ public class Cadete extends Personal{
     private boolean lmga;
     private boolean paseDirecto;
     private double notaPaseDirecto;
+    private String talleOperacional;
+    private int talleBotas;
+    private int talleQuepi;
     private Familiar madre;
     private Familiar padre;
 
-    public Cadete(String foto,Curso curso, Carrera carrera, Date fechaNac, String sexo, Departamento departamentoNac, String localidadNac, String cc, int ccNro, EstadoCivil estadoCivil, String domicilio, Departamento departamento, String localidad, String telefono, String email, int derecha, int hijos, boolean repitiente, boolean lmga, boolean paseDirecto, double notaPaseDirecto, Familiar madre,Familiar padre, int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String observaciones, boolean profesor) {
+    public Cadete(String foto,Curso curso, Carrera carrera, String fechaNac, String sexo, Departamento departamentoNac, String localidadNac, String cc, int ccNro, EstadoCivil estadoCivil, String domicilio, Departamento departamento, String localidad, String telefono, String email, int derecha, int hijos, boolean repitiente, boolean lmga, boolean paseDirecto, double notaPaseDirecto, Familiar madre,Familiar padre, int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String observaciones, boolean profesor,String talleOperacional,int talleBotas,int talleQuepi) {
         super(nroInterno, ci, grado, arma, primerNombre, segundoNombre, primerApellido, segundoApellido, documentos, observaciones, profesor);
         this.curso = curso;
         this.carrera = carrera;
@@ -63,6 +66,33 @@ public class Cadete extends Personal{
         this.madre = madre;
         this.padre = padre;
         this.foto=foto;
+        this.talleBotas=talleBotas;
+        this.talleOperacional=talleOperacional;
+        this.talleQuepi=talleQuepi;
+    }
+
+    public String getTalleOperacional() {
+        return talleOperacional;
+    }
+
+    public void setTalleOperacional(String talleOperacional) {
+        this.talleOperacional = talleOperacional;
+    }
+
+    public int getTalleBotas() {
+        return talleBotas;
+    }
+
+    public void setTalleBotas(int talleBotas) {
+        this.talleBotas = talleBotas;
+    }
+
+    public int getTalleQuepi() {
+        return talleQuepi;
+    }
+
+    public void setTalleQuepi(int talleQuepi) {
+        this.talleQuepi = talleQuepi;
     }
 
     public String getFoto() {
@@ -90,7 +120,7 @@ public class Cadete extends Personal{
         return curso;
     }
 
-    public Date getFechaNac() {
+    public String getFechaNac() {
         return fechaNac;
     }
 
@@ -166,7 +196,7 @@ public class Cadete extends Personal{
         this.curso = curso;
     }
 
-    public void setFechaNac(Date fechaNac) {
+    public void setFechaNac(String fechaNac) {
         this.fechaNac = fechaNac;
     }
 

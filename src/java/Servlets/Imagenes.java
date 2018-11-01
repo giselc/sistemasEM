@@ -54,20 +54,31 @@ public class Imagenes extends HttpServlet {
                     int ci = Integer.valueOf(request.getParameter("ci"));
                     String ext = request.getParameter("ext");
                     int idDoc = Integer.valueOf(request.getParameter("idDoc"));
-                    if(ext.equals(".doc")||ext.equals(".docx")){
-                        response.setContentType("application/msword");
-                    }
-                    else if(ext.equals(".xls")||ext.equals(".xlsx")){
-                        response.setContentType("application/vnd.ms-excel");
-                    }
-                    else if(ext.equals(".ppt")||ext.equals(".pptx")){
-                        response.setContentType("application/vnd.ms-powerpoint");
-                    }
-                    else if(ext.equals(".ppt")||ext.equals(".pdf")){
-                        response.setContentType("application/pdf");
-                    }
-                    else{
-                        response.setContentType("image/"+ext.substring(1));
+                    switch (ext) {
+                        case ".doc":
+                            response.setContentType("application/msword");
+                            break;
+                        case ".docx":
+                            response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                            break;
+                        case ".xls":
+                            response.setContentType("application/vnd.ms-excel");
+                            break;
+                        case ".xlsx":
+                            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                            break;
+                        case ".ppt":
+                            response.setContentType("application/vnd.ms-powerpoint");
+                            break;
+                        case ".pptx":
+                            response.setContentType("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+                            break;
+                        case ".pdf":
+                            response.setContentType("application/pdf");
+                            break;
+                        default:
+                            response.setContentType("image/"+ext.substring(1));
+                            break;
                     }
                     System.out.print(response.getContentType());
                     path= "c:/SEM-Documentos/"+ci+"-"+idDoc+ext;

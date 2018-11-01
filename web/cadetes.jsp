@@ -182,7 +182,7 @@
                             +"<td colspan=2 style='width: 20%' align='center'>"+imgnombre+"Nombres</td>"
                             +"<td colspan=2 style='width: 20%' align='center'>"+imgapellido+"Apellidos</td>"
                             +"<td style='width: 10%' align='center'>Cédula</td>"
-                            +"<td style='width: 5%' align='center'>Curso</td>"
+                            +"<td style='width: 15%' align='center'>Curso</td>"
                             +"<td style='width: 10%' align='center'></td>"
                 +"</tr>";
                 for (var i=0; i<listado.length;i++) {
@@ -194,7 +194,7 @@
                     }
                     j=i+1;
                     datos += "<tr style='background-color:"+color+"'>"
-                       +"<td style='width: 5%' align='center'>"+i+"</td>"
+                       +"<td style='width: 5%' align='center'>"+(i+1)+"</td>"
                        +"<td style='width: 5%' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(listado[i].ci)+"' /></td>"
                        +"<td style='width: 5%' align='center'>"+listado[i].Nro+"</td>"
                        +"<td style='width: 10%' align='center'>"+listado[i].grado+"</td>"

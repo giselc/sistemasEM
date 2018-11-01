@@ -15,7 +15,7 @@ public class RecordCadete {
     public String foto;
     public int idcurso;
     public int idcarrera;
-    public Date fechaNac;
+    public String fechaNac;
     public String sexo;
     public int iddepartamentoNac;
     public String localidadNac;
@@ -33,4 +33,7 @@ public class RecordCadete {
     public boolean lmga;
     public boolean paseDirecto;
     public double notaPaseDirecto;
+    public String talleOperacional;
+    public int talleBotas;
+    public int talleQuepi;
 }

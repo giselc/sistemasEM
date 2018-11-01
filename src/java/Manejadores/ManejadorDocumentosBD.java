@@ -66,9 +66,9 @@ public class ManejadorDocumentosBD {
     }
   
     public Documento crearDocumento(Tipo tipoDocumento, int idPersonal, Part archivo){
-        int clave = -1;
-        boolean ret=false;
-        String nombre=this.getFileName(archivo);
+        int clave;
+        boolean ret;
+        String nombre=ManejadorDocumentosBD.getFileName(archivo);
         try {
             String sql= "insert into sistemasem.documentos (idPersonal, idTipoDocumento, nombre,extension) values("+idPersonal+","+tipoDocumento.getId()+",'"+nombre+"','"+nombre.substring(nombre.lastIndexOf("."))+"')";
             Statement s= connection.createStatement();
@@ -78,7 +78,7 @@ public class ManejadorDocumentosBD {
                 if(rs.next()){ 
                     clave=rs.getInt(1);
                     if(clave!=-1){
-                        ret=this.subirArchivo(archivo, clave, idPersonal);
+                        ret=ManejadorDocumentosBD.subirArchivo(archivo, clave, idPersonal,false);
                         if(ret){
                             return new Documento(clave, tipoDocumento, nombre,nombre.substring(nombre.lastIndexOf("."))); 
                         }
@@ -123,43 +123,47 @@ public class ManejadorDocumentosBD {
         }
         return true;
     }
-    private boolean subirArchivo(Part archivo, int idDocumento, int ciPersonal){
+    static public boolean subirArchivo(Part archivo, int idDocumento, int ciPersonal,boolean foto){
         try{
             FileOutputStream output = null;
-            String name = this.getFileName(archivo);
+            String name = ManejadorDocumentosBD.getFileName(archivo);
             if(name!=null && !name.equals("")){
                 String extension = name.substring(name.lastIndexOf("."));
                 InputStream input = archivo.getInputStream();
                 try {
-                    output = new FileOutputStream( "c:/SEM-Documentos/"+ciPersonal+"-"+idDocumento+extension);
+                    if(foto){
+                        output = new FileOutputStream( "c:/SEM-Documentos/Fotos/"+ciPersonal+extension);
+                    }
+                    else{
+                        output = new FileOutputStream( "c:/SEM-Documentos/"+ciPersonal+"-"+idDocumento+extension);
+                    }
                     int leido = 0;
                     leido = input.read();
                     while (leido != -1) {
                         output.write(leido);
                         leido = input.read();
                     }
-                } catch (FileNotFoundException ex) {
-                    
-                } catch (IOException ex) {
+                } catch (Exception ex) {
+                    System.out.print(ex.getMessage());
                     
                 } finally {
                     try {
                         output.flush();
                         output.close();
                         input.close();
-                    } catch (IOException ex) {
-                        
+                    } catch (Exception ex) {
+                        System.out.print(ex.getMessage());
                     }
                 }
             }
             return true;
         }
-        catch(Exception e){
-            
+        catch(Exception ex){
+            System.out.print(ex.getMessage());
         }
         return false;
     }
-    private String getFileName(Part part) {
+    static private String getFileName(Part part) {
         for (String cd : part.getHeader("content-disposition").split(";")) {
                 if (cd.trim().startsWith("filename")) {
                         return cd.substring(cd.indexOf('=') + 1).trim()

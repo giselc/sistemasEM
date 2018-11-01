@@ -8,6 +8,8 @@ package Manejadores;
 import Classes.Cadete;
 import Classes.Documento;
 import Classes.Personal;
+import Classes.RecordCadete;
+import Classes.RecordPersonal;
 import Classes.Tipo;
 import Classes.TipoDocumento;
 import Classes.TipoPersonal;
@@ -387,10 +389,14 @@ public class ManejadorPersonal {
         return c;
     }
            
-    public synchronized boolean agregarCadete(){
-        
-        
-        return true;
+    public synchronized boolean agregarCadete(RecordPersonal rc,Part foto){
+        ManejadorPersonalBD mp= new ManejadorPersonalBD();
+        Cadete c = (Cadete)mp.agregarPersonal(rc,foto);
+        if(c!=null){
+            personal.get(1).add(c);
+            return true;
+        }
+        return false;
     }
             
     

@@ -5,17 +5,25 @@
  */
 package Servlets;
 
+import Classes.RecordCadete;
+import Classes.RecordPersonal;
+import Manejadores.ManejadorPersonal;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Enumeration;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 /**
  *
  * @author Gisel
  */
+@MultipartConfig
 public class Cadete extends HttpServlet {
 
     /**
@@ -30,17 +38,114 @@ public class Cadete extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        String mensaje="";
+        System.out.print("HOLAAA");
+        Enumeration<String> params = request.getParameterNames(); 
+        while(params.hasMoreElements()){
+            String paramName = params.nextElement();
+            System.out.println("Parameter Name - "+paramName+", Value - "+request.getParameter(paramName));
+        }
+        System.out.print("HOLAAA22");
+        
+        
+        HttpSession sesion= request.getSession();
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Cadete</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Cadete at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            ManejadorPersonal mp = ManejadorPersonal.getInstance();
+            int ci= Integer.valueOf(request.getParameter("ci"));
+            if(request.getParameter("baja")!=null){
+                    //baja
+                    
+            }
+            else{
+                Part foto = request.getPart("foto");
+                RecordCadete rc=new RecordCadete();
+                RecordPersonal rp= new RecordPersonal();
+                rp.ci=ci;
+                rc.derecha = Integer.valueOf(request.getParameter("derecha"));
+                rc.domicilio = request.getParameter("domicilio");
+                rc.email = request.getParameter("email");
+                rc.fechaNac = request.getParameter("fechaNac");
+                rc.foto = request.getParameter("foto2");
+                rp.primerNombre = request.getParameter("primerNombre");
+                rp.segundoNombre = request.getParameter("segundoNombre");
+                rp.primerApellido = request.getParameter("primerApellido");
+                rp.segundoApellido = request.getParameter("segundoApellido");
+                rc.sexo = request.getParameter("sexo[]");
+                if (request.getParameter("repitiente")!=null){
+                     rc.repitiente = request.getParameter("repitiente").equals("on");
+                }
+                else{
+                    rc.repitiente = false;
+                }
+                rp.idArma = Integer.parseInt(request.getParameter("arma"));
+                rp.idGrado = Integer.parseInt(request.getParameter("grado"));
+                rc.idcurso = Integer.parseInt(request.getParameter("curso"));
+                rc.idcarrera = Integer.parseInt(request.getParameter("carrera"));
+                rc.iddepartamentoNac = Integer.parseInt(request.getParameter("departamentoNac"));
+                rc.localidadNac = request.getParameter("localidadNac");
+                rc.cc = request.getParameter("cc");
+                rc.talleOperacional = request.getParameter("talleOperacional");
+                if (request.getParameter("talleBotas").equals("")){
+                     rc.talleBotas = 0;
+                }
+                else{
+                     rc.talleBotas = Integer.parseInt(request.getParameter("talleBotas"));
+                }
+                if (request.getParameter("talleQuepi").equals("")){
+                     rc.talleQuepi = 0;
+                }
+                else{
+                     rc.talleQuepi = Integer.parseInt(request.getParameter("talleQuepi"));
+                }
+                if (request.getParameter("CCNro").equals("")){
+                     rc.ccNro = 0;
+                }
+                else{
+                     rc.ccNro = Integer.parseInt(request.getParameter("CCNro"));
+                }
+                rc.idestadoCivil = Integer.parseInt(request.getParameter("estadoCivil"));
+                rc.domicilio = request.getParameter("domicilio");
+                rc.iddepartamento= Integer.parseInt(request.getParameter("departamento"));
+                rc.localidad= request.getParameter("localidad");
+                rc.telefono= request.getParameter("telefono");
+                rc.email = request.getParameter("email");
+               // response.getWriter().print("Hola4");
+                if (request.getParameter("lmga")!=null){
+                     rc.lmga = request.getParameter("lmga").equals("on");
+                }
+                else{
+                    rc.lmga = false;
+                }
+               // response.getWriter().print("Hola5");
+                if (request.getParameter("paseDirecto")!=null){
+                        rc.paseDirecto = request.getParameter("paseDirecto").equals("on");
+                }
+                else{
+                    rc.paseDirecto = false;
+                }
+                rc.notaPaseDirecto = Double.parseDouble(request.getParameter("notaPaseDirecto"));
+                rp.rc=rc;
+                if(request.getParameter("id")!=null){
+                        //modificar
+                }
+                else{
+                    //agregar
+                    if(mp.agregarCadete(rp, foto)){
+                        mensaje="Cadete insertado sastisfactoriamente.";
+                    }
+                    else{
+                        mensaje="Cadete insertado sastisfactoriamente.";
+                    };
+                }
+            }
+            sesion.setAttribute("Mensaje", mensaje);
+            response.sendRedirect("/cadete.jsp?id="+request.getParameter("ci"));
+        }
+        catch(Exception ex){
+            mensaje = "ERROR: " + ex.getMessage();
+            System.out.print(mensaje);
+//            response.sendRedirect("/cadetes.jsp");
         }
     }
 
