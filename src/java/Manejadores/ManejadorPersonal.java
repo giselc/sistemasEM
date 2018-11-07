@@ -43,7 +43,7 @@ public class ManejadorPersonal {
     public static ManejadorPersonal getInstance() {
         return ManejadorPersonalHolder.INSTANCE;
     }
-    
+
     private static class ManejadorPersonalHolder {
 
         private static final ManejadorPersonal INSTANCE = new ManejadorPersonal();
@@ -353,7 +353,7 @@ public class ManejadorPersonal {
         return cadetes;
     }
     public Documento getDocumento(int ci, int tipoPersonal, int id){
-        return personal.get(tipoPersonal).get(ci).getDocumentos().get(id);
+        return this.getPersonal(ci, tipoPersonal).getDocumentos().get(id);
     }
     //path -> Path context Servlet
     public boolean altaDocumento(Tipo tipoDocumento, int ci, Tipo tipoPersonal,Part archivo){
@@ -389,15 +389,117 @@ public class ManejadorPersonal {
         return c;
     }
            
-    public synchronized boolean agregarCadete(RecordPersonal rc,Part foto){
+    public synchronized boolean agregarCadete(RecordPersonal rc,Part foto){//grado.codigo asc, idCurso asc, idArma asc
         ManejadorPersonalBD mp= new ManejadorPersonalBD();
         Cadete c = (Cadete)mp.agregarPersonal(rc,foto);
         if(c!=null){
-            personal.get(1).add(c);
+            if(personal.get(1).isEmpty()){
+                personal.get(1).add(c);
+            }
+            else{
+                int i=0;
+                boolean agregue=false;
+                Iterator it = personal.get(1).iterator();
+                while(it.hasNext() && !agregue){
+                    Cadete cadActual = (Cadete)it.next();
+                    if(c.getGrado().getId()> cadActual.getGrado().getId()){
+                        personal.get(1).add(i, c);
+                        agregue=true;
+                    }
+                    else{
+                        if(c.getGrado().getId()== cadActual.getGrado().getId()){
+                            if(c.getCurso().getId()< cadActual.getCurso().getId()){
+                                personal.get(1).add(i, c);
+                                agregue=true;
+                            }
+                            else{
+                                if(c.getCurso().getId()==cadActual.getCurso().getId()){
+                                    if(c.getPrimerApellido().compareToIgnoreCase(cadActual.getPrimerApellido())<= 0){
+                                        personal.get(1).add(i, c);
+                                        agregue=true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    i++;
+                }
+                if(!agregue){
+                    personal.get(1).addLast(c);
+                }
+            }
             return true;
         }
         return false;
     }
-            
+    
+    public synchronized boolean modificarCadete(RecordPersonal rp, Part foto) { 
+        ManejadorPersonalBD mp= new ManejadorPersonalBD();
+        if( mp.modificarPersonal(rp,foto)){
+            Iterator it = personal.get(1).iterator();
+            boolean continuo=true;
+            ManejadorCodigos mc = ManejadorCodigos.getInstance();
+            while(it.hasNext() && continuo ){
+                Cadete cadActual = (Cadete)it.next();
+                if(cadActual.getCi()==rp.ci){
+                    if(foto!=null){
+                        cadActual.setFoto(rp.ci+ManejadorDocumentosBD.getFileName(foto).substring(ManejadorDocumentosBD.getFileName(foto).lastIndexOf(".")));
+                    }
+                    cadActual.setArma(mc.getArma(rp.idArma));
+                    cadActual.setCarrera(mc.getCarrera(rp.rc.idcarrera));
+                    cadActual.setCc(rp.rc.cc);
+                    cadActual.setCcNro(rp.rc.ccNro);
+                    cadActual.setCurso(mc.getCurso(rp.rc.idcurso));
+                    cadActual.setDepartamento(mc.getDepartamento(rp.rc.iddepartamento));
+                    cadActual.setDepartamentoNac(mc.getDepartamento(rp.rc.iddepartamentoNac));
+                    cadActual.setDerecha(rp.rc.derecha);
+                    cadActual.setDomicilio(rp.rc.domicilio);
+                    cadActual.setEmail(rp.rc.email);
+                    cadActual.setEstadoCivil(mc.getEstadoCivil(rp.rc.idestadoCivil));
+                    cadActual.setFechaNac(rp.rc.fechaNac);
+                    cadActual.setGrado(mc.getGrado(rp.idGrado));
+                    cadActual.setHijos(rp.rc.hijos);
+                    cadActual.setLmga(rp.rc.lmga);
+                    cadActual.setLocalidad(rp.rc.localidad);
+                    cadActual.setLocalidadNac(rp.rc.localidadNac);
+                    cadActual.setNotaPaseDirecto(rp.rc.notaPaseDirecto);
+                    cadActual.setObservaciones(rp.observaciones);
+                    cadActual.setPaseDirecto(rp.rc.paseDirecto);
+                    cadActual.setPrimerApellido(rp.primerApellido);
+                    cadActual.setPrimerNombre(rp.primerNombre);
+                    cadActual.setProfesor(rp.profesor);
+                    cadActual.setRepitiente(rp.rc.repitiente);
+                    cadActual.setSegundoApellido(rp.segundoApellido);
+                    cadActual.setSegundoNombre(rp.segundoNombre);
+                    cadActual.setSexo(rp.rc.sexo);
+                    cadActual.setTalleBotas(rp.rc.talleBotas);
+                    cadActual.setTalleOperacional(rp.rc.talleOperacional);
+                    cadActual.setTalleQuepi(rp.rc.talleQuepi);
+                    cadActual.setTelefono(rp.rc.telefono);
+                    continuo=false;
+                }
+            }
+            return true;
+       };
+       return false;
+    }
+    
+    public synchronized boolean bajaCadete(int ci, String causa){
+        ManejadorPersonalBD mp= new ManejadorPersonalBD();
+        if( mp.bajaCadete(ci,causa)){
+            Iterator it = personal.get(1).iterator();
+            boolean continuo=true;
+            ManejadorCodigos mc = ManejadorCodigos.getInstance();
+            while(it.hasNext() && continuo ){
+                Cadete cadActual = (Cadete)it.next();
+                if(cadActual.getCi()==ci){
+                    it.remove();
+                    continuo=false;
+                }
+            }
+            return !continuo;
+        }
+        return false;
+    }
     
 }

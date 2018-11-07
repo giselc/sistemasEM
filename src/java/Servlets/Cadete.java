@@ -8,6 +8,7 @@ package Servlets;
 import Classes.RecordCadete;
 import Classes.RecordPersonal;
 import Manejadores.ManejadorPersonal;
+import Manejadores.ManejadorDocumentosBD;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
@@ -39,15 +40,12 @@ public class Cadete extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String mensaje="";
-        System.out.print("HOLAAA");
-        Enumeration<String> params = request.getParameterNames(); 
+        String redirect="";
+        /*Enumeration<String> params = request.getParameterNames(); 
         while(params.hasMoreElements()){
             String paramName = params.nextElement();
             System.out.println("Parameter Name - "+paramName+", Value - "+request.getParameter(paramName));
-        }
-        System.out.print("HOLAAA22");
-        
-        
+        }*/
         HttpSession sesion= request.getSession();
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
@@ -59,6 +57,9 @@ public class Cadete extends HttpServlet {
             }
             else{
                 Part foto = request.getPart("foto");
+                if(foto.getSize()==0){
+                    foto=null;
+                }
                 RecordCadete rc=new RecordCadete();
                 RecordPersonal rp= new RecordPersonal();
                 rp.ci=ci;
@@ -66,7 +67,6 @@ public class Cadete extends HttpServlet {
                 rc.domicilio = request.getParameter("domicilio");
                 rc.email = request.getParameter("email");
                 rc.fechaNac = request.getParameter("fechaNac");
-                rc.foto = request.getParameter("foto2");
                 rp.primerNombre = request.getParameter("primerNombre");
                 rp.segundoNombre = request.getParameter("segundoNombre");
                 rp.primerApellido = request.getParameter("primerApellido");
@@ -110,14 +110,12 @@ public class Cadete extends HttpServlet {
                 rc.localidad= request.getParameter("localidad");
                 rc.telefono= request.getParameter("telefono");
                 rc.email = request.getParameter("email");
-               // response.getWriter().print("Hola4");
                 if (request.getParameter("lmga")!=null){
                      rc.lmga = request.getParameter("lmga").equals("on");
                 }
                 else{
                     rc.lmga = false;
                 }
-               // response.getWriter().print("Hola5");
                 if (request.getParameter("paseDirecto")!=null){
                         rc.paseDirecto = request.getParameter("paseDirecto").equals("on");
                 }
@@ -125,27 +123,37 @@ public class Cadete extends HttpServlet {
                     rc.paseDirecto = false;
                 }
                 rc.notaPaseDirecto = Double.parseDouble(request.getParameter("notaPaseDirecto"));
+                rp.fechaAltaSistema = request.getParameter("fechaAltaSistema");
                 rp.rc=rc;
+                rp.observaciones =request.getParameter("observaciones");
                 if(request.getParameter("id")!=null){
-                        //modificar
+                    if(mp.modificarCadete(rp, foto)){
+                        mensaje="Cadete modificado correctamente.";
+                    }
+                    else{
+                        mensaje="ERROR al modificar el cadete.";
+                    };
+                    redirect="/cadete.jsp?id="+request.getParameter("id");
                 }
                 else{
                     //agregar
                     if(mp.agregarCadete(rp, foto)){
                         mensaje="Cadete insertado sastisfactoriamente.";
+                        redirect="/cadete.jsp?id="+request.getParameter("ci");
                     }
                     else{
-                        mensaje="Cadete insertado sastisfactoriamente.";
+                        mensaje="ERROR al agregar al cadete.";
+                        redirect="/cadetes.jsp";
                     };
                 }
             }
             sesion.setAttribute("Mensaje", mensaje);
-            response.sendRedirect("/cadete.jsp?id="+request.getParameter("ci"));
+            response.sendRedirect(redirect);
         }
         catch(Exception ex){
             mensaje = "ERROR: " + ex.getMessage();
             System.out.print(mensaje);
-//            response.sendRedirect("/cadetes.jsp");
+            response.sendRedirect("/cadetes.jsp");
         }
     }
 

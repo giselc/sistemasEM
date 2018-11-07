@@ -47,8 +47,9 @@ public class Imagenes extends HttpServlet {
                 if(request.getParameter("foto")!=null){
                     int ci = Integer.valueOf(request.getParameter("foto"));
                     Classes.Cadete c = mp.getCadete(ci);
-                    path= "c:/SEM-Documentos/Fotos/"+c.getFoto();
-                    response.setContentType("image/*");
+                    if(!c.getFoto().equals("")){
+                        path= "c:/SEM-Documentos/Fotos/"+c.getFoto();
+                    }
                 }
                 else{
                     int ci = Integer.valueOf(request.getParameter("ci"));

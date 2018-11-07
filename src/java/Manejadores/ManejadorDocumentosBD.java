@@ -137,8 +137,7 @@ public class ManejadorDocumentosBD {
                     else{
                         output = new FileOutputStream( "c:/SEM-Documentos/"+ciPersonal+"-"+idDocumento+extension);
                     }
-                    int leido = 0;
-                    leido = input.read();
+                    int leido = input.read();
                     while (leido != -1) {
                         output.write(leido);
                         leido = input.read();
@@ -163,7 +162,7 @@ public class ManejadorDocumentosBD {
         }
         return false;
     }
-    static private String getFileName(Part part) {
+    static public String getFileName(Part part) {
         for (String cd : part.getHeader("content-disposition").split(";")) {
                 if (cd.trim().startsWith("filename")) {
                         return cd.substring(cd.indexOf('=') + 1).trim()

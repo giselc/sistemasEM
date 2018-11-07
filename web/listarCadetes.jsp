@@ -37,13 +37,13 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
     </table>
     
             <%
-                LinkedList<Personal> hmp = mp.getCadetesListarApellido(false);
+                LinkedList<Personal> hmp = mp.getCadetesListarGrado(false);
                 out.print("<table style='width: 100%;' id='tablalistado'>"
                         + "<tr style='background-color:#ffcc66'>"
                             +"<td style='width: 5%' align='center'></td>"
                             +"<td style='width: 5%' align='center'><input type='checkbox' onclick='seleccionar_todo()' id='selTodo'></td>"
                             +"<td style='width: 5%' align='center'><img src='images/derecha.png' width='30%' onclick='ordenar(1,1)' /> Nro.</td>"
-                            +"<td style='width: 10%' align='center'><img src='images/derecha.png' width='15%' onclick='ordenar(2,1)' />Grado</td>"
+                            +"<td style='width: 10%' align='center'><img src='images/abajo.png' width='15%' onclick='ordenar(2,1)' />Grado</td>"
                             +"<td colspan=2 style='width: 20%' align='center'><img src='images/derecha.png' width='6%' onclick='ordenar(3,1)' />Nombres</td>"
                             +"<td colspan=2 style='width: 20%' align='center'><img src='images/derecha.png' width='6%' onclick='ordenar(4,1)' />Apellidos</td>"
                             +"<td style='width: 10%' align='center'>Cédula</td>"
@@ -72,7 +72,7 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
                        +"<td style='width: 10%' align='center'>"+c.getSegundoApellido()+"</td>"
                        +"<td style='width: 10%' align='center'>"+c.getCi()+"</td>"
                        +"<td style='width: 15%' align='center'>"+c.getCurso().getAbreviacion()+"</td>"
-                       +"<td style='width: 10%' align='center'><a href='cadete.jsp?ci="+c.getCi()+"'><img src='images/ver.png' width='25%' /></a></td>"
+                       +"<td style='width: 10%' align='center'><a href='cadete.jsp?id="+c.getCi()+"'><img src='images/ver.png' width='25%' /></a></td>"
                        +"</tr>");
                 }
                 out.print("</table>");

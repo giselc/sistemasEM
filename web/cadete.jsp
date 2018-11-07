@@ -59,8 +59,8 @@
         ManejadorPersonal mp = ManejadorPersonal.getInstance();
         Cadete c=null;
         int idTipoPersonal=1;
-        if(request.getParameter("ci")!=null){
-           c = mp.getCadete(Integer.valueOf(request.getParameter("ci")));
+        if(request.getParameter("id")!=null){
+           c = mp.getCadete(Integer.valueOf(request.getParameter("id")));
         }
      %>
     <div id='dialog2' style="display:none" title="Imprimir ficha personal">

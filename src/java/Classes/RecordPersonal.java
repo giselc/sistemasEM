@@ -20,4 +20,5 @@ public class RecordPersonal {
     public String segundoApellido;
     public String observaciones;
     public boolean profesor;
+    public String fechaAltaSistema;
 }

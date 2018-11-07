@@ -25,8 +25,9 @@ public class Personal {
     private HashMap<Integer,Documento> documentos;
     private String observaciones;
     private boolean profesor;
-
-    public Personal(int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String observaciones, boolean profesor) {
+    private String fechaAltaSistema;
+    
+    public Personal(int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String observaciones, boolean profesor,String fechaAltaSistema) {
         this.nroInterno = nroInterno;
         this.ci = ci;
         this.grado = grado;
@@ -38,6 +39,15 @@ public class Personal {
         this.documentos = documentos;
         this.observaciones = observaciones;
         this.profesor = profesor;
+        this.fechaAltaSistema = fechaAltaSistema;
+    }
+
+    public String getFechaAltaSistema() {
+        return fechaAltaSistema;
+    }
+
+    public void setFechaAltaSistema(String fechaAltaSistema) {
+        this.fechaAltaSistema = fechaAltaSistema;
     }
 
     public boolean isProfesor() {

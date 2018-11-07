@@ -4,6 +4,7 @@
     Author     : Gisel
 --%>
 
+<%@page import="Classes.Carrera"%>
 <%@page import="Classes.Curso"%>
 <%@page import="Classes.Arma"%>
 <%@page import="Classes.Grado"%>
@@ -52,7 +53,7 @@
             };
 
         }
-    function agregarimagenYValidar(f){
+    function Validar(f){
         var r=confirm("¿Seguro que desea guardar los cambios?");
         if (r==true)
         {
@@ -60,19 +61,7 @@
                 var patron=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/;
                 if(f.elements["email"].value.search(patron)==0){
                     if (f.elements["telefono"].value.length==8 || f.elements["telefono"].value.length==9){
-                        var input = document.createElement('input');input.type = 'hidden';input.name = 'foto2';
-                        if(document.getElementById('uploadImage').value == ""){
-                            input.value = "";
-                        }
-                        else{
-                            var canvas= document.getElementById('canvas6');
-                            var dataURL = canvas.toDataURL();
-                            dataURL = dataURL.split(',');
-                            input.value = dataURL[1];
-                        }
-                        f.appendChild(input);
-                        $('#loader').fadeIn();
-                        f.submit();
+                        
                         return true;
                     }
                     else{
@@ -96,12 +85,12 @@
     }
 </script>
 <div id="loader" style="position: fixed; top:0; left:0; width:100%; height: 100%;background: url('images/loading-verde.gif') center center no-repeat; background-size: 10%"></div>
-<form method="post"  name="formulario" id="formulario" onsubmit="<% if (request.getParameter("ci")==null){out.print("alert('Se habilitó la pestaña de Datos Patronímicos');");} %>return agregarimagenYValidar(this);" <% if (request.getParameter("ci")==null){ out.print("action='Cadete'");} else{out.print("action='Cadete?id="+request.getParameter("ci")+"'");} %> enctype="multipart/form-data">
+<form method="post"  name="formulario" id="formulario" onsubmit="<% if (request.getParameter("id")==null){out.print("alert('Se habilitó la pestaña de Datos Patronímicos');");} %>return Validar(this);" <% if (request.getParameter("id")==null){ out.print("action='Cadete'");} else{out.print("action='Cadete?id="+request.getParameter("id")+"'");} %> enctype="multipart/form-data">
     <table style="width: 100%; text-align: center">
     <tr>
             <td>
                 <%
-                if(c!=null){
+                if(c!=null&&c.getFoto()!=""){
                     %>
                     <p align="center"><label for="uploadImage" ><img src="<%=request.getContextPath()%>/Imagenes?foto=<%=c.getCi()%>" id="uploadPreview" style="width: 20%" onclick=""/></label></p>
                     <%
@@ -133,8 +122,8 @@
         </tr>
         <tr  <% 
                 if(c==null){out.println("hidden='hidden'");} %>>
-            <td>ID: </td>
-            <td><input type="text" name="id" value="<%if(c!=null){out.print(c.getNroInterno());} %>" size="3" style="text-align: center" readonly/>
+            <td>N&uacute;mero de Interno: </td>
+            <td><input type="text" name="numerosInterno" value="<%if(c!=null){out.print(c.getNroInterno());} %>" size="3" style="text-align: center" readonly/>
                 <input type="text" name="carreraString" value="<%if(c!=null){out.print(c.getCarrera().getDescripcion());} %>" size="30" style="text-align: center" readonly/>
             </td>
             
@@ -182,6 +171,23 @@
                         out.print("<option " + s +" value='"+String.valueOf(dep.getId()) +"'>"+ dep.getDescripcion() +"</option>");
                     }
                     
+                    %>
+                 </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Carrera: </td>
+            <td>
+                <select name="carrera" form="formulario" required="required">
+                    <%
+                    HashMap<Integer,Carrera> ac1 = mc.getCarreras();
+                    for(Carrera dep: ac1.values() ){
+                        s="";
+                        if(c!=null && c.getCarrera().getId()==dep.getId()){
+                            s="selected";
+                        }
+                        out.print("<option " + s +" value='"+String.valueOf(dep.getId()) +"'>"+ dep.getDescripcion() +"</option>");
+                    }
                     %>
                  </select>
             </td>
@@ -374,7 +380,7 @@
                 </tr>
         <tr <%if( c==null){ out.print("style='display:none'");} %>>
             <td>Fecha de alta en el sistema: </td>
-            <td><input type=date name="fechaAlta" size="8" value="<%if( c!=null){out.print(c.getFechaNac());} %>"/></td>
+            <td><input type=date name="fechaAltaSistema" size="8" value="<%if( c!=null){out.print(c.getFechaAltaSistema());} %>"/></td>
         </tr>
         <tr>
             <td>Observaciones: </td>

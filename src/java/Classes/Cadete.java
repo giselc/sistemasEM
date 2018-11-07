@@ -41,8 +41,8 @@ public class Cadete extends Personal{
     private Familiar madre;
     private Familiar padre;
 
-    public Cadete(String foto,Curso curso, Carrera carrera, String fechaNac, String sexo, Departamento departamentoNac, String localidadNac, String cc, int ccNro, EstadoCivil estadoCivil, String domicilio, Departamento departamento, String localidad, String telefono, String email, int derecha, int hijos, boolean repitiente, boolean lmga, boolean paseDirecto, double notaPaseDirecto, Familiar madre,Familiar padre, int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String observaciones, boolean profesor,String talleOperacional,int talleBotas,int talleQuepi) {
-        super(nroInterno, ci, grado, arma, primerNombre, segundoNombre, primerApellido, segundoApellido, documentos, observaciones, profesor);
+    public Cadete(String foto,Curso curso, Carrera carrera, String fechaNac, String sexo, Departamento departamentoNac, String localidadNac, String cc, int ccNro, EstadoCivil estadoCivil, String domicilio, Departamento departamento, String localidad, String telefono, String email, int derecha, int hijos, boolean repitiente, boolean lmga, boolean paseDirecto, double notaPaseDirecto, Familiar madre,Familiar padre, int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String observaciones, boolean profesor,String fechaAltaSistema,String talleOperacional,int talleBotas,int talleQuepi) {
+        super(nroInterno, ci, grado, arma, primerNombre, segundoNombre, primerApellido, segundoApellido, documentos, observaciones, profesor,fechaAltaSistema);
         this.curso = curso;
         this.carrera = carrera;
         this.fechaNac = fechaNac;
