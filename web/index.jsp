@@ -11,7 +11,31 @@
         <title>Sistemas Internos E.M.</title>
         
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <body>
+        
+    <body >
+        <script>
+        var isMobile = {
+    Android: function() {
+        return navigator.userAgent.match(/Android/i);
+    },
+    BlackBerry: function() {
+        return navigator.userAgent.match(/BlackBerry/i);
+    },
+    iOS: function() {
+        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+    },
+    Opera: function() {
+        return navigator.userAgent.match(/Opera Mini/i);
+    },
+    Windows: function() {
+        return navigator.userAgent.match(/IEMobile/i);
+    },
+    any: function() {
+        return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+    }
+    
+};if(isMobile.any()){document.body.style="background-size:auto";}else{document.body.style="background-size:cover";};
+        </script>
         <% 
         HttpSession sesion = request.getSession();
         if(sesion.getAttribute("usuarioID")!=null){

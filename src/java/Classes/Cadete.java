@@ -8,6 +8,7 @@ package Classes;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  *
@@ -40,8 +41,9 @@ public class Cadete extends Personal{
     private int talleQuepi;
     private Familiar madre;
     private Familiar padre;
+    private final LinkedList<HistorialBajaCadete> historialBaja; 
 
-    public Cadete(String foto,Curso curso, Carrera carrera, String fechaNac, String sexo, Departamento departamentoNac, String localidadNac, String cc, int ccNro, EstadoCivil estadoCivil, String domicilio, Departamento departamento, String localidad, String telefono, String email, int derecha, int hijos, boolean repitiente, boolean lmga, boolean paseDirecto, double notaPaseDirecto, Familiar madre,Familiar padre, int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String observaciones, boolean profesor,String fechaAltaSistema,String talleOperacional,int talleBotas,int talleQuepi) {
+    public Cadete(String foto,Curso curso, Carrera carrera, String fechaNac, String sexo, Departamento departamentoNac, String localidadNac, String cc, int ccNro, EstadoCivil estadoCivil, String domicilio, Departamento departamento, String localidad, String telefono, String email, int derecha, int hijos, boolean repitiente, boolean lmga, boolean paseDirecto, double notaPaseDirecto, Familiar madre,Familiar padre, int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String observaciones, boolean profesor,String fechaAltaSistema,String talleOperacional,int talleBotas,int talleQuepi,LinkedList<HistorialBajaCadete> historialBaja) {
         super(nroInterno, ci, grado, arma, primerNombre, segundoNombre, primerApellido, segundoApellido, documentos, observaciones, profesor,fechaAltaSistema);
         this.curso = curso;
         this.carrera = carrera;
@@ -69,6 +71,7 @@ public class Cadete extends Personal{
         this.talleBotas=talleBotas;
         this.talleOperacional=talleOperacional;
         this.talleQuepi=talleQuepi;
+        this.historialBaja = historialBaja;
     }
 
     public String getTalleOperacional() {
@@ -110,6 +113,10 @@ public class Cadete extends Personal{
 
     public Familiar getPadre() {
         return padre;
+    }
+
+    public LinkedList<HistorialBajaCadete> getHistorialBaja() {
+        return historialBaja;
     }
 
     

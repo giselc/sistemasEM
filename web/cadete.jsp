@@ -13,6 +13,37 @@
 <script src="js/jquery-ui.js"></script>
 
     <script>
+        function existeCadete(ciInput){
+            xmlhttp=new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                    var obj = jQuery.parseJSON( xmlhttp.responseText );
+                    var existe = obj.Cadete;
+                    if(existe.length>0){
+                        if(existe.historial){
+                            var r=confirm("Existe el cadete en el historial, si confirma, sus datos son cargados automaticamente.");
+                            if (r==true){
+                                window.location.href="Cadete?ci="+ciInput.value+"&crearDesdeHistorial=1";
+                            }
+                            else{
+                                alert("No es posible crear el cadete si no es a través del historial.");
+                                window.location.href="cadetes.jsp";
+                            }
+                        }
+                        else{
+                            alert("El cadete ya existe en el sistema.");
+                            window.location.href="cadete.jsp?id="+ciInput.value;
+                        }
+                    }
+                    else{
+                        document.getElementById("rellenarOtrosDatos").style.display = '';
+                    }
+                };
+            };
+            xmlhttp.open("POST","Cadete?existe=1&ci="+ciInput.value);
+            xmlhttp.send();
+            return false;
+        }
         function abrir_dialog(dialog) {
           $( dialog ).dialog({
               modal: true
@@ -21,21 +52,21 @@
         function cerrar_dialog(dialog) {
           $( dialog ).dialog('close');
         };
-         $(document).ready(function() {
-                 $("#content div").hide();
-                 $("#tabs li:first").attr("id","current");
-                 $("#content div:first").fadeIn();
-                 $("#loader").fadeOut();
-             $('#tabs a').click(function(e) {
-                 document.getElementById("mensaje").innerHTML="";
-                 e.preventDefault();
-                 $("#content div").hide();
-                 $("#tabs li").attr("id","");
-                 $(this).parent().attr("id","current");
-                 $('#' + $(this).attr('title')).fadeIn();
-             });
-         });
-         function showPaseDirecto(b,admin){
+        $(document).ready(function() {
+                $("#content div").hide();
+                $("#tabs li:first").attr("id","current");
+                $("#content div:first").fadeIn();
+                $("#loader").fadeOut();
+            $('#tabs a').click(function(e) {
+                document.getElementById("mensaje").innerHTML="";
+                e.preventDefault();
+                $("#content div").hide();
+                $("#tabs li").attr("id","");
+                $(this).parent().attr("id","current");
+                $('#' + $(this).attr('title')).fadeIn();
+            });
+        });
+        function showPaseDirecto(b,admin){
             c = ((new String(b).valueOf() == new String("13").valueOf()) || admin);
             if(document.getElementById('lmga').checked && c){
                 document.getElementById('pd').style.display = '';
@@ -94,7 +125,7 @@
      <ul id="tabs">
         <li><a href="#" title="Datos-Personales">Datos Personales</a></li>
          <%--<li <% if (request.getParameter("ci")==null){ out.print("hidden='hidden'");} %>><a href="#" title="Familiares">Familiares</a></li>--%>
-       <li <% if (request.getParameter("ci")==null){ out.print("hidden='hidden'");} %>><a href="#" title="Documentos">Documentos</a></li>
+       <li <% if (request.getParameter("id")==null){ out.print("hidden='hidden'");} %>><a href="#" title="Documentos">Documentos</a></li>
     </ul>
     <div id="content">
          <div id="Datos-Personales"><%@include file="datosBasicos.jsp" %></div>

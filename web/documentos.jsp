@@ -11,8 +11,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%
-    if(request.getParameter("ci")!=null){
-        int ci=Integer.valueOf(request.getParameter("ci"));
+    if(request.getParameter("id")!=null){
+        int ci=Integer.valueOf(request.getParameter("id"));
 %>
 <table style="float: right" >
         <tr>

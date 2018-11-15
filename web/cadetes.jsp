@@ -183,7 +183,8 @@
                             +"<td colspan=2 style='width: 20%' align='center'>"+imgapellido+"Apellidos</td>"
                             +"<td style='width: 10%' align='center'>Cédula</td>"
                             +"<td style='width: 15%' align='center'>Curso</td>"
-                            +"<td style='width: 10%' align='center'></td>"
+                            +"<td style='width: 5%' align='center'>Ver</td>"
+                            +"<td style='width: 5%' align='center'>Elim</td>"   
                 +"</tr>";
                 for (var i=0; i<listado.length;i++) {
                     if ((i%2)==0){
@@ -204,7 +205,8 @@
                        +"<td style='width: 10%' align='center'>"+listado[i].segundoApellido+"</td>"
                        +"<td style='width: 10%' align='center'>"+listado[i].ci+"</td>"
                        +"<td style='width: 15%' align='center'>"+listado[i].curso+"</td>"
-                       +"<td style='width: 10%' align='center'><a href='cadete.jsp?id="+listado[i].ci+"'><img src='images/ver.png' width='25%' /></a></td>"
+                       +"<td style='width: 5%' align='center'><a href='cadete.jsp?id="+listado[i].ci+"'><img src='images/ver.png' width='60%' /></a></td>"
+                        +"<td style='width: 5%' align='center'><a href='baja.jsp?id="+listado[i].ci+"'><img src='images/eliminar.png' width='60%' /></a></td>"
                        +"</tr>";
 
                 }
@@ -247,7 +249,8 @@
                     datos +="<td style='width: 10%' align='center'>"+ listado[i].primerApellido +"</td>";
                     datos +="<td style='width: 10%' align='center'>"+ listado[i].segundoApellido +"</td>";
                     datos +="<td style='width: 15%' align='center'>"+ listado[i].ci +"</td>";
-                    datos +="<td style='width: 10%' align='center'><a href='cadete.jsp?id="+ listado[i].ci +"'><img src='images/ver.png' width='25%' /></a></td>";
+                    datos +="<td style='width: 5%' align='center'><a href='cadete.jsp?id="+ listado[i].ci +"'><img src='images/ver.png' width='60%' /></a></td>";
+                     datos +="<td style='width: 5%' align='center'><a href='baja.jsp?id="+ listado[i].ci +"'><img src='images/eliminar.png' width='60%' /></a></td>";
                     datos +="</tr>";
 
                 }

@@ -74,7 +74,7 @@ public class Documento extends HttpServlet {
                 }
             }
             if(idTipoPersonal==1){
-                response.sendRedirect("cadete.jsp?ci="+request.getParameter("ci"));
+                response.sendRedirect("cadete.jsp?id="+request.getParameter("ci"));
             }
             else{
                 response.sendRedirect("personal.jsp?ci="+request.getParameter("ci"));

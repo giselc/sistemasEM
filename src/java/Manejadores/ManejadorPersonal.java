@@ -388,10 +388,8 @@ public class ManejadorPersonal {
         }
         return c;
     }
-           
-    public synchronized boolean agregarCadete(RecordPersonal rc,Part foto){//grado.codigo asc, idCurso asc, idArma asc
-        ManejadorPersonalBD mp= new ManejadorPersonalBD();
-        Cadete c = (Cadete)mp.agregarPersonal(rc,foto);
+        
+    private void agregarEnOrdenCadete(Cadete c){
         if(c!=null){
             if(personal.get(1).isEmpty()){
                 personal.get(1).add(c);
@@ -428,6 +426,13 @@ public class ManejadorPersonal {
                     personal.get(1).addLast(c);
                 }
             }
+        }
+    }
+    public synchronized boolean agregarCadete(RecordPersonal rc,Part foto){//grado.codigo asc, idCurso asc, idArma asc
+        ManejadorPersonalBD mp= new ManejadorPersonalBD();
+        Cadete c = (Cadete)mp.agregarPersonal(rc,foto);
+        if(c!=null){
+            this.agregarEnOrdenCadete(c);
             return true;
         }
         return false;
@@ -493,6 +498,10 @@ public class ManejadorPersonal {
             while(it.hasNext() && continuo ){
                 Cadete cadActual = (Cadete)it.next();
                 if(cadActual.getCi()==ci){
+                    HashMap<Integer,Documento> hd=cadActual.getDocumentos();
+                    hd.values().stream().forEach((d) -> {
+                        ManejadorDocumentosBD.eliminarArchivo(ci, d);
+                    });
                     it.remove();
                     continuo=false;
                 }
@@ -500,6 +509,20 @@ public class ManejadorPersonal {
             return !continuo;
         }
         return false;
+    }
+    
+    public synchronized Boolean crearCadeteHistorial(int ci){
+        ManejadorPersonalBD mp = new ManejadorPersonalBD();
+        Cadete c= mp.crearCadeteHistorial(ci);
+        if(c!=null){
+            this.agregarEnOrdenCadete(c);
+            return true;
+        }
+        return false;        
+    }
+    public Boolean existeCadeteHistorial(int ci){
+        ManejadorPersonalBD mp = new ManejadorPersonalBD();
+        return mp.existeCadeteDesdeHistorial(ci);
     }
     
 }

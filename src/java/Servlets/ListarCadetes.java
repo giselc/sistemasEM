@@ -55,34 +55,34 @@ public class ListarCadetes extends HttpServlet {
                 case 4: per=mp.getCadetesListarApellido(orden); break ;
             }
             JsonObjectBuilder json = Json.createObjectBuilder(); 
-               if(per==null){
-                   json.add("listadoCadetes", Json.createArrayBuilder().build());
-                }
-                else{
-                    JsonArrayBuilder jab= Json.createArrayBuilder();
-                    for (Personal p : per){
-                        jab.add(Json.createObjectBuilder()
-                            .add("Nro", p.getNroInterno())
-                            .add("grado", p.getGrado().getAbreviacion())
-                            .add("primerNombre", p.getPrimerNombre())
-                            .add("segundoNombre", p.getSegundoNombre())
-                            .add("primerApellido", p.getPrimerApellido())
-                            .add("segundoApellido", p.getSegundoApellido())
-                            .add("ci", p.getCi())
-                            .add("curso", ((Cadete)p).getCurso().getAbreviacion())
-                        );
-                    };
-
-
-                    json.add("listadoCadetes", jab);
-
-
-                }
-                out.print(json.build());
+            if(per==null){
+                json.add("listadoCadetes", Json.createArrayBuilder().build());
             }
-            catch (Exception e){
+            else{
+                JsonArrayBuilder jab= Json.createArrayBuilder();
+                for (Personal p : per){
+                    jab.add(Json.createObjectBuilder()
+                        .add("Nro", p.getNroInterno())
+                        .add("grado", p.getGrado().getAbreviacion())
+                        .add("primerNombre", p.getPrimerNombre())
+                        .add("segundoNombre", p.getSegundoNombre())
+                        .add("primerApellido", p.getPrimerApellido())
+                        .add("segundoApellido", p.getSegundoApellido())
+                        .add("ci", p.getCi())
+                        .add("curso", ((Cadete)p).getCurso().getAbreviacion())
+                    );
+                };
+
+
+                json.add("listadoCadetes", jab);
+
 
             }
+            out.print(json.build());
+        }
+        catch (Exception e){
+
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

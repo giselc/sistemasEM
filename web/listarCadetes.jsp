@@ -48,7 +48,8 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
                             +"<td colspan=2 style='width: 20%' align='center'><img src='images/derecha.png' width='6%' onclick='ordenar(4,1)' />Apellidos</td>"
                             +"<td style='width: 10%' align='center'>Cédula</td>"
                             +"<td style='width: 15%' align='center'>Curso</td>"
-                            +"<td style='width: 10%' align='center'></td>"
+                            +"<td style='width: 5%' align='center'>Ver</td>"
+                            +"<td style='width: 5%' align='center'>Elim</td>"   
                 +"</tr>" );
                 int i=0;
                 String color;
@@ -72,7 +73,8 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
                        +"<td style='width: 10%' align='center'>"+c.getSegundoApellido()+"</td>"
                        +"<td style='width: 10%' align='center'>"+c.getCi()+"</td>"
                        +"<td style='width: 15%' align='center'>"+c.getCurso().getAbreviacion()+"</td>"
-                       +"<td style='width: 10%' align='center'><a href='cadete.jsp?id="+c.getCi()+"'><img src='images/ver.png' width='25%' /></a></td>"
+                       +"<td style='width: 5%' align='center'><a href='cadete.jsp?id="+c.getCi()+"'><img src='images/ver.png' width='60%' /></a></td>"
+                               +"<td style='width: 5%' align='center'><a href='baja.jsp?id="+c.getCi()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
                        +"</tr>");
                 }
                 out.print("</table>");

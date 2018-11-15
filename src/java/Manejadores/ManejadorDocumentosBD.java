@@ -45,7 +45,7 @@ public class ManejadorDocumentosBD {
                 as.put(rs.getInt("id"),documento);
             }
         } catch (SQLException ex) {
-           System.out.print(ex.getMessage());
+           System.out.print("getDocumentos:"+ex.getMessage());
         }
         
         return as;
@@ -90,7 +90,7 @@ public class ManejadorDocumentosBD {
                 }
             }
         } catch (Exception ex) {
-            System.out.print(ex.getMessage());
+            System.out.print("crearDocumento:"+ex.getMessage());
         }
         return null;
     }
@@ -100,11 +100,11 @@ public class ManejadorDocumentosBD {
             String sql="delete from sistemasem.documentos where id="+doc.getId();
             int i= s.executeUpdate(sql);
             if (i>0){
-                this.eliminarArchivo(idPersonal, doc); //si sale de la base de datos y el archivo no se borro de la compu, se retorna true igual debido a que ese archivo deja de ser accesible
+                ManejadorDocumentosBD.eliminarArchivo(idPersonal, doc); //si sale de la base de datos y el archivo no se borro de la compu, se retorna true igual debido a que ese archivo deja de ser accesible
                 return true;
             }
         } catch (Exception ex) {
-            System.out.print(ex.getMessage());
+            System.out.print("eliminarDocumento:"+ex.getMessage());
         }
         return false;
     }
@@ -112,7 +112,7 @@ public class ManejadorDocumentosBD {
     
     
     //path getServletContext().getRealPath("/")
-    private boolean eliminarArchivo(int ciPersonal, Documento documento){
+    static public boolean eliminarArchivo(int ciPersonal, Documento documento){
         if(!documento.getNombre().equals("")){
             String extension = documento.getNombre().substring(documento.getNombre().lastIndexOf("."));
             File f = new File("c:/SEM-Documentos/"+ciPersonal+"-"+documento.getId()+extension);
@@ -143,7 +143,7 @@ public class ManejadorDocumentosBD {
                         leido = input.read();
                     }
                 } catch (Exception ex) {
-                    System.out.print(ex.getMessage());
+                    System.out.print("subirArchivo-1:"+ex.getMessage());
                     
                 } finally {
                     try {
@@ -151,14 +151,14 @@ public class ManejadorDocumentosBD {
                         output.close();
                         input.close();
                     } catch (Exception ex) {
-                        System.out.print(ex.getMessage());
+                        System.out.print("subirArchivo-2:"+ex.getMessage());
                     }
                 }
             }
             return true;
         }
         catch(Exception ex){
-            System.out.print(ex.getMessage());
+            System.out.print("subirArchivo-3:"+ex.getMessage());
         }
         return false;
     }

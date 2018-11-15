@@ -4,6 +4,7 @@
     Author     : Gisel
 --%>
 
+<%@page import="Classes.HistorialBajaCadete"%>
 <%@page import="Classes.Carrera"%>
 <%@page import="Classes.Curso"%>
 <%@page import="Classes.Arma"%>
@@ -130,265 +131,295 @@
         </tr>
         <tr>
             <td>C.I.: </td>
-            <td><input type=number name="ci" size="8" maxlength="8" value="<%if( c!=null){ out.print(Integer.valueOf(c.getCi()));} %>" required="required"/></td>
+            <td><input type=number name="ci" size="8" maxlength="8" <%if( c==null){ out.print("onblur=\"existeCadete(this);\"");} %> value="<%if( c!=null){ out.print(Integer.valueOf(c.getCi()));} %>" <%if( c!=null){ out.print("readonly=\"readonly\"");} %> required="required"/></td>
         </tr>
-        <tr>
-            <td>Grado: </td>
-            <td>
-                <select name="grado" form="formulario" required="required">
-                    <%
-                    HashMap<Integer,Grado> ag = mc.getGrados();
-                    for(Grado dep: ag.values() ){
-                        if(dep.getIdTipoPersonal().getId()==1){//cadetes
-                            String s="";
-                            if(c!=null && c.getGrado().getId()==dep.getId()){
+        <tr id="rellenarOtrosDatos" <%if( c==null){ out.print("style=\"display:none; \"");} %>>
+            <td colspan="2">
+        <table>
+        
+            <tr>
+                <td>Grado: </td>
+                <td>
+                    <select name="grado" form="formulario" required="required">
+                        <%
+                        HashMap<Integer,Grado> ag = mc.getGrados();
+                        for(Grado dep: ag.values() ){
+                            if(dep.getIdTipoPersonal().getId()==1){//cadetes
+                                String s="";
+                                if(c!=null && c.getGrado().getId()==dep.getId()){
+                                    s="selected";
+                                }
+                                out.print("<option " + s +" value='"+String.valueOf(dep.getId()) +"'>"+ dep.getDescripcion() +"</option>");
+                            }
+                        }
+                        %>
+                     </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Arma: </td>
+                <td>
+                    <select name="arma" form="formulario" required="required">
+                        <%
+                        HashMap<Integer,Arma> aa = mc.getArmas();
+                        String s="";
+                      // System.out.print(c.getArma());
+                        if(c!=null && c.getArma()==null){
+                            s="selected";
+                        }
+                        out.print("<option "+s+" value='-1'>------</option>");
+                        for(Arma dep: aa.values() ){
+                            s="";
+                            if(c!=null && c.getArma()!=null && c.getArma().getId()==dep.getId()){
                                 s="selected";
                             }
                             out.print("<option " + s +" value='"+String.valueOf(dep.getId()) +"'>"+ dep.getDescripcion() +"</option>");
                         }
-                    }
-                    %>
-                 </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Arma: </td>
-            <td>
-                <select name="arma" form="formulario" required="required">
-                    <%
-                    HashMap<Integer,Arma> aa = mc.getArmas();
-                    String s="";
-                  // System.out.print(c.getArma());
-                    if(c!=null && c.getArma()==null){
-                        s="selected";
-                    }
-                    out.print("<option "+s+" value='-1'>------</option>");
-                    for(Arma dep: aa.values() ){
-                        s="";
-                        if(c!=null && c.getArma()!=null && c.getArma().getId()==dep.getId()){
-                            s="selected";
-                        }
-                        out.print("<option " + s +" value='"+String.valueOf(dep.getId()) +"'>"+ dep.getDescripcion() +"</option>");
-                    }
-                    
-                    %>
-                 </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Carrera: </td>
-            <td>
-                <select name="carrera" form="formulario" required="required">
-                    <%
-                    HashMap<Integer,Carrera> ac1 = mc.getCarreras();
-                    for(Carrera dep: ac1.values() ){
-                        s="";
-                        if(c!=null && c.getCarrera().getId()==dep.getId()){
-                            s="selected";
-                        }
-                        out.print("<option " + s +" value='"+String.valueOf(dep.getId()) +"'>"+ dep.getDescripcion() +"</option>");
-                    }
-                    %>
-                 </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Curso: </td>
-            <td>
-                <select name="curso" form="formulario" required="required">
-                    <%
-                    HashMap<Integer,Curso> ac = mc.getCursos();
-                    for(Curso dep: ac.values() ){
-                        s="";
-                        if(c!=null && c.getCurso().getId()==dep.getId()){
-                            s="selected";
-                        }
-                        out.print("<option " + s +" value='"+String.valueOf(dep.getId()) +"'>"+ dep.getDescripcion() +"</option>");
-                    }
-                    %>
-                 </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Derecha: </td>
-            <td><input type=number name="derecha" size="8" maxlength="8" value="<%if( c!=null){ out.print(Integer.valueOf(c.getDerecha()));} %>" required="required"/></td>
-        </tr>
-        <tr>
-            <td>Primer nombre: </td>
-            <td><input type="text" name="primerNombre" value="<%if( c!=null){out.print(c.getPrimerNombre());} %>" size="50" required="required"/></td>
-        </tr>
-        <tr>
-            <td>Segundo nombre: </td>
-            <td><input type="text" name="segundoNombre" value="<%if( c!=null){out.print(c.getSegundoNombre());} %>" size="50"/></td>
-        </tr>
-        <tr>
-            <td>Primer apellido: </td>
-            <td><input type="text" name="primerApellido" value="<%if( c!=null){out.print(c.getPrimerApellido());} %>" size="50" required="required"/></td>
-        </tr>
-        <tr>
-            <td>Segundo apellido: </td>
-            <td><input type="text" name="segundoApellido" value="<%if( c!=null){out.print(c.getSegundoApellido());} %>" size="50" required="required"/></td>
-        </tr>
-        <tr>
-            <td>Sexo: </td>
-            <td>M: <input type="radio" name="sexo[]" value="M" <% if ((c!=null && c.getSexo().equals("M"))||(c==null)){ out.print("checked='checked'");} %>/>
-                F: <input type="radio" name="sexo[]" value="F" <% if ((c!=null && c.getSexo().equals("F"))){ out.print("checked='checked'");} %> /></td>
-        </tr>
-        <tr>
-            <td>Fecha de Nacimiento: </td>
-            <td><input type=date name="fechaNac" size="8" value="<%if( c!=null){out.print(c.getFechaNac());} %>"required="required"/></td>
-        </tr>
-        <tr>
-            <td>Departamento de Nacimiento: </td>
-            <td>
-                <select name="departamentoNac" form="formulario" required="required">
-                    <%
-                    HashMap<Integer,Departamento> ad = mc.getDepartamentos();
-                    for(Departamento dep: ad.values() ){
-                        s="";
-                        if(c!=null && c.getDepartamentoNac().getCodigo()==dep.getCodigo()){
-                            s="selected";
-                        }
-                        out.print("<option " + s +" value='"+String.valueOf(dep.getCodigo()) +"'>"+ dep.getDescripcion() +"</option>");
-                    }
-                    %>
-                 </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Localidad de Nacimiento: </td>
-            <td><input type=text name="localidadNac" value="<%if( c!=null){out.print(c.getLocalidadNac());} %>" size="50" required="required"/></td>
-        </tr>
-        
-        <tr>
-            <td>Credencial: </td>
-            <td>Serie: <input type=text name="cc" size="8" value="<%if( c!=null){out.print(c.getCc());} %>"/>
-                N&deg;: <input type=number name="CCNro" size="8" value="<%if( c!=null){out.print(c.getCcNro());} %>"/></td>
-        </tr>
-        <tr>
-            <td>Estado Civil: </td>
-            <td>
-                <select name="estadoCivil" form="formulario" required="required">
-                    <%
-                    HashMap<Integer,EstadoCivil> ae = mc.getEstadosCiviles();
-                    for(EstadoCivil ec: ae.values() ){
-                        s="";
-                        if(c!=null && c.getEstadoCivil().getCodigo()==ec.getCodigo()){
-                            s="selected";
-                        }
-                        out.print("<option " + s +" value='"+String.valueOf(ec.getCodigo()) +"'>"+ ec.getDescripcion() +"</option>");
-                    }
-                    %>
-                 </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Domicilio: </td>
-            <td><input type=text name="domicilio" value="<%if( c!=null){out.print(c.getDomicilio());} %>" size="50"/></td>
-        </tr>
-        <tr>
-            <td>Departamento: </td>
-            <td>
-                <select name="departamento" form="formulario">
-                    <%
-                    HashMap<Integer,Departamento> ad1 = mc.getDepartamentos();
-                    for(Departamento dep1: ad1.values() ){
-                        s="";
-                        if(c!=null && c.getDepartamento().getCodigo()==dep1.getCodigo()){
-                            s="selected";
-                        }
-                        out.print("<option " + s +" value='"+String.valueOf(dep1.getCodigo()) +"'>"+ dep1.getDescripcion() +"</option>");
-                    }
-                    %>
-                 </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Localidad: </td>
-            <td><input type=text name="localidad" value="<% if( c!=null){out.print(c.getLocalidad());} %>" size="50"/></td>
-        </tr>
-        <tr>
-            <td>Tel&eacute;fono: </td>
-            <td><input type=text name="telefono" size="8" value="<% if(c!=null){out.print(c.getTelefono());} %>" required="required"/></td>
-        </tr>
-        <tr>
-            <td>Correo Electr&oacute;nico: </td>
-            <td><input type=text name="email" size="50" value="<%if( c!=null){out.print(c.getEmail());} %>" required="required"/></td>
-        </tr>
-        <tr>
-            <td>Repitiente: </td>
-            <td><input  type=checkbox name="repitiente" <% if(c!=null && c.isRepitiente()){out.print("checked='checked'");} %>/></td>
-        </tr>
-        
-        <% int i = Integer.parseInt(session.getAttribute("usuarioID").toString());%>
-        <tr>
-            <td>LMGA: </td>
-            <td><input  id="lmga" onchange="showPaseDirecto(<% out.print(session.getAttribute("usuarioID").toString()); %> , <%out.print(u.isAdmin()); %>);" type=checkbox name="lmga" <% if(c!=null && c.isLmga()){out.print("checked='checked'");} %>/></td>
-        </tr>
-        <tr id="pd" <% if (((c!=null && !c.isLmga())||(c==null)) ) {out.print("style='display: none'");} %> >
-            <td>Pase directo: </td>
-            <td><input id="paseDirecto" onchange="showNotaPaseDirecto(<% out.print(session.getAttribute("usuarioID").toString()); %> , <%out.print(u.isAdmin()); %>);" type=checkbox name="paseDirecto" <% if(c!=null && c.isPaseDirecto()){out.print("checked='checked'");} %>/></td>
-        </tr>
-        <tr id="notaPaseDirecto" <% if (((c!=null && !c.isPaseDirecto())||(c==null)) ) {out.print("style='display: none'");} %> >
-            <td>Nota: </td>
-            <td><input type=number name="notaPaseDirecto" step="0.001" value="<% if( c!=null){out.print(c.getNotaPaseDirecto());}else{out.print("0");} %>"/></td>
-        </tr>
-        <%--<tr>
-            <td>Presenta certificado de Buena Conducta: </td>
-            <td><input type=checkbox name="buenaConducta" <% if(p!=null && p.isBuenaConducta()){out.print("checked='checked'");} %>/></td>
-        </tr>--%>
-        <tr id="hijos" >
-            <td>Cantidad de hijos: </td>
-            <td>
-                0:
-                <input type=radio name="hijos[]" value="0" <% if((c!=null && c.getHijos()==0) || (c==null) ){out.print("checked='checked'");} %>/>
-                1:
-                <input type=radio name="hijos[]" value="1" <% if(c!=null && c.getHijos()==1){ out.print("checked='checked'");} %>/> 
-                2:
-                <input type=radio name="hijos[]" value="2" <% if(c!=null && c.getHijos()==2){ out.print("checked='checked'");} %>/> 
-                3:
-                <input type=radio name="hijos[]" value="3" <% if(c!=null && c.getHijos()==3){ out.print("checked='checked'");} %>/> 
-                + de 3:
-                <input type=radio name="hijos[]" value="4" <% if(c!=null && c.getHijos()==4){ out.print("checked='checked'");} %>/> 
-            
-            </td>
 
-        </tr>
-        <tr>
-                    <td>Talle Operacional: </td>
-                    <td>
-                        <select name="talleOperacional" form="formulario">
+                        %>
+                     </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Carrera: </td>
+                <td>
+                    <select name="carrera" form="formulario" required="required">
+                        <%
+                        HashMap<Integer,Carrera> ac1 = mc.getCarreras();
+                        for(Carrera dep: ac1.values() ){
+                            s="";
+                            if(c!=null && c.getCarrera().getId()==dep.getId()){
+                                s="selected";
+                            }
+                            out.print("<option " + s +" value='"+String.valueOf(dep.getId()) +"'>"+ dep.getDescripcion() +"</option>");
+                        }
+                        %>
+                     </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Curso: </td>
+                <td>
+                    <select name="curso" form="formulario" required="required">
+                        <%
+                        HashMap<Integer,Curso> ac = mc.getCursos();
+                        for(Curso dep: ac.values() ){
+                            s="";
+                            if(c!=null && c.getCurso().getId()==dep.getId()){
+                                s="selected";
+                            }
+                            out.print("<option " + s +" value='"+String.valueOf(dep.getId()) +"'>"+ dep.getDescripcion() +"</option>");
+                        }
+                        %>
+                     </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Derecha: </td>
+                <td><input type=number name="derecha" size="8" maxlength="8" value="<%if( c!=null){ out.print(Integer.valueOf(c.getDerecha()));} %>" required="required"/></td>
+            </tr>
+            <tr>
+                <td>Primer nombre: </td>
+                <td><input type="text" name="primerNombre" value="<%if( c!=null){out.print(c.getPrimerNombre());} %>" size="50" required="required"/></td>
+            </tr>
+            <tr>
+                <td>Segundo nombre: </td>
+                <td><input type="text" name="segundoNombre" value="<%if( c!=null){out.print(c.getSegundoNombre());} %>" size="50"/></td>
+            </tr>
+            <tr>
+                <td>Primer apellido: </td>
+                <td><input type="text" name="primerApellido" value="<%if( c!=null){out.print(c.getPrimerApellido());} %>" size="50" required="required"/></td>
+            </tr>
+            <tr>
+                <td>Segundo apellido: </td>
+                <td><input type="text" name="segundoApellido" value="<%if( c!=null){out.print(c.getSegundoApellido());} %>" size="50" required="required"/></td>
+            </tr>
+            <tr>
+                <td>Sexo: </td>
+                <td>M: <input type="radio" name="sexo[]" value="M" <% if ((c!=null && c.getSexo().equals("M"))||(c==null)){ out.print("checked='checked'");} %>/>
+                    F: <input type="radio" name="sexo[]" value="F" <% if ((c!=null && c.getSexo().equals("F"))){ out.print("checked='checked'");} %> /></td>
+            </tr>
+            <tr>
+                <td>Fecha de Nacimiento: </td>
+                <td><input type=date name="fechaNac" size="8" value="<%if( c!=null){out.print(c.getFechaNac());} %>"required="required"/></td>
+            </tr>
+            <tr>
+                <td>Departamento de Nacimiento: </td>
+                <td>
+                    <select name="departamentoNac" form="formulario" required="required">
+                        <%
 
-                            <option <%if(c==null){out.print("selected");}%> value=''></option>");
-                            <option <%if(c!=null && c.getTalleOperacional().equals("S")){out.print("selected");}%> value='S'>S</option>");
-                            <option <%if(c!=null && c.getTalleOperacional().equals("M")){out.print("selected");}%> value='M'>M</option>");
-                            <option <%if(c!=null && c.getTalleOperacional().equals("L")){out.print("selected");}%> value='L'>L</option>");
-                            <option <%if(c!=null && c.getTalleOperacional().equals("XL")){out.print("selected");}%> value='XL'>XL</option>");
-                            <option <%if(c!=null && c.getTalleOperacional().equals("XXL")){out.print("selected");}%> value='XXL'>XXL</option>");
-                            <option <%if(c!=null && c.getTalleOperacional().equals("XXXL")){out.print("selected");}%> value='XXXL'>XXXL</option>");
+                        HashMap<Integer,Departamento> ad = mc.getDepartamentos();
+                        for(Departamento dep: ad.values() ){
+                            s="";
+                            if(c!=null && c.getDepartamentoNac().getCodigo()==dep.getCodigo()){
+                                s="selected";
+                            }
+                            out.print("<option " + s +" value='"+String.valueOf(dep.getCodigo()) +"'>"+ dep.getDescripcion() +"</option>");
+                        }
+                        %>
+                     </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Localidad de Nacimiento: </td>
+                <td><input type=text name="localidadNac" value="<%if( c!=null){out.print(c.getLocalidadNac());} %>" size="50" required="required"/></td>
+            </tr>
 
-                         </select>
+            <tr>
+                <td>Credencial: </td>
+                <td>Serie: <input type=text name="cc" size="8" value="<%if( c!=null){out.print(c.getCc());} %>"/>
+                    N&deg;: <input type=number name="CCNro" size="8" value="<%if( c!=null){out.print(c.getCcNro());} %>"/></td>
+            </tr>
+            <tr>
+                <td>Estado Civil: </td>
+                <td>
+                    <select name="estadoCivil" form="formulario" required="required">
+                        <%
+                        HashMap<Integer,EstadoCivil> ae = mc.getEstadosCiviles();
+                        for(EstadoCivil ec: ae.values() ){
+                            s="";
+                            if(c!=null && c.getEstadoCivil().getCodigo()==ec.getCodigo()){
+                                s="selected";
+                            }
+                            out.print("<option " + s +" value='"+String.valueOf(ec.getCodigo()) +"'>"+ ec.getDescripcion() +"</option>");
+                        }
+                        %>
+                     </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Domicilio: </td>
+                <td><input type=text name="domicilio" value="<%if( c!=null){out.print(c.getDomicilio());} %>" size="50"/></td>
+            </tr>
+            <tr>
+                <td>Departamento: </td>
+                <td>
+                    <select name="departamento" form="formulario">
+                        <%
+                        HashMap<Integer,Departamento> ad1 = mc.getDepartamentos();
+                        for(Departamento dep1: ad1.values() ){
+                            s="";
+                            if(c!=null && c.getDepartamento().getCodigo()==dep1.getCodigo()){
+                                s="selected";
+                            }
+                            out.print("<option " + s +" value='"+String.valueOf(dep1.getCodigo()) +"'>"+ dep1.getDescripcion() +"</option>");
+                        }
+                        %>
+                     </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Localidad: </td>
+                <td><input type=text name="localidad" value="<% if( c!=null){out.print(c.getLocalidad());} %>" size="50"/></td>
+            </tr>
+            <tr>
+                <td>Tel&eacute;fono: </td>
+                <td><input type=text name="telefono" size="8" value="<% if(c!=null){out.print(c.getTelefono());} %>" required="required"/></td>
+            </tr>
+            <tr>
+                <td>Correo Electr&oacute;nico: </td>
+                <td><input type=text name="email" size="50" value="<%if( c!=null){out.print(c.getEmail());} %>" required="required"/></td>
+            </tr>
+            <tr>
+                <td>Repitiente: </td>
+                <td><input  type=checkbox name="repitiente" <% if(c!=null && c.isRepitiente()){out.print("checked='checked'");} %>/></td>
+            </tr>
+
+            <% int i = Integer.parseInt(session.getAttribute("usuarioID").toString());%>
+            <tr>
+                <td>LMGA: </td>
+                <td><input  id="lmga" onchange="showPaseDirecto(<% out.print(session.getAttribute("usuarioID").toString()); %> , <%out.print(u.isAdmin()); %>);" type=checkbox name="lmga" <% if(c!=null && c.isLmga()){out.print("checked='checked'");} %>/></td>
+            </tr>
+            <tr id="pd" <% if (((c!=null && !c.isLmga())||(c==null)) ) {out.print("style='display: none'");} %> >
+                <td>Pase directo: </td>
+                <td><input id="paseDirecto" onchange="showNotaPaseDirecto(<% out.print(session.getAttribute("usuarioID").toString()); %> , <%out.print(u.isAdmin()); %>);" type=checkbox name="paseDirecto" <% if(c!=null && c.isPaseDirecto()){out.print("checked='checked'");} %>/></td>
+            </tr>
+            <tr id="notaPaseDirecto" <% if (((c!=null && !c.isPaseDirecto())||(c==null)) ) {out.print("style='display: none'");} %> >
+                <td>Nota: </td>
+                <td><input type=number name="notaPaseDirecto" step="0.001" value="<% if( c!=null){out.print(c.getNotaPaseDirecto());}else{out.print("0");} %>"/></td>
+            </tr>
+            <%--<tr>
+                <td>Presenta certificado de Buena Conducta: </td>
+                <td><input type=checkbox name="buenaConducta" <% if(p!=null && p.isBuenaConducta()){out.print("checked='checked'");} %>/></td>
+            </tr>--%>
+            <tr id="hijos" >
+                <td>Cantidad de hijos: </td>
+                <td>
+                    0:
+                    <input type=radio name="hijos[]" value="0" <% if((c!=null && c.getHijos()==0) || (c==null) ){out.print("checked='checked'");} %>/>
+                    1:
+                    <input type=radio name="hijos[]" value="1" <% if(c!=null && c.getHijos()==1){ out.print("checked='checked'");} %>/> 
+                    2:
+                    <input type=radio name="hijos[]" value="2" <% if(c!=null && c.getHijos()==2){ out.print("checked='checked'");} %>/> 
+                    3:
+                    <input type=radio name="hijos[]" value="3" <% if(c!=null && c.getHijos()==3){ out.print("checked='checked'");} %>/> 
+                    + de 3:
+                    <input type=radio name="hijos[]" value="4" <% if(c!=null && c.getHijos()==4){ out.print("checked='checked'");} %>/> 
+
+                </td>
+
+            </tr>
+            <tr>
+                        <td>Talle Operacional: </td>
+                        <td>
+                            <select name="talleOperacional" form="formulario">
+
+                                <option <%if(c==null){out.print("selected");}%> value=''></option>");
+                                <option <%if(c!=null && c.getTalleOperacional().equals("S")){out.print("selected");}%> value='S'>S</option>");
+                                <option <%if(c!=null && c.getTalleOperacional().equals("M")){out.print("selected");}%> value='M'>M</option>");
+                                <option <%if(c!=null && c.getTalleOperacional().equals("L")){out.print("selected");}%> value='L'>L</option>");
+                                <option <%if(c!=null && c.getTalleOperacional().equals("XL")){out.print("selected");}%> value='XL'>XL</option>");
+                                <option <%if(c!=null && c.getTalleOperacional().equals("XXL")){out.print("selected");}%> value='XXL'>XXL</option>");
+                                <option <%if(c!=null && c.getTalleOperacional().equals("XXXL")){out.print("selected");}%> value='XXXL'>XXXL</option>");
+
+                             </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Talle Quep&iacute;: </td>
+                        <td><input  type=number name="talleQuepi" value="<% if( c!=null){out.print(c.getTalleQuepi());}else{out.print("0");} %>"/></td>
+                    </tr>
+                    <tr>
+                        <td>Talle Botas: </td>
+                        <td><input  type=number name="talleBotas" value="<% if( c!=null){out.print(c.getTalleBotas());}else{out.print("0");} %>"/></td>
+                    </tr>
+            <tr <%if( c==null){ out.print("style='display:none'");} %>>
+                <td>Fecha de alta en el sistema: </td>
+                <td><input type=date name="fechaAltaSistema" size="8" value="<%if( c!=null){out.print(c.getFechaAltaSistema());} %>"/></td>
+            </tr>
+            <tr>
+                <td>Observaciones: </td>
+                <td>
+                    <textarea rows="4" cols="50" name="observaciones" form="formulario"><% if(c!=null){out.print(c.getObservaciones());} %></textarea>
+                </td>
+            </tr>
+            <%
+            if(c!=null && !c.getHistorialBaja().isEmpty()){%>
+                <tr  >
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                            <h4>Historial de Baja</h4>
+                            </tr>
+
+                                <%
+                                for(HistorialBajaCadete hb:c.getHistorialBaja()){
+                                    out.print("<tr>"
+                                                + "<td><b>Fecha Baja:</b> "+hb.getFechaBaja()+"</td>"
+                                                + "<td><b>Causa Baja:</b> "+hb.getCausa()+"</td>"
+                                            + "</tr>");
+                                }
+
+                                %>
+
+                        </table>
                     </td>
                 </tr>
-                <tr>
-                    <td>Talle Quep&iacute;: </td>
-                    <td><input  type=number name="talleQuepi" value="<% if( c!=null){out.print(c.getTalleQuepi());}else{out.print("0");} %>"/></td>
-                </tr>
-                <tr>
-                    <td>Talle Botas: </td>
-                    <td><input  type=number name="talleBotas" value="<% if( c!=null){out.print(c.getTalleBotas());}else{out.print("0");} %>"/></td>
-                </tr>
-        <tr <%if( c==null){ out.print("style='display:none'");} %>>
-            <td>Fecha de alta en el sistema: </td>
-            <td><input type=date name="fechaAltaSistema" size="8" value="<%if( c!=null){out.print(c.getFechaAltaSistema());} %>"/></td>
+            <%}%>
+        </table>
+        </td>
         </tr>
-        <tr>
-            <td>Observaciones: </td>
-            <td>
-                <textarea rows="4" cols="50" name="observaciones" form="formulario"><% if(c!=null){out.print(c.getObservaciones());} %></textarea>
-            </td>
-        </tr>
-        
     </table>
     <p align="right"> <input style="font-size: 18px" type="submit" <% if (request.getParameter("ci")==null){ out.print("value='Guardar y Continuar'");} else{out.print("value='Modificar'");} %> /> </p>
                                              
