@@ -18,13 +18,19 @@ public class Documento {
     private Tipo tipo;
     private String nombre;
     private String extension;
+    private String descripcion;
     
     
-    public Documento(int id, Tipo tipo,String nombre,String extension) {
+    public Documento(int id, Tipo tipo,String nombre,String extension,String descripcion) {
         this.id = id;
         this.tipo = tipo;
         this.nombre=nombre;
         this.extension=extension;
+        this.descripcion= descripcion;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
     }
 
     public String getExtension() {

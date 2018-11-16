@@ -37,6 +37,7 @@
                 out.print("<tr style='background-color:#ffcc66'>");
                             out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Tipo Documento</h3></td>");
                             out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Archivo</h3></td>");
+                            out.print("<td style='width: 30%' align='center'><h3 style='margin:2%;'>Descripcion</h3></td>");
                             out.print("<td style='width: 10%' align='center'></td>");
                        out.print("</tr>" );
                 i=0;
@@ -57,6 +58,7 @@
                         out.print("<a target='_blank' href='"+request.getContextPath()+"/Imagenes?ci="+ci+"&ext="+s1.getExtension()+"&idDoc="+s1.getId()+"'>"+s1.getNombre()+"</a>");
                     }
                     out.print("</td>");
+                    out.print("<td style='width: 30%' align='center'><h3 style='margin:2%;'>"+s1.getDescripcion()+"</h3></td>");
                     out.print("<td style='width: 10%' align='center'><form method='post' onsubmit=\"return confirmar(this,'')\" action='Documento?elim="+s1.getId()+"&ci="+ci+"&idTipoPersonal="+idTipoPersonal+"'><input type='image' width='25%' title='Eliminar' src='images/eliminar.png' alt='Submit Form' /> </form></td>");
                     out.print("</tr>");
                 }

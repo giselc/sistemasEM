@@ -90,15 +90,19 @@
                                                             if (u.isAdmin()){
                                                         %>
                                                              <li><a href="usuarios.jsp">Usuarios </a></li>
-                                                             
+                                                             <li>
+                                                                <form action="AgregarPersonal" method="POST" style="font-size: 100%">
+                                                                    <a align="center"><input type="submit" value="Agregar Personal"/></a>
+                                                                </form>
+                                                            </li>
+                                                        <%
+                                                            }
+                                                            if (u.isAdmin()|| u.getPermisosPersonal().getId()==1){
+                                                        %>
+                                                            <li><a href="bajasYActualizacionGrados.jsp">Baja 3er a&ntilde;o y actualizaci&oacute;n de grados </a></li>
                                                         <%
                                                             }
                                                         %>
-                                                        <li>
-                                                            <form action="AgregarPersonal" method="POST" style="font-size: 100%">
-                                                                <a align="center"><input type="submit" value="Agregar Personal"/></a>
-                                                            </form>
-                                                        </li>
                                                         <li>
                                                             <form action="logout" method="POST" style="font-size: 100%">
                                                                 <a align="center"><input type="submit" value="SALIR"/></a>

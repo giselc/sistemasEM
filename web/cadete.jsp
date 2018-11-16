@@ -20,7 +20,7 @@
                     var obj = jQuery.parseJSON( xmlhttp.responseText );
                     var existe = obj.Cadete;
                     if(existe.length>0){
-                        if(existe.historial){
+                        if(existe[0].historial=="1"){
                             var r=confirm("Existe el cadete en el historial, si confirma, sus datos son cargados automaticamente.");
                             if (r==true){
                                 window.location.href="Cadete?ci="+ciInput.value+"&crearDesdeHistorial=1";
@@ -110,7 +110,7 @@
            <table style="width: 100%">
                <tr>
                    <td>
-                       <p align="left"><a href="cadetes.jsp"><img src="images/atras.png" width="20%"/></a></p>
+                       <p align="left"><a href="<%=sesion.getAttribute("atras")%>"><img src="images/atras.png" width="20%"/></a></p>
                    </td>
                    <td>
                        <img src="images/imprimir.png" width="20%" onclick="abrir_dialog(dialog2)" />

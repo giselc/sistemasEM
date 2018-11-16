@@ -93,6 +93,14 @@
                             </select>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <b>Descripci&oacute;n del documento:</b>
+                        </td>
+                        <td style="width: 50%">
+                            <textarea form="formulario" name="descripcion"></textarea>
+                        </td>
+                    </tr>
                 </table>
             </td>            
         </tr>

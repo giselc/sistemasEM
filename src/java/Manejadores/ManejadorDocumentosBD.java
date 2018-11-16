@@ -41,7 +41,7 @@ public class ManejadorDocumentosBD {
             Documento documento;
             ManejadorCodigos mc = ManejadorCodigos.getInstance();
             while(rs.next()){
-                documento=new Documento(rs.getInt("id"),(TipoDocumento)mc.getTipoDocumento(rs.getInt("idTipoDocumento")),rs.getString("nombre"),rs.getString("extension"));
+                documento=new Documento(rs.getInt("id"),(TipoDocumento)mc.getTipoDocumento(rs.getInt("idTipoDocumento")),rs.getString("nombre"),rs.getString("extension"),rs.getString("descripcion"));
                 as.put(rs.getInt("id"),documento);
             }
         } catch (SQLException ex) {
@@ -58,19 +58,19 @@ public class ManejadorDocumentosBD {
             ResultSet rs = s.executeQuery(sql);
             ManejadorCodigos mc = ManejadorCodigos.getInstance();
             if(rs.next()){
-                p= new Documento(id,(TipoDocumento) mc.getTipoDocumento(rs.getInt("idTipoDocumento")), rs.getString("nombre"), rs.getString("extension"));
+                p= new Documento(id,(TipoDocumento) mc.getTipoDocumento(rs.getInt("idTipoDocumento")), rs.getString("nombre"), rs.getString("extension"), rs.getString("descripcion"));
             }
         } catch (SQLException ex) {
         }
         return p;
     }
   
-    public Documento crearDocumento(Tipo tipoDocumento, int idPersonal, Part archivo){
+    public Documento crearDocumento(Tipo tipoDocumento, int idPersonal, Part archivo,String descripcion){
         int clave;
         boolean ret;
         String nombre=ManejadorDocumentosBD.getFileName(archivo);
         try {
-            String sql= "insert into sistemasem.documentos (idPersonal, idTipoDocumento, nombre,extension) values("+idPersonal+","+tipoDocumento.getId()+",'"+nombre+"','"+nombre.substring(nombre.lastIndexOf("."))+"')";
+            String sql= "insert into sistemasem.documentos (idPersonal, idTipoDocumento, nombre,extension,descripcion) values("+idPersonal+","+tipoDocumento.getId()+",'"+nombre+"','"+nombre.substring(nombre.lastIndexOf("."))+"','"+descripcion+"')";
             Statement s= connection.createStatement();
             int result = s.executeUpdate(sql,Statement.RETURN_GENERATED_KEYS);
             if(result>0){
@@ -80,7 +80,7 @@ public class ManejadorDocumentosBD {
                     if(clave!=-1){
                         ret=ManejadorDocumentosBD.subirArchivo(archivo, clave, idPersonal,false);
                         if(ret){
-                            return new Documento(clave, tipoDocumento, nombre,nombre.substring(nombre.lastIndexOf("."))); 
+                            return new Documento(clave, tipoDocumento, nombre,nombre.substring(nombre.lastIndexOf(".")),descripcion); 
                         }
                         else{
                             sql="delete * from documentos where id="+clave; //si se produce un error al cargar el archivo, debo eliiminarlo de la base para que no tengan accesibilidad

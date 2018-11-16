@@ -44,6 +44,10 @@ public class ManejadorPersonal {
         return ManejadorPersonalHolder.INSTANCE;
     }
 
+    public void actualizarGrados(String[] parameterValues) {
+        sssssssssssssss
+    }
+
     private static class ManejadorPersonalHolder {
 
         private static final ManejadorPersonal INSTANCE = new ManejadorPersonal();
@@ -356,9 +360,9 @@ public class ManejadorPersonal {
         return this.getPersonal(ci, tipoPersonal).getDocumentos().get(id);
     }
     //path -> Path context Servlet
-    public boolean altaDocumento(Tipo tipoDocumento, int ci, Tipo tipoPersonal,Part archivo){
+    public boolean altaDocumento(Tipo tipoDocumento, int ci, Tipo tipoPersonal,Part archivo,String descripcion){
         ManejadorDocumentosBD md = new ManejadorDocumentosBD();
-        Documento d = md.crearDocumento(tipoDocumento, ci, archivo); //sube el archivo y lo agrega a la base de datos
+        Documento d = md.crearDocumento(tipoDocumento, ci, archivo,descripcion); //sube el archivo y lo agrega a la base de datos
         if(d!=null){
             this.getPersonal(ci, tipoPersonal.getId()).agregarDocumento(d); //lo agrega a memoria
             return true;

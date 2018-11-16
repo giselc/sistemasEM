@@ -78,12 +78,22 @@ public class Cadete extends HttpServlet {
                         json.add("Cadete", Json.createArrayBuilder().build());
                     }
                     else{
-                        JsonArrayBuilder jab= Json.createArrayBuilder();
-                        jab.add(Json.createObjectBuilder()
-                            .add("historial", true)
-                                //agregar resto
-                        );
-                        json.add("Cadete", jab);
+                        if(historial){
+                            JsonArrayBuilder jab= Json.createArrayBuilder();
+                            jab.add(Json.createObjectBuilder()
+                                .add("historial", "1")
+                                    //agregar resto
+                            );
+                            json.add("Cadete", jab);
+                        }
+                        else{
+                            JsonArrayBuilder jab= Json.createArrayBuilder();
+                            jab.add(Json.createObjectBuilder()
+                                .add("historial", "0")
+                                    //agregar resto
+                            );
+                            json.add("Cadete", jab);
+                        }
                     }
                     out.print(json.build());
                 }
