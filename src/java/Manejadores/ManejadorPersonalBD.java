@@ -668,4 +668,37 @@ public class ManejadorPersonalBD {
         }
         return false;
     }
+
+    boolean actualizarGrados(String[] parameterValues) {
+        //Los de tercer año que no estaban en la lista ya fueron eliminados
+        String sql ;
+        if(parameterValues!=null){
+            String ciActualizar="";
+            boolean primero=true;
+            for(String s:parameterValues){
+                
+                if(primero){
+                    ciActualizar="ci="+s;
+                    primero=false;
+                }
+                else{
+                    ciActualizar=" or ci="+s;
+                }
+            }
+            sql = "UPDATE sistemasem.personal set idGrado=idGrado-1 where NOT("+ciActualizar+")";
+        }
+        else{
+            sql = "UPDATE sistemasem.personal set idGrado=idGrado-1";
+        
+        }
+        try {
+            Statement statement= connection.createStatement();
+            int row=statement.executeUpdate(sql);
+            return(row>0);
+
+        } catch (SQLException ex) {
+            System.out.print(ex);
+            return false;
+        }
+    }
 }

@@ -9,6 +9,7 @@ import Classes.Usuario;
 import Manejadores.ManejadorPersonal;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -34,14 +35,11 @@ public class ActualizacionDeGrados extends HttpServlet {
             throws ServletException, IOException {
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
-        if(u.isAdmin()||u.getPermisosPersonal().getId()!=0){
+        if(u.isAdmin()||u.getPermisosPersonal().getId()==1){
             try (PrintWriter out = response.getWriter()) {
                 /* TODO output your page here. You may use following sample code. */
                 ManejadorPersonal mp = ManejadorPersonal.getInstance();
-                if(request.getParameterValues("List[]")!=null){
-                    mp.actualizarGrados(request.getParameterValues("List[]"));
-                }
-                
+                mp.actualizarGrados(request.getParameterValues("List[]"));
                 response.sendRedirect("cadetes.jsp");
             }
         }

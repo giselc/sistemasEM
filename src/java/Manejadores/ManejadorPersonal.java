@@ -14,6 +14,7 @@ import Classes.Tipo;
 import Classes.TipoDocumento;
 import Classes.TipoPersonal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -43,9 +44,38 @@ public class ManejadorPersonal {
     public static ManejadorPersonal getInstance() {
         return ManejadorPersonalHolder.INSTANCE;
     }
-
-    public void actualizarGrados(String[] parameterValues) {
-        sssssssssssssss
+    public synchronized boolean actualizarGrados(String[] parameterValues) {
+        //System.out.print(Arrays.toString(parameterValues));
+        boolean sinError=true;
+        ManejadorPersonalBD mp= new ManejadorPersonalBD();
+        ManejadorCodigos mc= ManejadorCodigos.getInstance();
+        int i=0;
+        for(Personal p:personal.get(1)){
+            if((parameterValues==null) || (!Arrays.toString(parameterValues).contains(String.valueOf(p.getCi())))){
+                switch(p.getGrado().getId()){
+                    case 16:case 17:case 18:case 19: //sgto hnrio 1ro, sgto hnrio,cabo hnrio, cad 3ro
+                        sinError=sinError&&this.bajaCadetePosicion(p.getCi(), "Graduado.",i);
+                    break;
+                    case 20: //cad 2do pasa a cabo hrio NO a cad 3ro
+                        if(((Cadete)p).getCarrera().getId()==2){ //cad 2do apoyo (por degradacion)
+                            sinError=sinError&&this.bajaCadetePosicion(p.getCi(), "Graduado.",i);
+                        }
+                        else{
+                            p.setGrado(mc.getGrado(p.getGrado().getId()-2));
+                        }
+                    break;
+                    case 21: case 22://cad 1ro y asp
+                        p.setGrado(mc.getGrado(p.getGrado().getId()-1));
+                    break;
+                }
+            }
+            else{
+                ((Cadete)p).setRepitiente(true);
+            }
+            i++;
+        }
+        return sinError&&mp.actualizarGrados(parameterValues);
+            
     }
 
     private static class ManejadorPersonalHolder {
@@ -514,7 +544,19 @@ public class ManejadorPersonal {
         }
         return false;
     }
-    
+    public boolean bajaCadetePosicion(int ci, String causa,int pos){
+        ManejadorPersonalBD mp= new ManejadorPersonalBD();
+        if( mp.bajaCadete(ci,causa)){
+            Personal p = personal.get(1).get(pos);
+            HashMap<Integer,Documento> hd=p.getDocumentos();
+            hd.values().stream().forEach((d) -> {
+                ManejadorDocumentosBD.eliminarArchivo(ci, d);
+            });
+            personal.get(1).remove(pos);
+            return true;
+        }
+        return false;
+    }
     public synchronized Boolean crearCadeteHistorial(int ci){
         ManejadorPersonalBD mp = new ManejadorPersonalBD();
         Cadete c= mp.crearCadeteHistorial(ci);
