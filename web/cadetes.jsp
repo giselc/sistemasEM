@@ -217,16 +217,29 @@
         xmlhttp.send();
         return false;
     }
-    function aplicarFiltro(f,idDatos){
-       // alert(serialize(f));
+    function aplicarFiltro(f){
+       //alert("Hola");
         xmlhttp=new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                //alert("Hola");
                 var obj = jQuery.parseJSON( xmlhttp.responseText );
-                var listado = obj.listadoPostulantes;
+                var listado = obj.listadoPersonal;
                 var color = "";
-                var datos = "";
                 var j;
+                var datos="<table style='width: 100%;' id='tablalistado'>"
+                        + "<tr style='background-color:#ffcc66'>"
+                            +"<td style='width: 5%' align='center'></td>"
+                            +"<td style='width: 5%' align='center'><input type='checkbox' onclick='seleccionar_todo()' id='selTodo'></td>"
+                            +"<td style='width: 5%' align='center'><img src='images/derecha.png' width='30%' onclick='ordenar(1,1)' /> Nro.</td>"
+                            +"<td style='width: 10%' align='center'><img src='images/abajo.png' width='15%' onclick='ordenar(2,1)' />Grado</td>"
+                            +"<td colspan=2 style='width: 20%' align='center'><img src='images/derecha.png' width='6%' onclick='ordenar(3,1)' />Nombres</td>"
+                            +"<td colspan=2 style='width: 20%' align='center'><img src='images/derecha.png' width='6%' onclick='ordenar(4,1)' />Apellidos</td>"
+                            +"<td style='width: 10%' align='center'>Cédula</td>"
+                            +"<td style='width: 15%' align='center'>Curso</td>"
+                            +"<td style='width: 5%' align='center'>Ver</td>"
+                            +"<td style='width: 5%' align='center'>Elim</td>"   
+                +"</tr>";
                 for (var i=0; i<listado.length;i++) {
                     if ((i%2)==0){
                         color=" #ccccff";
@@ -235,27 +248,25 @@
                         color=" #ffff99";
                     }
                     j=i+1;
-                    datos += "<tr style='background-color:"+color+"'>";
-                    datos += "<td style='width: 5%' align='center'>"+j+"</td>";
-                    datos +="<td style='width: 5%' align='center'><input type='checkbox' name='List[]' value='"+ listado[i].ci +"' /></td>";
-                    if (listado[i].id != -1){
-                        datos +="<td style='width: 10%' align='center'>"+ listado[i].id +"</td>";
-                    }
-                    else{
-                        datos +="<td style='width: 10%' align='center'>COND.</td>";
-                    }
-                    datos +="<td style='width: 10%' align='center'>"+ listado[i].primerNombre +"</td>";
-                    datos +="<td style='width: 10%' align='center'>"+ listado[i].segundoNombre +"</td>";
-                    datos +="<td style='width: 10%' align='center'>"+ listado[i].primerApellido +"</td>";
-                    datos +="<td style='width: 10%' align='center'>"+ listado[i].segundoApellido +"</td>";
-                    datos +="<td style='width: 15%' align='center'>"+ listado[i].ci +"</td>";
-                    datos +="<td style='width: 5%' align='center'><a href='cadete.jsp?id="+ listado[i].ci +"'><img src='images/ver.png' width='60%' /></a></td>";
-                     datos +="<td style='width: 5%' align='center'><a href='baja.jsp?id="+ listado[i].ci +"'><img src='images/eliminar.png' width='60%' /></a></td>";
-                    datos +="</tr>";
+                    datos+="<tr style='background-color:"+color+"'>"
+                       +"<td style='width: 5%' align='center'>"+j+"</td>"
+                       +"<td style='width: 5%' align='center'><input type='checkbox' name='List[]' value='"+listado[i].ci+"' /></td>"
+                       +"<td style='width: 5%' align='center'>"+listado[i].numero+"</td>"
+                       +"<td style='width: 10%' align='center'>"+listado[i].grado+"</td>"
+                       +"<td style='width: 10%' align='center'>"+listado[i].primerNombre+"</td>"
+                       +"<td style='width: 10%' align='center'>"+listado[i].segundoNombre+"</td>"
+                       +"<td style='width: 10%' align='center'>"+listado[i].primerApellido+"</td>"
+                       +"<td style='width: 10%' align='center'>"+listado[i].segundoApellido+"</td>"
+                       +"<td style='width: 10%' align='center'>"+listado[i].ci+"</td>"
+                       +"<td style='width: 15%' align='center'>"+listado[i].curso+"</td>"
+                       +"<td style='width: 5%' align='center'><a href='cadete.jsp?id="+listado[i].ci+"'><img src='images/ver.png' width='60%' /></a></td>"
+                               +"<td style='width: 5%' align='center'><a href='baja.jsp?id="+listado[i].ci+"'><img src='images/eliminar.png' width='60%' /></a></td>"
+                       +"</tr>";
 
                 }
-                document.getElementById(idDatos).innerHTML = datos;
-                document.getElementById("filtroTexto").innerHTML = obj.filtroMostrar;
+                datos+="</table>";
+                document.getElementById("tablalistado").innerHTML = datos;
+                document.getElementById("filtroTexto").innerHTML = obj.filtroTexto;
             };
         };
         xmlhttp.open("POST","Filtro?"+serialize(f));
@@ -294,8 +305,9 @@
 
                     </tr>
                 </table>
-                <%@include file="listarCadetes.jsp" %>
             </form>
+                <%@include file="listarCadetes.jsp" %>
+            
 
          </div>
      </div>    

@@ -9,6 +9,7 @@ import Classes.Cadete;
 import Classes.Documento;
 import Classes.Personal;
 import Classes.RecordCadete;
+import Classes.RecordCadetesFiltro;
 import Classes.RecordPersonal;
 import Classes.Tipo;
 import Classes.TipoDocumento;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import javax.servlet.http.Part;
+import sun.swing.SwingUtilities2;
 
 /**
  *
@@ -40,7 +42,6 @@ public class ManejadorPersonal {
            }
         }*/
     }
-    
     public static ManejadorPersonal getInstance() {
         return ManejadorPersonalHolder.INSTANCE;
     }
@@ -77,12 +78,204 @@ public class ManejadorPersonal {
         return sinError&&mp.actualizarGrados(parameterValues);
             
     }
-
+    public void setFiltroMostrar(RecordCadetesFiltro rf){
+        String filtroMostrar = "";
+        ManejadorCodigos mc = ManejadorCodigos.getInstance();
+        boolean guion=false;
+        if(rf.armas!=null){
+            filtroMostrar+="Armas:";
+            for(String s:rf.armas){
+                filtroMostrar+=" "+mc.getArma(Integer.valueOf(s)).getDescripcion();
+            }
+            guion=true;
+        }
+        if(rf.grados!=null){
+            if(guion){
+                filtroMostrar+=" - ";
+            }
+            filtroMostrar+="Grados:";
+            for(String s:rf.grados){
+                filtroMostrar+=" "+mc.getGrado(Integer.valueOf(s)).getDescripcion();
+            }
+            guion=true;
+        }
+        if(rf.cursos!=null){
+            if(guion){
+                filtroMostrar+=" - ";
+            }
+            filtroMostrar+="Cursos:";
+            for(String s:rf.cursos){
+                filtroMostrar+=" "+mc.getCurso(Integer.valueOf(s)).getDescripcion();
+            }
+            guion=true;
+        }
+        if(!rf.carrera.equals("TODOS")){
+            if(guion){
+                filtroMostrar+=" - ";
+            }
+            filtroMostrar+="Carrera:";
+            if(rf.carrera.equals("C")){
+                filtroMostrar+=" Comando";
+            }
+            else{
+                filtroMostrar+=" Apoyo de S. y C.";
+            }
+            guion=true;
+        }
+        if(!rf.lmga.equals("TODOS")){
+            if(guion){
+                filtroMostrar+=" - ";
+            }
+            filtroMostrar+="LMGA:";
+            if(rf.lmga.equals("S")){
+                filtroMostrar+=" SI";
+            }
+            else{
+                filtroMostrar+=" NO";
+            }
+            guion=true;
+        }
+        if(!rf.pd.equals("TODOS")){
+            if(guion){
+                filtroMostrar+=" - ";
+            }
+            filtroMostrar+="Pase Directo:";
+            if(rf.pd.equals("S")){
+                filtroMostrar+=" SI";
+            }
+            else{
+                filtroMostrar+=" NO";
+            }
+            guion=true;
+        }
+        if(!rf.sexo.equals("TODOS")){
+            if(guion){
+                filtroMostrar+=" - ";
+            }
+            filtroMostrar+="Sexo:";
+            filtroMostrar+=" "+rf.sexo;
+            guion=true;
+        }
+        if(!rf.repitiente.equals("TODOS")){
+            if(guion){
+                filtroMostrar+=" - ";
+            }
+            filtroMostrar+="Repitiente:";
+            if(rf.repitiente.equals("S")){
+                filtroMostrar+=" SI";
+            }
+            else{
+                filtroMostrar+=" NO";
+            }
+            guion=true;
+        }
+        if(rf.depNac!=null){
+            if(guion){
+                filtroMostrar+=" - ";
+            }
+            filtroMostrar+="Dpto. Nac.:";
+            for(String s:rf.grados){
+                filtroMostrar+=" "+mc.getDepartamento(Integer.valueOf(s)).getDescripcion();
+            }
+            guion=true;
+        }
+        if(rf.depDom!=null){
+            if(guion){
+                filtroMostrar+=" - ";
+            }
+            filtroMostrar+="Dpto. Dom.:";
+            for(String s:rf.grados){
+                filtroMostrar+=" "+mc.getDepartamento(Integer.valueOf(s)).getDescripcion();
+            }
+            guion=true;
+        }
+        if(rf.canthijos!=null){
+            if(guion){
+                filtroMostrar+=" - ";
+            }
+            filtroMostrar+="Dpto. Dom.:";
+            for(String s:rf.canthijos){
+                if(s.equals("4")){
+                    filtroMostrar+=" + de 3";
+                }
+                else{
+                    filtroMostrar+=" "+rf.canthijos;
+                }
+            }
+        }
+        rf.filtroMostrar=filtroMostrar;
+    }
+    public ArrayList<Personal> getPersonalFiltro(RecordCadetesFiltro rf) {
+        boolean cumpleFiltro;
+        ArrayList<Personal> ap= new ArrayList<>();
+        //int i =0;
+        for (Personal p : personal.get(1)) {
+            Cadete c= (Cadete)p;
+            cumpleFiltro=true;
+            if(rf.armas!=null){
+                cumpleFiltro=cumpleFiltro && Arrays.toString(rf.armas).contains(String.valueOf(c.getArma().getId()));
+            }
+            if(cumpleFiltro && rf.grados!=null){
+                cumpleFiltro=cumpleFiltro && Arrays.toString(rf.grados).contains(String.valueOf(c.getGrado().getId()));
+            }
+            if(cumpleFiltro && rf.cursos!=null){
+                cumpleFiltro=cumpleFiltro && Arrays.toString(rf.cursos).contains(String.valueOf(c.getCurso().getId()));
+            }
+            if(cumpleFiltro && !rf.carrera.equals("TODOS")){
+                if(rf.carrera.equals("C")){
+                    cumpleFiltro= c.getCarrera().getId()==1;
+                }
+                else{
+                    cumpleFiltro= c.getCarrera().getId()==2;
+                }
+            }
+            if(cumpleFiltro && !rf.lmga.equals("TODOS")){
+                if(rf.lmga.equals("S")){
+                    cumpleFiltro= (c.isLmga()==true);
+                }
+                else{
+                     cumpleFiltro= (c.isLmga()==false);
+                }
+            }
+            if(cumpleFiltro && !rf.pd.equals("TODOS")){
+                if(rf.pd.equals("S")){
+                    cumpleFiltro= (c.isPaseDirecto()==true);
+                }
+                else{
+                     cumpleFiltro= (c.isPaseDirecto()==false);
+                }
+            }
+            if(cumpleFiltro && !rf.sexo.equals("TODOS")){
+                cumpleFiltro= (rf.sexo.equals(c.getSexo()));
+            }
+            if(cumpleFiltro && !rf.repitiente.equals("TODOS")){
+                if(rf.repitiente.equals("S")){
+                    cumpleFiltro= (c.isRepitiente()==true);
+                }
+                else{
+                     cumpleFiltro= (c.isRepitiente()==false);
+                }
+            }
+            if(cumpleFiltro && rf.depNac!=null){
+                cumpleFiltro=cumpleFiltro && Arrays.toString(rf.depNac).contains(String.valueOf(c.getDepartamentoNac().getCodigo()));
+            }
+            if(cumpleFiltro && rf.depDom!=null){
+                cumpleFiltro=cumpleFiltro && Arrays.toString(rf.depDom).contains(String.valueOf(c.getDepartamento().getCodigo()));
+            }
+            if(cumpleFiltro && rf.canthijos!=null){
+                cumpleFiltro=cumpleFiltro && Arrays.toString(rf.canthijos).contains(String.valueOf(c.getHijos()));
+            }
+            if(cumpleFiltro){
+                ap.add(p);
+            }
+        }
+        setFiltroMostrar(rf);
+        return ap;
+    }
     private static class ManejadorPersonalHolder {
 
         private static final ManejadorPersonal INSTANCE = new ManejadorPersonal();
     }
-    
     public LinkedList<Personal> obtenerCadetes(){
         return personal.get(1);
     }
@@ -109,7 +302,6 @@ public class ManejadorPersonal {
         }
         return null;
     }
-    
     public LinkedList<Personal> getCadetesListarNro(Boolean asc){//0=des,1=asc
         LinkedList<Personal> cadetes= new LinkedList();
         if(asc){
@@ -411,7 +603,6 @@ public class ManejadorPersonal {
         }
         return false;
     }
-    
     public Cadete getCadete(int ci){
         Cadete c= null;
         for(Personal p : personal.get(1)){
@@ -422,7 +613,6 @@ public class ManejadorPersonal {
         }
         return c;
     }
-        
     private void agregarEnOrdenCadete(Cadete c){
         if(c!=null){
             if(personal.get(1).isEmpty()){
@@ -471,7 +661,6 @@ public class ManejadorPersonal {
         }
         return false;
     }
-    
     public synchronized boolean modificarCadete(RecordPersonal rp, Part foto) { 
         ManejadorPersonalBD mp= new ManejadorPersonalBD();
         if( mp.modificarPersonal(rp,foto)){
@@ -522,7 +711,6 @@ public class ManejadorPersonal {
        };
        return false;
     }
-    
     public synchronized boolean bajaCadete(int ci, String causa){
         ManejadorPersonalBD mp= new ManejadorPersonalBD();
         if( mp.bajaCadete(ci,causa)){

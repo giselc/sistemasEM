@@ -5,6 +5,7 @@
  */
 package Classes;
 
+import java.io.PrintWriter;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -293,6 +294,8 @@ public class Cadete extends Personal{
         this.carrera = carrera;
     }
     
-    
+    public void imprimirFicha(PrintWriter out){
+        
+    }
     
 }

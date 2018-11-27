@@ -11,6 +11,7 @@ package Classes;
  */
 public class RecordCadetesFiltro {
     public String lmga; // TODOS, S, N
+    public String pd; // TODOS, S, N
     public String sexo; // TODOS, M, F
     public String repitiente; // TODOS, S, N
     public String[] depNac;
@@ -19,5 +20,9 @@ public class RecordCadetesFiltro {
     public String filtroMostrar;
     public String[] cursos;
     public String[] armas;
+    public String[] grados;
+    public String carrera; // TODOS, C, A
+    
+    
     
 }
