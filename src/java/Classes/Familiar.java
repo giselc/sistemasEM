@@ -13,7 +13,7 @@ import java.sql.Date;
  */
 public class Familiar {
     private String NombreComp;
-    private Date FechaNac;
+    private String FechaNac;
     private Departamento DepartamentoNac;
     private String LocalidadNac;
     private EstadoCivil EstadoCivil;
@@ -24,7 +24,7 @@ public class Familiar {
     private String Profesion;
     private String LugarTrabajo;
 
-    public Familiar(String NombreComp, Date FechaNac, Departamento DepartamentoNac, String LocalidadNac, EstadoCivil EstadoCivil, String Domicilio, Departamento Departamento, String Localidad, String telefono, String Profesion, String LugarTrabajo) {
+    public Familiar(String NombreComp, String FechaNac, Departamento DepartamentoNac, String LocalidadNac, EstadoCivil EstadoCivil, String Domicilio, Departamento Departamento, String Localidad, String telefono, String Profesion, String LugarTrabajo) {
         this.NombreComp = NombreComp;
         this.FechaNac = FechaNac;
         this.DepartamentoNac = DepartamentoNac;
@@ -42,7 +42,7 @@ public class Familiar {
         return NombreComp;
     }
 
-    public Date getFechaNac() {
+    public String getFechaNac() {
         return FechaNac;
     }
 

@@ -294,8 +294,328 @@ public class Cadete extends Personal{
         this.carrera = carrera;
     }
     
-    public void imprimirFicha(PrintWriter out){
-        
+    public void imprimirFicha(PrintWriter out,String Context){
+        String impr="<table class=\"resultsTable\" style=\"margin-left: 0%; margin-right: 0%;word-wrap: break-word\">\n" +
+"            <tr>\n" +
+"                <td>\n" +
+"                    <p align=\"left\">Escuela Militar</p>\n" +
+"                </td>\n" +
+"                <td>\n" +
+"                     <p align=\"right\">Jefatura de Estudios</p>\n" +
+"                </td>\n" +
+"            </tr>\n" +
+"            <tr>\n" +
+"                <td colspan=\"2\">\n";
+       
+                if(foto!=""){
+                    impr+="<p align=\"center\"><img src=\""+Context+"/Imagenes?foto="+super.getCi()+"\" style=\"width: 20%\" /></p>";
+                    
+                }
+                else{
+                   
+                     impr+="<p align=\"center\"><img src=\"images/silueta.jpg\" id=\"uploadPreview\" style=\"width: 20%\" /></p>";
+                            
+                }
+
+                    impr+="</td>\n" +
+"            </tr>\n" +
+"            <tr>\n" +
+"                <td width=\"40%\" style=\"vertical-align: top;border: solid\">\n" +
+"                    <table  style=\"table-layout: fixed; width: 100%\">\n" +
+"                        <tr>\n" +
+"                            <td>\n" +
+"                            <h4 style=\"padding: 0px\">Datos Personales:</h4>\n" +
+"                            </td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>N&uacute;mero: </td>\n" +
+"                            <td>"+ super.getNroInterno() +"\n" +
+"                                "+ carrera.getDescripcion() +"\n" +
+"                            </td>\n" +
+                            
+"                        <tr>\n" +
+"                            <td>Arma: </td>\n" +
+"                            <td>"+ super.getArma().getDescripcion()+"</td>\n" +
+"                        </tr>\n" +
+                            
+"                        <tr>\n" +
+"                            <td>Curso: </td>\n" +
+"                            <td>"+ curso.getDescripcion()+"</td>\n" +
+"                        </tr>\n" +
+                            
+"                        <tr>\n" +
+"                            <td>Grado: </td>\n" +
+"                            <td>"+ super.getGrado().getDescripcion()+"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Primer nombre: </td>\n" +
+"                            <td>"+ super.getPrimerNombre() +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Segundo nombre: </td>\n" +
+"                            <td>"+ super.getSegundoNombre()+"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Primer apellido: </td>\n" +
+"                            <td>"+ super.getPrimerApellido()+"</td>\n" +
+"                        </tr>\n" +
+                            
+"                        <tr>\n" +
+"                            <td>Segundo apellido: </td>\n" +
+"                            <td>"+ super.getSegundoApellido() +"</td>\n" +
+"                        </tr>\n" +
+"                        </tr>\n" +
+                            "<tr>\n" +
+"                            <td>Derecha: </td>\n" +
+"                            <td>"+ derecha +
+"                            </td>\n" +
+"                        </tr>"+
+"                        <tr>\n" +
+"                            <td>C.I.: </td>\n" +
+"                            <td>"+ super.getCi() +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Sexo: </td>\n" +
+"                            <td>"+ sexo +"</td>\n" +
+"                        </tr>\n" +
+
+"                        <tr>\n" +
+"                            <td>Fecha de Nacimiento: </td>\n" +
+"                            <td>"+ fechaNac+"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Departamento de Nacimiento: </td>\n" +
+"                            <td>"+ departamentoNac.getDescripcion() +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Localidad de Nacimiento: </td>\n" +
+"                            <td>"+ localidadNac +"</td>\n" +
+"                        </tr>\n" +
+"\n" +
+"                        <tr>\n" +
+"                            <td>Credencial: </td>\n" +
+"                            <td>Serie: "+ cc +"\n" +
+"                                N&deg;: "+ ccNro +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Estado Civil: </td>\n" +
+"                            <td>"+ estadoCivil.getDescripcion() +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Departamento: </td>\n" +
+"                            <td>"+ departamento.getDescripcion() +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Localidad: </td>\n" +
+"                            <td>"+ localidad +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Tel&eacute;fono: </td>\n" +
+"                            <td>"+ telefono +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Correo Electr&oacute;nico: </td>\n" +
+"                            <td>"+ email +"</td>\n" +
+"                        </tr>\n" ;
+impr+="                        <tr>\n" +
+"                            <td>LMGA: </td>\n" +
+"                            <td>";
+                                if(lmga){
+                                    impr+="SI";
+                                }
+                                else{
+                                    impr+="NO";
+                                } 
+                                impr+="</td>\n" +
+"                        </tr>\n" ;
+                        if(lmga){
+    impr+="                 <tr>\n" +
+    "                            <td>PASE DIRECTO: </td>\n" +
+    "                            <td>";
+                                    if(paseDirecto){
+                                        impr+="SI";
+                                    }
+                                    else{
+                                        impr+="NO";
+                                    } 
+                            impr+="</td>\n" +
+    "                       </tr>\n" ;
+                            if(paseDirecto){
+        impr+="                 <tr>\n" +
+        "                           <td>Nota Pase Directo: </td>\n" +
+        "                           <td>"+ notaPaseDirecto +"</td>\n" +
+        "                       </tr>\n" ;
+                            }
+                        };
+                        
+impr+="                 <tr>\n" +
+"                            <td>Cantidad de hijos: </td>\n" +
+"                            <td>"; if(hijos==4){
+                                        impr+="+ de 3";
+                                    }
+                                    else{
+                                        impr+= hijos;
+                                    }
+impr+="                      </td>\n" +
+"                       </tr>\n" +
+"                       <tr>\n" +
+"                            <td>REPITIENTE: </td>\n" +
+"                            <td>";
+                                if(repitiente){
+                                    impr+="SI";
+                                }
+                                else{
+                                    impr+="NO";
+                                } 
+                        impr+="</td>\n" +
+"                       </tr>\n" +
+                                
+"                        <tr>\n" +
+"                            <td>Talle operacional: </td>\n" +
+"                            <td>"+ talleOperacional +"</td>\n" +
+"                        </tr>\n" +
+                                
+"                        <tr>\n" +
+"                            <td>Talle Quep&iacute: </td>\n" +
+"                            <td>"+ talleQuepi +"</td>\n" +
+"                        </tr>\n" +
+                                
+"                        <tr>\n" +
+"                            <td>Talle botas: </td>\n" +
+"                            <td>"+ talleBotas +"</td>\n" +
+"                        </tr>\n" +
+"                </table>\n" +
+"                </td>\n" +
+"                <td width=\"40%\" style=\"vertical-align: top;border: solid\" >\n" +
+"                    <table  style=\"width: 100%; table-layout: fixed\">\n" +
+"                        <tr>\n" +
+"                            <td>\n" +
+"                                <h4 style=\"padding: 0px\">Datos Patron&iacute;micos:</h4>\n" +
+"                            </td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>\n" +
+"                                <b>Padre:</b>\n" +
+"                            </td>\n" +
+"                        </tr>\n" ;
+                        for(int i=1;i<=2;i++){
+                           Familiar f;
+                           if(i==1){
+                               f=padre;
+impr+="                        <tr>\n" +
+"                            <td>\n" +
+"                                <b>Padre:</b>\n" +
+"                            </td>\n" +
+"                        </tr>\n" ;
+                           }
+                           else{
+                               f=madre;
+impr+="                        <tr>\n" +
+"                            <td>\n" +
+"                                <b>Madre:</b>\n" +
+"                            </td>\n" +
+"                        </tr>\n" ;
+                           }
+impr+="                            <td>Nombre Completo: </td>\n" +
+"                            <td style=\"size: 50\">"+ f.getNombreComp() +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Fecha de Nacimiento: </td>\n" +
+"                            <td>"+ f.getFechaNac()+"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Departamento de Nacimiento: </td>\n" +
+"                            <td>"+ f.getFechaNac() +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Localidad de Nacimiento: </td>\n" +
+"                            <td>"+ f.getLocalidadNac() +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Estado Civil: </td>\n" +
+"                            <td>"+ f.getEstadoCivil().getDescripcion() +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Domicilio: </td>\n" +
+"                            <td>"+ f.getDomicilio() +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Departamento: </td>\n" +
+"                            <td>"+ f.getDepartamento().getDescripcion() +"</td>\n" +
+"                        </tr>\n" +
+"\n" +
+"                        <tr>\n" +
+"                            <td>Localidad: </td>\n" +
+"                            <td>"+ f.getLocalidad() +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Tel&eacute;fono: </td>\n" +
+"                            <td>"+ f.getTelefono() +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Profesi&oacute;n: </td>\n" +
+"                            <td>"+ f.getProfesion() +"</td>\n" +
+"                        </tr>\n" +
+"                        <tr>\n" +
+"                            <td>Lugar de trabajo: </td>\n" +
+"                            <td>"+ f.getLugarTrabajo() +"</td>\n" +
+"                        </tr>\n" ;
+                        }
+impr+="                    </table>\n" +
+"                        \n" +
+"                </td>\n" +
+"            </tr>\n" +
+"            <tr> \n" +
+"                <td colspan=\"2\">\n" +
+"                    <table>\n" +
+"                        <tr>\n" +
+"                            <td>\n" +
+"                                <b>Observaciones:</b>\n" +
+"                            </td>\n" +
+"                            <td>\n" +
+"                                <textarea readonly rows=" ;
+boolean sigo=true;
+int ultIndex=0;
+int cant=1;
+while(sigo){
+    ultIndex=super.getObservaciones().indexOf("\n", ultIndex);
+    if(ultIndex!=-1){
+        cant++;
+        ultIndex++;
+    }
+    else{
+        sigo=false;
+    }
+}
+        impr+=cant+" style=\"resize: none\" cols=\"80\"  name=\"observaciones\">"+ super.getObservaciones() +"</textarea>\n" +
+"                            </td>\n" +
+"                        </tr>\n" +
+"                        \n" +
+"                    </table>\n" +
+"                    \n" +
+"                </td>\n" +
+"            </tr>\n" +
+"        </table> <h1 style='page-break-after:always' > </h1>";
+        if(historialBaja.isEmpty()){
+ impr+="               <tr>"
+         + "<td colspan=\"2\">\n" +
+"                        <table>\n" +
+"                            <tr>\n" +
+"                            <h4>Historial de Baja</h4>\n" +
+"                            </tr>\n" +
+"\n" ;
+                                for(HistorialBajaCadete hb:historialBaja){
+impr+="                                    out.print(\"<tr>\"\n" +
+"                                                + \"<td><b>Fecha Baja:</b> "+hb.getFechaBaja()+"</td>\"\n" +
+"                                                + \"<td><b>Causa Baja:</b> "+hb.getCausa()+"</td>\"\n" +
+"                                            + \"</tr>\");\n" ;
+                                };
+impr+="                        </table>\n" +
+"                    </td>\n" +
+"                </tr>";
+                    
+            }
+       out.println(impr);
     }
     
 }

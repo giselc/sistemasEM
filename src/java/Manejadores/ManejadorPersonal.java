@@ -8,19 +8,17 @@ package Manejadores;
 import Classes.Cadete;
 import Classes.Documento;
 import Classes.Personal;
-import Classes.RecordCadete;
 import Classes.RecordCadetesFiltro;
+import Classes.RecordCamposListar;
 import Classes.RecordPersonal;
 import Classes.Tipo;
-import Classes.TipoDocumento;
-import Classes.TipoPersonal;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import javax.servlet.http.Part;
-import sun.swing.SwingUtilities2;
 
 /**
  *
@@ -271,6 +269,198 @@ public class ManejadorPersonal {
         }
         setFiltroMostrar(rf);
         return ap;
+    }
+    private void imprimirEncabezado(PrintWriter out,RecordCamposListar rl){
+    out.print("<table style=\"width: 70%; margin:auto;\">");
+    out.print("     <tr>\n" +
+        "                <td colspan=\"3\">\n" +
+        "                    <p align=\"left\">Escuela Militar</p>\n" +
+        "                </td>\n" +
+        "                <td colspan=\"3\">\n" +
+        "                     <p align=\"right\">Jefatura de Estudios</p>\n" +
+        "                </td>\n" +
+        "            </tr>\n");
+out.print("          <tr>\n" +
+        "                <td colspan=\"6\" style=\"text-align: center;\">\n" +
+        "                    <h1>CADETES</h1>\n" +
+        "                </td>\n" +
+        "            </tr>\n");
+        out.println("<tr>\n" +
+                "        <td colspan=\"6\">\n" +
+                "            <p>\n <b>FILTROS: </b> " +
+                                rl.filtro +
+                "            </p>\n" +
+                "        </td>\n" +
+                "    </tr>");
+         out.print("<tr style='background-color:#ffcc66'>");
+                out.print("<td style='width: 5%' align='center'><h3 style='margin:2%;'></h3></td>");
+                if(rl.carrera){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Carrera</h3></td>");
+                }
+                if(rl.numero){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Número</h3></td>");
+                }
+                if(rl.ci){
+                    out.print("<td align='center'><h3 style='margin:2%;'>C.I.</h3></td>");
+                }
+                if(rl.grado){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Grado</h3></td>");
+                }
+                if(rl.primerNombre){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Primer nombre</h3></td>");
+                }
+                if(rl.segundoNombre){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Segundo nombre</h3></td>");
+                }
+                if(rl.primerApellido){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Primer apellido</h3></td>");
+                }
+                if(rl.segundoApellido){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Segundo apellido</h3></td>");
+                }
+                if(rl.curso){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Curso</h3></td>");
+                }
+                if(rl.arma){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Arma</h3></td>");
+                }
+                if(rl.lmga){
+                    out.print("<td align='center'><h3 style='margin:2%;'>LMGA</h3></td>");
+                }
+                if(rl.pd){
+                    out.print("<td align='center'><h3 style='margin:2%;'>PD</h3></td>");
+                }
+                if(rl.sexo){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Sexo</h3></td>");
+                }
+                if(rl.dptoNac){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Dpto.Nac.</h3></td>");
+                }
+                if(rl.localidadNac){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Loc.Nac.</h3></td>");
+                }
+                if(rl.dptoDom){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Dpto.Dom.</h3></td>");
+                }
+                if(rl.localidadDom){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Loc.Dom.</h3></td>");
+                }
+                if(rl.repitiente){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Repite</h3></td>");
+                }
+                if(rl.cantHijos){
+                    out.print("<td align='center'><h3 style='margin:2%;'>Cant. Hijos</h3></td>");
+                }
+                if(rl.talleOperacional){
+                    out.print("<td align='center'><h3 style='margin:2%;'>T.O.</h3></td>");
+                }
+                if(rl.talleBotas){
+                    out.print("<td align='center'><h3 style='margin:2%;'>T.B.</h3></td>");
+                }
+                if(rl.talleQuepi){
+                    out.print("<td align='center'><h3 style='margin:2%;'>T.Q.</h3></td>");
+                }
+                 out.print("</tr>");
+                
+    }
+    public void imprimirListado(String[] lista, RecordCamposListar rl, PrintWriter out,String Context) {
+        if(rl.ficha){
+            for(Personal p: personal.get(1)){
+                if(Arrays.toString(lista).contains(String.valueOf(p.getCi()))){
+                   ((Cadete)p).imprimirFicha(out,Context);
+                   out.print("        </table> <h1 style='page-break-after:always' > </h1>");
+                }
+            }
+        }
+        else{
+            imprimirEncabezado(out,rl);
+            Cadete c;
+            int i=0;
+            String color;
+            for(Personal p: personal.get(1)){
+                if ((i%2)==0){
+                    color=" #ccccff";
+                }
+                else{
+                    color=" #ffff99";
+                }
+                i++;
+                c = (Cadete)p;
+                if(Arrays.toString(lista).contains(String.valueOf(p.getCi()))){
+                            out.print("<tr style='background-color:"+color+"'>");
+                out.print("<td style='width: 5%' align='center'><h3 style='margin:2%;'></h3></td>");
+                if(rl.carrera){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCarrera().getDescripcion()+"</h3></td>");
+                }
+                if(rl.numero){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getNroInterno()+"</h3></td>");
+                }
+                if(rl.ci){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCi()+"</h3></td>");
+                }
+                if(rl.grado){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getGrado().getAbreviacion()+"</h3></td>");
+                }
+                if(rl.primerNombre){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getPrimerNombre()+"</h3></td>");
+                }
+                if(rl.segundoNombre){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSegundoNombre()+"</h3></td>");
+                }
+                if(rl.primerApellido){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getPrimerApellido()+"</h3></td>");
+                }
+                if(rl.segundoApellido){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSegundoApellido()+"</h3></td>");
+                }
+                if(rl.curso){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCurso().getAbreviacion()+"</h3></td>");
+                }
+                if(rl.arma){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getArma().getDescripcion()+"</h3></td>");
+                }
+                if(rl.lmga){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.isLmga()+"</h3></td>");
+                }
+                if(rl.pd){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.isPaseDirecto()+"</h3></td>");
+                }
+                if(rl.sexo){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSexo()+"</h3></td>");
+                }
+                if(rl.dptoNac){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getDepartamentoNac().getDescripcion()+"</h3></td>");
+                }
+                if(rl.localidadNac){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getLocalidadNac()+"</h3></td>");
+                }
+                if(rl.dptoDom){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getDepartamento().getDescripcion()+"</h3></td>");
+                }
+                if(rl.localidadDom){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getLocalidad()+"</h3></td>");
+                }
+                if(rl.repitiente){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.isRepitiente()+"</h3></td>");
+                }
+                if(rl.cantHijos){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getHijos()+"</h3></td>");
+                }
+                if(rl.talleOperacional){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleOperacional()+"</h3></td>");
+                }
+                if(rl.talleBotas){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleBotas()+"</h3></td>");
+                }
+                if(rl.talleQuepi){
+                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleQuepi()+"</h3></td>");
+                }
+                 out.print("</tr>");
+                    
+                }
+            }
+            out.print("</table>");
+        }
     }
     private static class ManejadorPersonalHolder {
 

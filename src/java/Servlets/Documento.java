@@ -5,6 +5,7 @@
  */
 package Servlets;
 
+import Classes.Usuario;
 import Manejadores.ManejadorCodigos;
 import Manejadores.ManejadorPersonal;
 import java.io.File;
@@ -42,44 +43,50 @@ public class Documento extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession sesion = request.getSession();
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            ManejadorPersonal mp = ManejadorPersonal.getInstance();
-            ManejadorCodigos mc = ManejadorCodigos.getInstance();
-            int ci= Integer.valueOf(request.getParameter("ci"));
-            int idTipoPersonal= Integer.valueOf(request.getParameter("idTipoPersonal"));
-            if(request.getParameter("id")!= null){ //alta
-                int id= Integer.valueOf(request.getParameter("id"));
-                Part documento = request.getPart("documento");
-                int tipoDocumento= Integer.valueOf(request.getParameter("tipoDocumento"));
-                if(id==-1){ //alta
-                    String descripcion = request.getParameter("descipcion");
-                    boolean exito = mp.altaDocumento(mc.getTipoDocumento(tipoDocumento), ci,mc.getTipoPersonal(idTipoPersonal), documento,descripcion);
-                    if(exito){
-                        sesion.setAttribute("mensaje", "Documento agregado correctamente.");
-                    }
-                    else{
-                        sesion.setAttribute("mensaje", "ERROR al agregar el documento.");
-                    }
-                }
-            }
-            else{
-                if(request.getParameter("elim")!= null){
-                    int idDocumento=Integer.valueOf(request.getParameter("elim"));
-                    if(mp.bajaDocumento(ci, mc.getTipoPersonal(idTipoPersonal), idDocumento)){
-                        sesion.setAttribute("mensaje", "Documento eliminado correctamente.");
-                    }
-                    else{
-                        sesion.setAttribute("mensaje", "ERROR al eliminar el documento.");
+        Usuario u = (Usuario)sesion.getAttribute("usuario");
+        if(u.isAdmin()||u.getPermisosPersonal().getId()==1){
+            try (PrintWriter out = response.getWriter()) {
+                /* TODO output your page here. You may use following sample code. */
+                ManejadorPersonal mp = ManejadorPersonal.getInstance();
+                ManejadorCodigos mc = ManejadorCodigos.getInstance();
+                int ci= Integer.valueOf(request.getParameter("ci"));
+                int idTipoPersonal= Integer.valueOf(request.getParameter("idTipoPersonal"));
+                if(request.getParameter("id")!= null){ //alta
+                    int id= Integer.valueOf(request.getParameter("id"));
+                    Part documento = request.getPart("documento");
+                    int tipoDocumento= Integer.valueOf(request.getParameter("tipoDocumento"));
+                    if(id==-1){ //alta
+                        String descripcion = request.getParameter("descipcion");
+                        boolean exito = mp.altaDocumento(mc.getTipoDocumento(tipoDocumento), ci,mc.getTipoPersonal(idTipoPersonal), documento,descripcion);
+                        if(exito){
+                            sesion.setAttribute("mensaje", "Documento agregado correctamente.");
+                        }
+                        else{
+                            sesion.setAttribute("mensaje", "ERROR al agregar el documento.");
+                        }
                     }
                 }
+                else{
+                    if(request.getParameter("elim")!= null){
+                        int idDocumento=Integer.valueOf(request.getParameter("elim"));
+                        if(mp.bajaDocumento(ci, mc.getTipoPersonal(idTipoPersonal), idDocumento)){
+                            sesion.setAttribute("mensaje", "Documento eliminado correctamente.");
+                        }
+                        else{
+                            sesion.setAttribute("mensaje", "ERROR al eliminar el documento.");
+                        }
+                    }
+                }
+                if(idTipoPersonal==1){
+                    response.sendRedirect("cadete.jsp?id="+request.getParameter("ci"));
+                }
+                else{
+                    response.sendRedirect("personal.jsp?ci="+request.getParameter("ci"));
+                }
             }
-            if(idTipoPersonal==1){
-                response.sendRedirect("cadete.jsp?id="+request.getParameter("ci"));
-            }
-            else{
-                response.sendRedirect("personal.jsp?ci="+request.getParameter("ci"));
-            }
+        }
+        else{
+                response.sendRedirect("");
         }
     }
     

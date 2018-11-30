@@ -9,6 +9,7 @@ import Classes.Cadete;
 import Manejadores.ManejadorPersonal;
 import Manejadores.ManejadorPersonalBD;
 import Classes.Personal;
+import Classes.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.LinkedList;
@@ -19,6 +20,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -38,50 +40,57 @@ public class ListarCadetes extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            ManejadorPersonal mp = ManejadorPersonal.getInstance();
-            int tipo = Integer.valueOf(request.getParameter("tipo"));
-            boolean orden=false;
-            if(request.getParameter("orden").equals("1")){
-                orden=true;
-            };
-            LinkedList<Personal> per=null;
-           // System.out.print("tipo="+tipo+";orden="+orden);
-            switch(tipo){
-                case 1: per=mp.getCadetesListarNro(orden); break ;
-                case 2: per=mp.getCadetesListarGrado(orden); break ;
-                case 3: per=mp.getCadetesListarNombre(orden); break ;
-                case 4: per=mp.getCadetesListarApellido(orden); break ;
-            }
-            JsonObjectBuilder json = Json.createObjectBuilder(); 
-            if(per==null){
-                json.add("listadoCadetes", Json.createArrayBuilder().build());
-            }
-            else{
-                JsonArrayBuilder jab= Json.createArrayBuilder();
-                for (Personal p : per){
-                    jab.add(Json.createObjectBuilder()
-                        .add("Nro", p.getNroInterno())
-                        .add("grado", p.getGrado().getAbreviacion())
-                        .add("primerNombre", p.getPrimerNombre())
-                        .add("segundoNombre", p.getSegundoNombre())
-                        .add("primerApellido", p.getPrimerApellido())
-                        .add("segundoApellido", p.getSegundoApellido())
-                        .add("ci", p.getCi())
-                        .add("curso", ((Cadete)p).getCurso().getAbreviacion())
-                    );
+        HttpSession sesion = request.getSession();
+        Usuario u = (Usuario)sesion.getAttribute("usuario");
+        if(u.isAdmin()||u.getPermisosPersonal().getId()!=1){
+            try (PrintWriter out = response.getWriter()) {
+                /* TODO output your page here. You may use following sample code. */
+                ManejadorPersonal mp = ManejadorPersonal.getInstance();
+                int tipo = Integer.valueOf(request.getParameter("tipo"));
+                boolean orden=false;
+                if(request.getParameter("orden").equals("1")){
+                    orden=true;
                 };
+                LinkedList<Personal> per=null;
+               // System.out.print("tipo="+tipo+";orden="+orden);
+                switch(tipo){
+                    case 1: per=mp.getCadetesListarNro(orden); break ;
+                    case 2: per=mp.getCadetesListarGrado(orden); break ;
+                    case 3: per=mp.getCadetesListarNombre(orden); break ;
+                    case 4: per=mp.getCadetesListarApellido(orden); break ;
+                }
+                JsonObjectBuilder json = Json.createObjectBuilder(); 
+                if(per==null){
+                    json.add("listadoCadetes", Json.createArrayBuilder().build());
+                }
+                else{
+                    JsonArrayBuilder jab= Json.createArrayBuilder();
+                    for (Personal p : per){
+                        jab.add(Json.createObjectBuilder()
+                            .add("Nro", p.getNroInterno())
+                            .add("grado", p.getGrado().getAbreviacion())
+                            .add("primerNombre", p.getPrimerNombre())
+                            .add("segundoNombre", p.getSegundoNombre())
+                            .add("primerApellido", p.getPrimerApellido())
+                            .add("segundoApellido", p.getSegundoApellido())
+                            .add("ci", p.getCi())
+                            .add("curso", ((Cadete)p).getCurso().getAbreviacion())
+                        );
+                    };
 
 
-                json.add("listadoCadetes", jab);
+                    json.add("listadoCadetes", jab);
 
+
+                }
+                out.print(json.build());
+            }
+            catch (Exception e){
 
             }
-            out.print(json.build());
         }
-        catch (Exception e){
-
+        else{
+                response.sendRedirect("");
         }
     }
 

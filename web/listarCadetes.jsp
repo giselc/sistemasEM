@@ -48,7 +48,7 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
                         Cadete c= (Cadete) p;
                        out.print("<tr style='background-color:"+color+"'>"
                        +"<td style='width: 5%' align='center'>"+i+"</td>"
-                       +"<td style='width: 5%' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(c.getCi())+"' /></td>"
+                       +"<td style='width: 5%' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(c.getCi())+"' form='formCadeteListar' /></td>"
                        +"<td style='width: 5%' align='center'>"+c.getNroInterno()+"</td>"
                        +"<td style='width: 10%' align='center'>"+c.getGrado().getAbreviacion()+"</td>"
                        +"<td style='width: 10%' align='center'>"+c.getPrimerNombre()+"</td>"

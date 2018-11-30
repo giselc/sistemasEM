@@ -7,6 +7,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%@ include file="header.jsp" %>   
+<% 
+    if(u.isAdmin() || u.getPermisosPersonal().getId()==1){
+%>
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/jquery-ui.js"></script>
     <script>
@@ -234,4 +237,11 @@
 
          </div>
      </div>    
+<% 
+    }
+    else{
+         response.sendRedirect("");
+    }
+
+%>
 <%@ include file="footer.jsp" %> 

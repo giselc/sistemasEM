@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%@ include file="header.jsp" %>
+<% if(u!=null && u.isAdmin()){%>
 <style type="text/css">
                         
 			.nav2 > li {
@@ -53,7 +54,7 @@
 			}
 			
     </style> 
-<% if(u!=null && u.isAdmin()){%>
+
     <p id="mensaje" style="color: #ffffff"><% if(session.getAttribute("Mensaje")!=null){out.print("<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+session.getAttribute("Mensaje"));}%></p>
     <%
         session.setAttribute("Mensaje",null);
@@ -109,9 +110,12 @@
                 <a href="habilitacion.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Habilitacion" src="images/button_habilitacion.png"/></p></a>
             </li>
     </ul>
-    <%}else{
+    <%
+}
+else{
     response.sendRedirect((String)sesion.getAttribute("inicio"));
-   }%>
+}
+    %>
 
 
 

@@ -5,7 +5,6 @@
  */
 package Servlets;
 
-import Classes.Personal;
 import Classes.Usuario;
 import Manejadores.ManejadorPersonal;
 import java.io.BufferedInputStream;
@@ -13,7 +12,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +39,7 @@ public class Imagenes extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             HttpSession sesion = request.getSession();
             Usuario u = (Usuario)sesion.getAttribute("usuario");
-            if(u.isAdmin()||u.getPermisosPersonal().getId()!=0){
+            if(u.isAdmin()||u.getPermisosPersonal().getId()!=1){
                 String path="";
                 ManejadorPersonal mp = ManejadorPersonal.getInstance();
                 if(request.getParameter("foto")!=null){

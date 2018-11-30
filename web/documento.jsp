@@ -15,6 +15,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%@ include file="header.jsp" %>
+<% 
+    if(u.isAdmin() || u.getPermisosPersonal().getId()==1){
+%>
+
 <script type="text/javascript">
         function PreviewImage() {
             var fileInput = document.getElementById('uploadImage');
@@ -42,9 +46,6 @@
         }
 
 </script>
-<% 
-    if(u.isAdmin() || u.getPermisosPersonal().getId()==1){
-%>
 <% 
     Documento d=null;    
     if(request.getParameter("id")!=null){
@@ -114,4 +115,5 @@
     }
 
 %>
+
 <%@ include file="footer.jsp" %>

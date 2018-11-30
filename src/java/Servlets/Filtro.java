@@ -7,6 +7,7 @@ package Servlets;
 
 import Classes.Personal;
 import Classes.RecordCadetesFiltro;
+import Classes.Usuario;
 import Manejadores.ManejadorPersonal;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -36,52 +38,59 @@ public class Filtro extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            ManejadorPersonal mp = ManejadorPersonal.getInstance(); 
-            RecordCadetesFiltro rf =  new RecordCadetesFiltro();
-            rf.lmga = request.getParameter("lmga");
-            rf.pd = request.getParameter("pd");
-            rf.sexo = request.getParameter("sexo");
-            rf.canthijos = request.getParameterValues("canthijos");
-            rf.depDom = request.getParameterValues("depDom");
-            rf.depNac = request.getParameterValues("depNac");
-            rf.carrera = request.getParameter("carrera");
-            rf.repitiente = request.getParameter("repitiente");
-            rf.armas = request.getParameterValues("armas");
-            rf.grados = request.getParameterValues("grados");
-            rf.cursos = request.getParameterValues("cursos");
-            ArrayList<Personal> ap = mp.getPersonalFiltro(rf);
-            JsonObjectBuilder json = Json.createObjectBuilder(); 
-            json.add("filtroTexto",rf.filtroMostrar);
-            if(ap.isEmpty()){
-               json.add("listadoPersonal", Json.createArrayBuilder().build());
+        HttpSession sesion = request.getSession();
+        Usuario u = (Usuario)sesion.getAttribute("usuario");
+        if(u.isAdmin()||u.getPermisosPersonal().getId()==1){
+            try (PrintWriter out = response.getWriter()) {
+                /* TODO output your page here. You may use following sample code. */
+                ManejadorPersonal mp = ManejadorPersonal.getInstance(); 
+                RecordCadetesFiltro rf =  new RecordCadetesFiltro();
+                rf.lmga = request.getParameter("lmga");
+                rf.pd = request.getParameter("pd");
+                rf.sexo = request.getParameter("sexo");
+                rf.canthijos = request.getParameterValues("canthijos");
+                rf.depDom = request.getParameterValues("depDom");
+                rf.depNac = request.getParameterValues("depNac");
+                rf.carrera = request.getParameter("carrera");
+                rf.repitiente = request.getParameter("repitiente");
+                rf.armas = request.getParameterValues("armas");
+                rf.grados = request.getParameterValues("grados");
+                rf.cursos = request.getParameterValues("cursos");
+                ArrayList<Personal> ap = mp.getPersonalFiltro(rf);
+                JsonObjectBuilder json = Json.createObjectBuilder(); 
+                json.add("filtroTexto",reemplazarCaracteresHtml(rf.filtroMostrar));
+                if(ap.isEmpty()){
+                   json.add("listadoPersonal", Json.createArrayBuilder().build());
+                }
+                else{
+                    JsonArrayBuilder jab= Json.createArrayBuilder();
+                    for (Personal p : ap){
+                        jab.add(Json.createObjectBuilder()
+                            .add("ci", p.getCi())
+                            .add("numero", p.getNroInterno())
+                            .add("primerNombre", reemplazarCaracteresHtml(p.getPrimerNombre()))
+                            .add("segundoNombre", reemplazarCaracteresHtml(p.getSegundoNombre()))
+                            .add("primerApellido",reemplazarCaracteresHtml(p.getPrimerApellido()))
+                            .add("segundoApellido",reemplazarCaracteresHtml(p.getSegundoApellido()))
+                            .add("grado",reemplazarCaracteresHtml(p.getGrado().getAbreviacion()))
+                            .add("curso", reemplazarCaracteresHtml(((Classes.Cadete)p).getCurso().getAbreviacion()))
+                        );
+                    };
+                    json.add("listadoPersonal", jab);
+                }
+                out.print(json.build());
             }
-            else{
-                JsonArrayBuilder jab= Json.createArrayBuilder();
-                for (Personal p : ap){
-                    jab.add(Json.createObjectBuilder()
-                        .add("ci", p.getCi())
-                        .add("numero", p.getNroInterno())
-                        .add("primerNombre", reemplazarCaracteresHtml(p.getPrimerNombre()))
-                        .add("segundoNombre", reemplazarCaracteresHtml(p.getSegundoNombre()))
-                        .add("primerApellido",reemplazarCaracteresHtml(p.getPrimerApellido()))
-                        .add("segundoApellido",reemplazarCaracteresHtml(p.getSegundoApellido()))
-                        .add("grado",reemplazarCaracteresHtml(p.getGrado().getAbreviacion()))
-                        .add("curso", reemplazarCaracteresHtml(((Classes.Cadete)p).getCurso().getAbreviacion()))
-                    );
-                };
-                json.add("listadoPersonal", jab);
+            catch (Exception e){
+                System.out.print(e.getMessage());
             }
-            out.print(json.build());
         }
-        catch (Exception e){
-            System.out.print(e.getMessage());
+        else{
+                response.sendRedirect("");
         }
     }
     private String reemplazarCaracteresHtml(String input){
-        CharSequence[] origen={"á", "à", "Á", "À","é", "è", "É", "È","í", "ì", "Í", "Ì","ó", "ò", "Ó", "Ò","ú", "ù", "Ú", "Ù","ñ","Ñ","ç","Ç","º","ª"};
-        CharSequence[] destino= {"&aacute;", "&aacute;", "&Aacute;", "&Aacute;","&eacute;", "&eacute;", "&Eacute;", "&Eacute;","&iacute;", "&iacute;", "&Iacute;", "&Iacute;","&oacute;", "&oacute;", "&Oacute;", "&Oacute;","&uacute;", "&uacute;", "&Uacute;", "&Uacute;","&ntilde;","&Ntilde;","&ccedil;","&Ccedil;","&deg;","&ordf;"} ;
+        CharSequence[] origen={"á", "à", "Á", "À","é", "è", "É", "È","í", "ì", "Í", "Ì","ó", "ò", "Ó", "Ò","ú", "ù", "Ú", "Ù","ñ","Ñ","ç","Ç","°","ª"};//,""
+        CharSequence[] destino= {"&aacute;", "&aacute;", "&Aacute;", "&Aacute;","&eacute;", "&eacute;", "&Eacute;", "&Eacute;","&iacute;", "&iacute;", "&Iacute;", "&Iacute;","&oacute;", "&oacute;", "&Oacute;", "&Oacute;","&uacute;", "&uacute;", "&Uacute;", "&Uacute;","&ntilde;","&Ntilde;","&ccedil;","&Ccedil;","&deg;","&ordf;"} ;//
         int i=0;
         for(CharSequence o:origen){
             input=input.replace(o, destino[i++]);
