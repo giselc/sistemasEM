@@ -5,9 +5,6 @@
  */
 package Classes;
 
-import java.sql.Blob;
-import java.sql.Date;
-
 /**
  *
  * @author Gisel

@@ -12,7 +12,6 @@ import Classes.Departamento;
 import Classes.EstadoCivil;
 import Classes.Grado;
 import Classes.Tipo;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**

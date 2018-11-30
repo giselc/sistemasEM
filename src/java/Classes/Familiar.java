@@ -5,8 +5,6 @@
  */
 package Classes;
 
-import java.sql.Date;
-
 /**
  *
  * @author Gisel

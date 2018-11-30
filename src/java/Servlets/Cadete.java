@@ -5,14 +5,12 @@
  */
 package Servlets;
 
-import Classes.Personal;
 import Classes.RecordCadete;
 import Classes.RecordPersonal;
 import Classes.Usuario;
 import Manejadores.ManejadorPersonal;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Enumeration;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;

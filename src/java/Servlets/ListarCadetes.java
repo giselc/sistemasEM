@@ -7,7 +7,6 @@ package Servlets;
 
 import Classes.Cadete;
 import Manejadores.ManejadorPersonal;
-import Manejadores.ManejadorPersonalBD;
 import Classes.Personal;
 import Classes.Usuario;
 import java.io.IOException;
