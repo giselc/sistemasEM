@@ -199,7 +199,7 @@
                     document.getElementById("tablalistado").innerHTML = datos;
                 };
             };
-            xmlhttp.open("POST","ListarCadetes?tipo="+tipo+"&orden="+orden);
+            xmlhttp.open("POST","ListarPersonal?tipoListado="+tipo+"&orden="+orden+"&tipo=1");
             xmlhttp.send();
             return false;
         }
@@ -232,7 +232,7 @@
                         </td>
                     </tr>
                 </table>
-                <%@include file="listarCadetes.jsp" %>
+                <%@include file="listarPersonal.jsp?tipo=1" %>
             </form>
 
          </div>

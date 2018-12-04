@@ -9,7 +9,7 @@
 <%@page import="java.util.HashMap"%>
 <%@page import="Manejadores.ManejadorCodigos"%>
 <%@page import="Classes.Cadete"%>
-<form method="post"  id="formulario1" <% if (request.getParameter("ci")==null){ out.print("action='alerta(Debe crear un cadete previamente)'");} else{out.print("action='Cadete?ci="+request.getParameter("ci")+"&patronimico=1'");} %> enctype="multipart/form-data">
+<form method="post"  id="formulario1" <% if (request.getParameter("id")!=null){ out.print("action='Cadete?ci="+request.getParameter("id")+"&patronimico=1'");} %> enctype="multipart/form-data">
     <table>
         <tr>
             <td>
@@ -27,7 +27,7 @@
         </tr>
         <tr>
             <td>Fecha de Nacimiento: </td>
-            <td><input type=date name="PFechaNac" size="8" value="<%if( c!=null){out.print(c.getPadre().getFechaNac());} %>"/></td>
+            <td><input type=date name="PFechaNac" size="8" value="<%=c.getPadre().getFechaNac()%>"/></td>
         </tr>
         <tr>
             <td>Departamento de Nacimiento: </td>
@@ -35,13 +35,13 @@
                 <select name="PDepartamentoNac" form="formulario1">
                     <%
                     for(Departamento dep1: ad1.values() ){
-                        String s="";
+                        String s1="";
                         if(c!=null && c.getPadre().getDepartamentoNac()!=null){
                             if(c.getPadre().getDepartamentoNac().getCodigo()==dep1.getCodigo()){
-                                s="selected";
+                                s1="selected";
                             }
                         }
-                        out.print("<option " + s +" value='"+String.valueOf(dep1.getCodigo()) +"'>"+ dep1.getDescripcion() +"</option>");
+                        out.print("<option " + s1 +" value='"+String.valueOf(dep1.getCodigo()) +"'>"+ dep1.getDescripcion() +"</option>");
                     }
                     %>
                  </select>
@@ -57,13 +57,13 @@
                 <select name="PEstadoCivil" form="formulario1">
                     <%
                     for(EstadoCivil ec: ae.values() ){
-                        String s="";
+                        String s1="";
                         if(c!=null && c.getPadre().getEstadoCivil()!=null){
                             if(c.getPadre().getEstadoCivil().getCodigo()==ec.getCodigo()){
-                                s="selected";
+                                s1="selected";
                             }
                         }
-                        out.print("<option " + s +" value='"+String.valueOf(ec.getCodigo()) +"'>"+ ec.getDescripcion() +"</option>");
+                        out.print("<option " + s1 +" value='"+String.valueOf(ec.getCodigo()) +"'>"+ ec.getDescripcion() +"</option>");
                     }
                     %>
                  </select>
@@ -80,13 +80,13 @@
                     <%
                     ad1 = mc.getDepartamentos();
                     for(Departamento dep1: ad1.values() ){
-                        String s="";
+                        String s1="";
                         if(c!=null && c.getPadre().getDepartamento()!=null){
                             if( c.getPadre().getDepartamento().getCodigo()==dep1.getCodigo()){
-                                s="selected";
+                                s1="selected";
                             }
                         }
-                        out.print("<option " + s +" value='"+String.valueOf(dep1.getCodigo()) +"'>"+ dep1.getDescripcion() +"</option>");
+                        out.print("<option " + s1 +" value='"+String.valueOf(dep1.getCodigo()) +"'>"+ dep1.getDescripcion() +"</option>");
                     }
                     %>
                  </select>
@@ -120,7 +120,7 @@
         </tr>
         <tr>
             <td>Fecha de Nacimiento: </td>
-            <td><input type=date name="MFechaNac" size="8" value="<%if( c!=null){out.print(c.getMadre().getFechaNac());} %>"/></td>
+            <td><input type=date name="MFechaNac" size="8" value="<%=c.getMadre().getFechaNac()%>"/></td>
         </tr>
         <tr>
             <td>Departamento de Nacimiento: </td>
@@ -129,13 +129,13 @@
                     <%
                     ad1 = mc.getDepartamentos();
                     for(Departamento dep1: ad1.values() ){
-                        String s="";
+                        String s1="";
                         if(c!=null && c.getMadre().getDepartamentoNac()!=null){
                             if(c.getMadre().getDepartamentoNac().getCodigo()==dep1.getCodigo()){
-                                s="selected";
+                                s1="selected";
                             }
                         }
-                        out.print("<option " + s +" value='"+String.valueOf(dep1.getCodigo()) +"'>"+ dep1.getDescripcion() +"</option>");
+                        out.print("<option " + s1 +" value='"+String.valueOf(dep1.getCodigo()) +"'>"+ dep1.getDescripcion() +"</option>");
                     }
                     %>
                  </select>
@@ -152,13 +152,13 @@
                     <%
                     ae = mc.getEstadosCiviles();
                     for(EstadoCivil ec: ae.values() ){
-                        String s="";
+                        String s1="";
                         if(c!=null && c.getMadre().getEstadoCivil()!=null){
                             if(c.getMadre().getEstadoCivil().getCodigo()==ec.getCodigo()){
-                                s="selected";
+                                s1="selected";
                             }
                         }
-                        out.print("<option " + s +" value='"+String.valueOf(ec.getCodigo()) +"'>"+ ec.getDescripcion() +"</option>");
+                        out.print("<option " + s1 +" value='"+String.valueOf(ec.getCodigo()) +"'>"+ ec.getDescripcion() +"</option>");
                     }
                     %>
                  </select>
@@ -175,13 +175,13 @@
                     <%
                     ad1 = mc.getDepartamentos();
                     for(Departamento dep1: ad1.values() ){
-                        String s="";
+                        String s1="";
                         if(c!=null && c.getMadre().getDepartamento()!=null){
                             if(c.getMadre().getDepartamento().getCodigo()==dep1.getCodigo()){
-                                s="selected";
+                                s1="selected";
                             }
                         }
-                        out.print("<option " + s +" value='"+String.valueOf(dep1.getCodigo()) +"'>"+ dep1.getDescripcion() +"</option>");
+                        out.print("<option " + s1 +" value='"+String.valueOf(dep1.getCodigo()) +"'>"+ dep1.getDescripcion() +"</option>");
                     }
                     %>
                  </select>

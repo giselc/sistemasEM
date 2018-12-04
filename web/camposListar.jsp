@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 
-<form method="post" target="_blank" onsubmit="return listar(this)" id="formCadeteListar" name="formCadeteListar" action='Listar'>
+<form method="post" target="_blank" onsubmit="return listar(this)" id="formCadeteListar" name="formCadeteListar" action='Listar?tipoPersonal=<%=tipo %>'>
     <table style="font-size: 70%">
         <tr>
             <td>

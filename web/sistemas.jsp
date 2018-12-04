@@ -67,13 +67,13 @@
                         <a href="cadetes.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Cadetes" src="images/button_cadetes.png"/></p></a>
                     </li>
                     <li style="width: 90%">
-                        <a href="ps.jsp"><p align="center" style="margin:0px"><img  class="boton" title="PS" src="images/button_p-s.png"/></p></a>
+                        <a href="personal.jsp?tipo=2"><p align="center" style="margin:0px"><img  class="boton" title="PS" src="images/button_p-s.png"/></p></a>
                     </li>
                     <li style="width: 90%">
-                        <a href="oficiales.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Oficiales" src="images/button_oficiales.png"/></p></a>
+                        <a href="personal.jsp?tipo=3"><p align="center" style="margin:0px"><img  class="boton" title="Oficiales" src="images/button_oficiales.png"/></p></a>
                     </li>
                     <li style="width: 90%">
-                        <a href="profesores.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Profesores" src="images/button_profesores.png"/></p></a>
+                        <a href="personal.jsp?tipo=4"><p align="center" style="margin:0px"><img  class="boton" title="Profesores" src="images/button_profesores.png"/></p></a>
                     </li>
                     <li style="width: 90%">
                         <a href="S1-admin.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Admin" src="images/button_admin.png"/></p></a>

@@ -91,8 +91,18 @@
                                                         %>
                                                              <li><a href="usuarios.jsp">Usuarios </a></li>
                                                              <li>
-                                                                <form action="AgregarPersonal" method="POST" style="font-size: 100%">
+                                                                <form action="AgregarPersonal?tipo=1" method="POST" style="font-size: 100%">
+                                                                    <a align="center"><input type="submit" value="Agregar Cadetes"/></a>
+                                                                </form>
+                                                            </li>
+                                                            <li>
+                                                                <form action="AgregarPersonal?tipo=2" method="POST" style="font-size: 100%">
                                                                     <a align="center"><input type="submit" value="Agregar Personal"/></a>
+                                                                </form>
+                                                            </li>
+                                                            <li>
+                                                                <form action="AgregarPersonal?tipo=4" method="POST" style="font-size: 100%">
+                                                                    <a align="center"><input type="submit" value="Agregar Profesores"/></a>
                                                                 </form>
                                                             </li>
                                                         <%

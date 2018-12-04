@@ -71,6 +71,9 @@ public class Cadete extends HttpServlet {
                     sesion.setAttribute("Mensaje", mensaje);
                     response.sendRedirect(redirect);
                 }
+                else if(request.getParameter("patronimico")!=null){
+                    //////////FALTAAAAAAAAAAAAAAAAAAAAAAAAa
+                }
                 else{
                     if(request.getParameter("existe")!=null){
                         JsonObjectBuilder json = Json.createObjectBuilder(); 

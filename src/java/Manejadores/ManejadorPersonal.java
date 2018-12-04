@@ -8,7 +8,7 @@ package Manejadores;
 import Classes.Cadete;
 import Classes.Documento;
 import Classes.Personal;
-import Classes.RecordCadetesFiltro;
+import Classes.RecordFiltro;
 import Classes.RecordCamposListar;
 import Classes.RecordPersonal;
 import Classes.Tipo;
@@ -76,7 +76,7 @@ public class ManejadorPersonal {
         return sinError&&mp.actualizarGrados(parameterValues);
             
     }
-    public void setFiltroMostrar(RecordCadetesFiltro rf){
+    public void setFiltroMostrar(RecordFiltro rf){
         String filtroMostrar = "";
         ManejadorCodigos mc = ManejadorCodigos.getInstance();
         boolean guion=false;
@@ -203,7 +203,29 @@ public class ManejadorPersonal {
         }
         rf.filtroMostrar=filtroMostrar;
     }
-    public ArrayList<Personal> getPersonalFiltro(RecordCadetesFiltro rf) {
+     public void setFiltroMostrarPersonal(RecordFiltro rf){
+        String filtroMostrar = "";
+        ManejadorCodigos mc = ManejadorCodigos.getInstance();
+        boolean guion=false;
+        if(rf.armas!=null){
+            filtroMostrar+="Armas:";
+            for(String s:rf.armas){
+                filtroMostrar+=" "+mc.getArma(Integer.valueOf(s)).getDescripcion();
+            }
+            guion=true;
+        }
+        if(rf.grados!=null){
+            if(guion){
+                filtroMostrar+=" - ";
+            }
+            filtroMostrar+="Grados:";
+            for(String s:rf.grados){
+                filtroMostrar+=" "+mc.getGrado(Integer.valueOf(s)).getDescripcion();
+            }
+        }
+        rf.filtroMostrar=filtroMostrar;
+     }
+    public ArrayList<Personal> getCadeteFiltro(RecordFiltro rf) {
         boolean cumpleFiltro;
         ArrayList<Personal> ap= new ArrayList<>();
         //int i =0;
@@ -211,7 +233,12 @@ public class ManejadorPersonal {
             Cadete c= (Cadete)p;
             cumpleFiltro=true;
             if(rf.armas!=null){
-                cumpleFiltro=cumpleFiltro && Arrays.toString(rf.armas).contains(String.valueOf(c.getArma().getId()));
+                if(c.getArma()!=null){
+                    cumpleFiltro=cumpleFiltro && Arrays.toString(rf.armas).contains(String.valueOf(c.getArma().getId()));
+                }
+                else{
+                    cumpleFiltro=false;
+                }
             }
             if(cumpleFiltro && rf.grados!=null){
                 cumpleFiltro=cumpleFiltro && Arrays.toString(rf.grados).contains(String.valueOf(c.getGrado().getId()));
@@ -270,7 +297,7 @@ public class ManejadorPersonal {
         setFiltroMostrar(rf);
         return ap;
     }
-    private void imprimirEncabezado(PrintWriter out,RecordCamposListar rl){
+    private void imprimirEncabezado(PrintWriter out,RecordCamposListar rl,int tipoPersonal){
     out.print("<table style=\"width: 70%; margin:auto;\">");
     out.print("     <tr>\n" +
         "                <td colspan=\"3\">\n" +
@@ -281,9 +308,17 @@ public class ManejadorPersonal {
         "                </td>\n" +
         "            </tr>\n");
 out.print("          <tr>\n" +
-        "                <td colspan=\"6\" style=\"text-align: center;\">\n" +
-        "                    <h1>CADETES</h1>\n" +
-        "                </td>\n" +
+        "                <td colspan=\"6\" style=\"text-align: center;\">\n");
+switch(tipoPersonal){
+    case 1:out.print("       <h1>CADETES</h1>\n");break;
+    case 2:out.print("       <h1>PERSONAL SUBALTERNO</h1>\n");break;
+    case 3:out.print("       <h1>SEÑORES OFICIALES</h1>\n");break;
+    case 4:out.print("       <h1>PROFESORES</h1>\n");break;
+                    
+}
+switch(tipoPersonal){
+    case 1:
+out.print("                </td>\n" +
         "            </tr>\n");
         out.println("<tr>\n" +
                 "        <td colspan=\"6\">\n" +
@@ -361,11 +396,33 @@ out.print("          <tr>\n" +
                     out.print("<td align='center'><h3 style='margin:2%;'>T.Q.</h3></td>");
                 }
                  out.print("</tr>");
+        break;
+    case 2: case 3: case 4:
+        out.print("                </td>\n" +
+        "            </tr>\n");
+        out.println("<tr>\n" +
+                "        <td colspan=\"6\">\n" +
+                "            <p>\n <b>FILTROS: </b> " +
+                                rl.filtro +
+                "            </p>\n" +
+                "        </td>\n" +
+                "    </tr>");
+        out.print("<tr style='background-color:#ffcc66'>");
+        out.print("<td align='center'><h3 style='margin:2%;'>Número</h3></td>");
+        out.print("<td align='center'><h3 style='margin:2%;'>C.I.</h3></td>");
+        out.print("<td align='center'><h3 style='margin:2%;'>Grado</h3></td>");
+        out.print("<td align='center'><h3 style='margin:2%;'>Primer nombre</h3></td>");
+        out.print("<td align='center'><h3 style='margin:2%;'>Segundo nombre</h3></td>");
+        out.print("<td align='center'><h3 style='margin:2%;'>Primer apellido</h3></td>");
+        out.print("<td align='center'><h3 style='margin:2%;'>Segundo apellido</h3></td>");
+        out.print("<td align='center'><h3 style='margin:2%;'>Arma</h3></td>");
+         break;       
+        }
                 
     }
-    public void imprimirListado(String[] lista, RecordCamposListar rl, PrintWriter out,String Context) {
+    public void imprimirListado(String[] lista, RecordCamposListar rl, PrintWriter out,String Context,int tipoPersonal) {
         if(rl.ficha){
-            for(Personal p: personal.get(1)){
+            for(Personal p: personal.get(tipoPersonal)){
                 if(Arrays.toString(lista).contains(String.valueOf(p.getCi()))){
                    ((Cadete)p).imprimirFicha(out,Context);
                    out.print("        </table> <h1 style='page-break-after:always' > </h1>");
@@ -373,11 +430,11 @@ out.print("          <tr>\n" +
             }
         }
         else{
-            imprimirEncabezado(out,rl);
+            imprimirEncabezado(out,rl,tipoPersonal);
             Cadete c;
             int i=0;
             String color;
-            for(Personal p: personal.get(1)){
+            for(Personal p: personal.get(tipoPersonal)){
                 if ((i%2)==0){
                     color=" #ccccff";
                 }
@@ -385,82 +442,119 @@ out.print("          <tr>\n" +
                     color=" #ffff99";
                 }
                 i++;
-                c = (Cadete)p;
                 if(Arrays.toString(lista).contains(String.valueOf(p.getCi()))){
-                            out.print("<tr style='background-color:"+color+"'>");
-                out.print("<td style='width: 5%' align='center'><h3 style='margin:2%;'></h3></td>");
-                if(rl.carrera){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCarrera().getDescripcion()+"</h3></td>");
-                }
-                if(rl.numero){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getNroInterno()+"</h3></td>");
-                }
-                if(rl.ci){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCi()+"</h3></td>");
-                }
-                if(rl.grado){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getGrado().getAbreviacion()+"</h3></td>");
-                }
-                if(rl.primerNombre){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getPrimerNombre()+"</h3></td>");
-                }
-                if(rl.segundoNombre){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSegundoNombre()+"</h3></td>");
-                }
-                if(rl.primerApellido){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getPrimerApellido()+"</h3></td>");
-                }
-                if(rl.segundoApellido){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSegundoApellido()+"</h3></td>");
-                }
-                if(rl.curso){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCurso().getAbreviacion()+"</h3></td>");
-                }
-                if(rl.arma){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getArma().getDescripcion()+"</h3></td>");
-                }
-                if(rl.lmga){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.isLmga()+"</h3></td>");
-                }
-                if(rl.pd){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.isPaseDirecto()+"</h3></td>");
-                }
-                if(rl.sexo){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSexo()+"</h3></td>");
-                }
-                if(rl.dptoNac){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getDepartamentoNac().getDescripcion()+"</h3></td>");
-                }
-                if(rl.localidadNac){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getLocalidadNac()+"</h3></td>");
-                }
-                if(rl.dptoDom){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getDepartamento().getDescripcion()+"</h3></td>");
-                }
-                if(rl.localidadDom){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getLocalidad()+"</h3></td>");
-                }
-                if(rl.repitiente){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.isRepitiente()+"</h3></td>");
-                }
-                if(rl.cantHijos){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getHijos()+"</h3></td>");
-                }
-                if(rl.talleOperacional){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleOperacional()+"</h3></td>");
-                }
-                if(rl.talleBotas){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleBotas()+"</h3></td>");
-                }
-                if(rl.talleQuepi){
-                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleQuepi()+"</h3></td>");
-                }
+                    out.print("<tr style='background-color:"+color+"'>");
+                    switch(tipoPersonal){
+                        case 1:
+                            c = (Cadete)p;
+                            out.print("<td style='width: 5%' align='center'><h3 style='margin:2%;'></h3></td>");
+                            if(rl.carrera){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCarrera().getDescripcion()+"</h3></td>");
+                            }
+                            if(rl.numero){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getNroInterno()+"</h3></td>");
+                            }
+                            if(rl.ci){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCi()+"</h3></td>");
+                            }
+                            if(rl.grado){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getGrado().getAbreviacion()+"</h3></td>");
+                            }
+                            if(rl.primerNombre){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getPrimerNombre()+"</h3></td>");
+                            }
+                            if(rl.segundoNombre){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSegundoNombre()+"</h3></td>");
+                            }
+                            if(rl.primerApellido){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getPrimerApellido()+"</h3></td>");
+                            }
+                            if(rl.segundoApellido){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSegundoApellido()+"</h3></td>");
+                            }
+                            if(rl.curso){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCurso().getAbreviacion()+"</h3></td>");
+                            }
+                            if(rl.arma){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getArma().getDescripcion()+"</h3></td>");
+                            }
+                            if(rl.lmga){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.isLmga()+"</h3></td>");
+                            }
+                            if(rl.pd){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.isPaseDirecto()+"</h3></td>");
+                            }
+                            if(rl.sexo){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSexo()+"</h3></td>");
+                            }
+                            if(rl.dptoNac){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getDepartamentoNac().getDescripcion()+"</h3></td>");
+                            }
+                            if(rl.localidadNac){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getLocalidadNac()+"</h3></td>");
+                            }
+                            if(rl.dptoDom){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getDepartamento().getDescripcion()+"</h3></td>");
+                            }
+                            if(rl.localidadDom){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getLocalidad()+"</h3></td>");
+                            }
+                            if(rl.repitiente){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.isRepitiente()+"</h3></td>");
+                            }
+                            if(rl.cantHijos){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getHijos()+"</h3></td>");
+                            }
+                            if(rl.talleOperacional){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleOperacional()+"</h3></td>");
+                            }
+                            if(rl.talleBotas){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleBotas()+"</h3></td>");
+                            }
+                            if(rl.talleQuepi){
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleQuepi()+"</h3></td>");
+                            }
+                        break;
+                        case 2: case 3: case 4:
+                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getNroInterno()+"</h3></td>");
+                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getCi()+"</h3></td>");
+                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getGrado().getAbreviacion()+"</h3></td>");
+                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getPrimerNombre()+"</h3></td>");
+                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getSegundoNombre()+"</h3></td>");
+                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getPrimerApellido()+"</h3></td>");
+                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getSegundoApellido()+"</h3></td>");
+                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getArma().getDescripcion()+"</h3></td>");
+                        break;
+                    }
                  out.print("</tr>");
-                    
                 }
             }
             out.print("</table>");
         }
+    }
+    public ArrayList<Personal> getPersonalFiltro(RecordFiltro rf,int tipoPersonal) {
+       boolean cumpleFiltro;
+        ArrayList<Personal> ap= new ArrayList<>();
+        //int i =0;
+        for (Personal p : personal.get(tipoPersonal)) {
+            cumpleFiltro=true;
+            if(rf.armas!=null){
+                if(p.getArma()!=null){
+                    cumpleFiltro=cumpleFiltro && Arrays.toString(rf.armas).contains(String.valueOf(p.getArma().getId()));
+                }
+                else{
+                    cumpleFiltro=false;
+                }
+            }
+            if(cumpleFiltro && rf.grados!=null){
+                cumpleFiltro=cumpleFiltro && Arrays.toString(rf.grados).contains(String.valueOf(p.getGrado().getId()));
+            }
+            if(cumpleFiltro){
+                ap.add(p);
+            }
+        }
+        setFiltroMostrarPersonal(rf);
+        return ap;
     }
     private static class ManejadorPersonalHolder {
 
@@ -492,26 +586,25 @@ out.print("          <tr>\n" +
         }
         return null;
     }
-    public LinkedList<Personal> getCadetesListarNro(Boolean asc){//0=des,1=asc
-        LinkedList<Personal> cadetes= new LinkedList();
+    public LinkedList<Personal> getPersonalListarNro(int tipo,Boolean asc){//0=des,1=asc
+        LinkedList<Personal> personalLista= new LinkedList();
         if(asc){
-            for(Personal c : personal.get(1)){
-                c=(Cadete)c;
-                if(cadetes.isEmpty()){
-                    cadetes.add(c);
+            for(Personal c : personal.get(tipo)){
+                if(personalLista.isEmpty()){
+                    personalLista.add(c);
                 }
                 else{
-                    if(c.getNroInterno() >= ((Cadete)cadetes.getLast()).getNroInterno()){
-                        cadetes.addLast(c);
+                    if(c.getNroInterno() >= (personalLista.getLast()).getNroInterno()){
+                        personalLista.addLast(c);
                     }
                     else{
                         int i=0;
                         boolean agregue=false;
-                        Iterator it = cadetes.iterator();
+                        Iterator it = personalLista.iterator();
                         while(it.hasNext() && !agregue){
-                            Cadete cadActual = (Cadete)it.next();
-                            if(c.getNroInterno()<= cadActual.getNroInterno()){
-                                cadetes.add(i, c);
+                            Personal perActual = (Personal)it.next();
+                            if(c.getNroInterno()<= perActual.getNroInterno()){
+                                personalLista.add(i, c);
                                 agregue=true;
                             }
                             i++;
@@ -521,23 +614,22 @@ out.print("          <tr>\n" +
             }
         }
         else{
-            for(Personal c : personal.get(1)){
-                c=(Cadete)c;
-                if(cadetes.isEmpty()){
-                    cadetes.add(c);
+            for(Personal c : personal.get(tipo)){
+                if(personalLista.isEmpty()){
+                    personalLista.add(c);
                 }
                 else{
-                    if(c.getNroInterno() <= ((Cadete)cadetes.getLast()).getNroInterno()){
-                        cadetes.addLast(c);
+                    if(c.getNroInterno() <= (personalLista.getLast()).getNroInterno()){
+                        personalLista.addLast(c);
                     }
                     else{
                         int i=0;
                         boolean agregue=false;
-                        Iterator it = cadetes.iterator();
+                        Iterator it = personalLista.iterator();
                         while(it.hasNext() && !agregue){
-                            Cadete cadActual = (Cadete)it.next();
-                            if(c.getNroInterno()>= cadActual.getNroInterno()){
-                                cadetes.add(i, c);
+                            Personal perActual = (Personal)it.next();
+                            if(c.getNroInterno()>= perActual.getNroInterno()){
+                                personalLista.add(i, c);
                                 agregue=true;
                             }
                             i++;
@@ -546,39 +638,51 @@ out.print("          <tr>\n" +
                 }
             }
         }
-        return cadetes;
+        return personalLista;
     }
-    public LinkedList<Personal> getCadetesListarGrado(Boolean asc){//0=des,1=asc
-        LinkedList<Personal> cadetes= new LinkedList();
+    public LinkedList<Personal> getPersonalListarGrado(int tipo,Boolean asc){//0=des,1=asc
+        LinkedList<Personal> personalLista= new LinkedList();
+        System.out.print(tipo);
         if(asc){
-            Cadete c= null;
-            for(Personal p : personal.get(1)){
-                c=(Cadete)p;
-                if(cadetes.isEmpty()){
-                    cadetes.add(c);
+            for(Personal c : personal.get(tipo)){
+                if(personalLista.isEmpty()){
+                    personalLista.add(c);
                 }
                 else{
                     int i=0;
                     boolean agregue=false;
-                    Iterator it = cadetes.iterator();
+                    Iterator it = personalLista.iterator();
+                    Personal personalActual;
+                    Cadete cadActual;
                     while(it.hasNext() && !agregue){
-                        Cadete cadActual = (Cadete)it.next();
-                        if(c.getGrado().getId()> cadActual.getGrado().getId()){
-                            cadetes.add(i, c);
+                        personalActual=(Personal)it.next();
+                        if(c.getGrado().getId()> personalActual.getGrado().getId()){
+                            personalLista.add(i, c);
                             agregue=true;
                         }
                         else{
-                            if(c.getGrado().getId()== cadActual.getGrado().getId()){
-                                if(c.getCurso().getId()< cadActual.getCurso().getId()){
-                                    cadetes.add(i, c);
-                                    agregue=true;
-                                }
-                                else{
-                                    if(c.getCurso().getId()==cadActual.getCurso().getId()){
-                                        if(c.getPrimerApellido().compareToIgnoreCase(cadActual.getPrimerApellido())<= 0){
-                                            cadetes.add(i, c);
-                                            agregue=true;
+                            if(tipo==1){
+                                cadActual = (Cadete)personalActual;
+                                if(c.getGrado().getId()== personalActual.getGrado().getId()){
+                                    if(((Cadete)c).getCurso().getId()< cadActual.getCurso().getId()){
+                                        personalLista.add(i, c);
+                                        agregue=true;
+                                    }
+                                    else{
+                                        if(((Cadete)c).getCurso().getId()==cadActual.getCurso().getId()){
+                                            if(c.getPrimerApellido().compareToIgnoreCase(cadActual.getPrimerApellido())<= 0){
+                                                personalLista.add(i, c);
+                                                agregue=true;
+                                            }
                                         }
+                                    }
+                                }
+                            }
+                            else{
+                                if(c.getGrado().getId()== personalActual.getGrado().getId()){
+                                    if(c.getPrimerApellido().compareToIgnoreCase(personalActual.getPrimerApellido())<= 0){
+                                        personalLista.add(i, c);
+                                        agregue=true;
                                     }
                                 }
                             }
@@ -586,42 +690,51 @@ out.print("          <tr>\n" +
                         i++;
                     }
                     if(!agregue){
-                        cadetes.addLast(c);
+                        personalLista.addLast(c);
                     }
-                    
-                    
                 }
             }
         }
         else{
-            Cadete c=null;
-            for(Personal p : personal.get(1)){
-                c=(Cadete)p;
-                if(cadetes.isEmpty()){
-                    cadetes.add(c);
+            for(Personal c : personal.get(tipo)){
+                if(personalLista.isEmpty()){
+                    personalLista.add(c);
                 }
                 else{
                     int i=0;
                     boolean agregue=false;
-                    Iterator it = cadetes.iterator();
+                    Iterator it = personalLista.iterator();
+                    Personal personalActual;
+                    Cadete cadActual;
                     while(it.hasNext() && !agregue){
-                        Cadete cadActual = (Cadete)it.next();
-                        if(c.getGrado().getId()< cadActual.getGrado().getId()){
-                            cadetes.add(i, c);
+                        personalActual=(Personal)it.next();
+                        if(c.getGrado().getId()< personalActual.getGrado().getId()){
+                            personalLista.add(i, c);
                             agregue=true;
                         }
                         else{
-                            if(c.getGrado().getId()== cadActual.getGrado().getId()){
-                                if(c.getCurso().getId()< cadActual.getCurso().getId()){
-                                    cadetes.add(i, c);
-                                    agregue=true;
-                                }
-                                else{
-                                    if(c.getCurso().getId()==cadActual.getCurso().getId()){
-                                        if(c.getPrimerApellido().compareToIgnoreCase(cadActual.getPrimerApellido())<= 0){
-                                            cadetes.add(i, c);
-                                            agregue=true;
+                            if(tipo==1){
+                                cadActual = (Cadete)personalActual;
+                                if(c.getGrado().getId()== cadActual.getGrado().getId()){
+                                    if(((Cadete)c).getCurso().getId()< cadActual.getCurso().getId()){
+                                        personalLista.add(i, c);
+                                        agregue=true;
+                                    }
+                                    else{
+                                        if(((Cadete)c).getCurso().getId()==cadActual.getCurso().getId()){
+                                            if(c.getPrimerApellido().compareToIgnoreCase(cadActual.getPrimerApellido())<= 0){
+                                                personalLista.add(i, c);
+                                                agregue=true;
+                                            }
                                         }
+                                    }
+                                }
+                            }
+                            else{
+                                if(c.getGrado().getId()== personalActual.getGrado().getId()){
+                                    if(c.getPrimerApellido().compareToIgnoreCase(personalActual.getPrimerApellido())<= 0){
+                                        personalLista.add(i, c);
+                                        agregue=true;
                                     }
                                 }
                             }
@@ -629,12 +742,12 @@ out.print("          <tr>\n" +
                         i++;
                     }
                     if(!agregue){
-                        cadetes.addLast(c);
+                        personalLista.addLast(c);
                     }
                 }
             }
         }
-        return cadetes;
+        return personalLista;
     }
     private String reemplazarTildes(String s){
         String original = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ";
@@ -648,28 +761,29 @@ out.print("          <tr>\n" +
         }
         return output;
     }
-    public LinkedList<Personal> getCadetesListarNombre(Boolean asc){//0=des,1=asc
-        LinkedList<Personal> cadetes= new LinkedList();
+    public LinkedList<Personal> getPersonalListarNombre(int tipo,Boolean asc){//0=des,1=asc
+        LinkedList<Personal> personalListar= new LinkedList();
         if(asc){
-            for(Personal c : personal.get(1)){
-                c=(Cadete)c;
+            for(Personal c : personal.get(tipo)){
                 String nombreC=reemplazarTildes(c.getPrimerNombre());
-                if(cadetes.isEmpty()){
-                    cadetes.add(c);
+                if(personalListar.isEmpty()){
+                    personalListar.add(c);
                 }
                 else{
-                    String nombre=reemplazarTildes(((Cadete)cadetes.getLast()).getPrimerNombre());
+                    String nombre=reemplazarTildes((personalListar.getLast()).getPrimerNombre());
                     if(nombreC.compareToIgnoreCase(nombre)>0){
-                        cadetes.addLast(c);
+                        personalListar.addLast(c);
                     }
                     else{
                         int i=0;
                         boolean agregue=false;
-                        Iterator it = cadetes.iterator();
+                        Iterator it = personalListar.iterator();
+                        Personal personalActual;
                         while(it.hasNext() && !agregue){
-                            nombre=reemplazarTildes(((Cadete)it.next()).getPrimerNombre());
+                            personalActual=((Personal)it.next());
+                            nombre=reemplazarTildes(personalActual.getPrimerNombre());
                             if(nombreC.compareToIgnoreCase(nombre)<=0){
-                                cadetes.add(i, c);
+                                personalListar.add(i, c);
                                 agregue=true;
                             }
                             i++;
@@ -679,25 +793,26 @@ out.print("          <tr>\n" +
             }
         }
         else{
-            for(Personal c : personal.get(1)){
-                c=(Cadete)c;
+            for(Personal c : personal.get(tipo)){
                 String nombreC=reemplazarTildes(c.getPrimerNombre());
-                if(cadetes.isEmpty()){
-                    cadetes.add(c);
+                if(personalListar.isEmpty()){
+                    personalListar.add(c);
                 }
                 else{
-                    String nombre=reemplazarTildes(((Cadete)cadetes.getLast()).getPrimerNombre());
+                    String nombre=reemplazarTildes((personalListar.getLast()).getPrimerNombre());
                     if(nombreC.compareToIgnoreCase(nombre)<=0){
-                        cadetes.addLast(c);
+                        personalListar.addLast(c);
                     }
                     else{
                         int i=0;
                         boolean agregue=false;
-                        Iterator it = cadetes.iterator();
+                        Iterator it = personalListar.iterator();
+                        Personal personalActual;
                         while(it.hasNext() && !agregue){
-                            nombre=reemplazarTildes(((Cadete)it.next()).getPrimerNombre());
+                            personalActual=((Personal)it.next());
+                            nombre=reemplazarTildes(personalActual.getPrimerNombre());
                             if(nombreC.compareToIgnoreCase(nombre)>=0){
-                                cadetes.add(i, c);
+                                personalListar.add(i, c);
                                 agregue=true;
                             }
                             i++;
@@ -706,30 +821,31 @@ out.print("          <tr>\n" +
                 }
             }
         }
-        return cadetes;
+        return personalListar;
     }
-    public LinkedList<Personal> getCadetesListarApellido(Boolean asc){//0=des,1=asc
-        LinkedList<Personal> cadetes= new LinkedList();
+    public LinkedList<Personal> getPersonalListarApellido(int tipo,Boolean asc){//0=des,1=asc
+        LinkedList<Personal> personalListar= new LinkedList();
         if(asc){
-            for(Personal c : personal.get(1)){
-                c=(Cadete)c;
+            for(Personal c : personal.get(tipo)){
                 String nombreC=reemplazarTildes(c.getPrimerApellido());
-                if(cadetes.isEmpty()){
-                    cadetes.add(c);
+                if(personalListar.isEmpty()){
+                    personalListar.add(c);
                 }
                 else{
-                    String nombre=reemplazarTildes(((Cadete)cadetes.getLast()).getPrimerApellido());
+                    String nombre=reemplazarTildes((personalListar.getLast()).getPrimerApellido());
                     if(nombreC.compareToIgnoreCase(nombre)>0){
-                        cadetes.addLast(c);
+                        personalListar.addLast(c);
                     }
                     else{
                         int i=0;
                         boolean agregue=false;
-                        Iterator it = cadetes.iterator();
+                        Iterator it = personalListar.iterator();
+                        Personal personalActual;
                         while(it.hasNext() && !agregue){
-                            nombre=reemplazarTildes(((Cadete)it.next()).getPrimerApellido());
+                            personalActual=((Personal)it.next());
+                            nombre=reemplazarTildes(personalActual.getPrimerApellido());
                             if(nombreC.compareToIgnoreCase(nombre)<=0){
-                                cadetes.add(i, c);
+                                personalListar.add(i, c);
                                 agregue=true;
                             }
                             i++;
@@ -739,25 +855,26 @@ out.print("          <tr>\n" +
             }
         }
         else{
-            for(Personal c : personal.get(1)){
-                c=(Cadete)c;
+            for(Personal c : personal.get(tipo)){
                 String nombreC=reemplazarTildes(c.getPrimerApellido());
-                if(cadetes.isEmpty()){
-                    cadetes.add(c);
+                if(personalListar.isEmpty()){
+                    personalListar.add(c);
                 }
                 else{
-                    String nombre=reemplazarTildes(((Cadete)cadetes.getLast()).getPrimerApellido());
+                    String nombre=reemplazarTildes((personalListar.getLast()).getPrimerApellido());
                     if(nombreC.compareToIgnoreCase(nombre)<=0){
-                        cadetes.addLast(c);
+                        personalListar.addLast(c);
                     }
                     else{
                         int i=0;
                         boolean agregue=false;
-                        Iterator it = cadetes.iterator();
+                        Iterator it = personalListar.iterator();
+                        Personal personalActual;
                         while(it.hasNext() && !agregue){
-                            nombre=reemplazarTildes(((Cadete)it.next()).getPrimerApellido());
+                            personalActual=((Personal)it.next());
+                            nombre=reemplazarTildes(personalActual.getPrimerApellido());
                             if(nombreC.compareToIgnoreCase(nombre)>=0){
-                                cadetes.add(i, c);
+                                personalListar.add(i, c);
                                 agregue=true;
                             }
                             i++;
@@ -766,12 +883,11 @@ out.print("          <tr>\n" +
                 }
             }
         }
-        return cadetes;
+        return personalListar;
     }
     public Documento getDocumento(int ci, int tipoPersonal, int id){
         return this.getPersonal(ci, tipoPersonal).getDocumentos().get(id);
     }
-    //path -> Path context Servlet
     public boolean altaDocumento(Tipo tipoDocumento, int ci, Tipo tipoPersonal,Part archivo,String descripcion){
         ManejadorDocumentosBD md = new ManejadorDocumentosBD();
         Documento d = md.crearDocumento(tipoDocumento, ci, archivo,descripcion); //sube el archivo y lo agrega a la base de datos
@@ -781,7 +897,6 @@ out.print("          <tr>\n" +
         }
         return false;
     }
-    //path -> Path context Servlet
     public boolean bajaDocumento(int ci, Tipo tipoPersonal,int idDocumento){
         ManejadorDocumentosBD md = new ManejadorDocumentosBD();
         Documento d = this.getPersonal(ci, tipoPersonal.getId()).getDocumentos().get(idDocumento);

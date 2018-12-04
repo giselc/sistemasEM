@@ -11,8 +11,11 @@
 <%@page import="Classes.Departamento"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<form method="post" onsubmit='return aplicarFiltro(this);' id="formCadetesFiltro" action="">
+<form method="post" onsubmit='return aplicarFiltro(this,<%= tipo %>);' id="formCadetesFiltro" action="">
     <table style="font-size: 70%">
+        <%
+        if(tipo==1){
+        %>
         <tr>
             <td>
                 Carrera:
@@ -25,6 +28,9 @@
                 </select>
             </td>
         </tr>
+        <%
+        }
+        %>
         <tr>
             <td>
                 Grado/s:
@@ -35,7 +41,7 @@
                         HashMap<Integer, Grado> ag = mc.getGrados();
                         int j = 0;
                         for (Grado g : ag.values()){
-                            if(g.getIdTipoPersonal().getId()==1){ //CADETES
+                            if(g.getIdTipoPersonal().getId()== tipo ){ //CADETES
                                 if (j==0){
                                     j++;
                                 }
@@ -48,6 +54,9 @@
                 </select>
             </td>
         </tr>
+        <%
+        if(tipo==1){
+        %>
         <tr>
             <td>
                 Curso/s:
@@ -69,6 +78,9 @@
                 </select>
             </td>
         </tr>
+        <%
+        }
+        %>
         <tr>
             <td>
                 Arma/s:
@@ -90,6 +102,9 @@
                 </select>
             </td>
         </tr>
+        <%
+        if(tipo==1){
+        %>
         <tr>
             <td>
                 LMGA:
@@ -194,6 +209,9 @@
                 </select>
             </td>
         </tr>
+        <%
+        }
+        %>
         
         <tr>
             <td colspan="2" style="text-align: right">

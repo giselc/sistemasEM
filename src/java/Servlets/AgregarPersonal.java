@@ -34,8 +34,13 @@ public class AgregarPersonal extends HttpServlet {
         ManejadorPersonalBD mp = new ManejadorPersonalBD();
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
+        int tipo= Integer.valueOf(request.getParameter("tipo"));
         if(u.isAdmin()){
-            mp.AgregarCadetesTXT();
+            switch(tipo){
+                case 1: mp.AgregarCadetesTXT(); break;
+                case 2: mp.AgregarPersonalTXT(); break;
+                case 4: mp.AgregarProfesoresTXT(); break;
+            }
         }
         else{
                 response.sendRedirect("");

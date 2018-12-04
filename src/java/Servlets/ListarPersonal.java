@@ -25,7 +25,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author Gisel
  */
-public class ListarCadetes extends HttpServlet {
+public class ListarPersonal extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,51 +41,69 @@ public class ListarCadetes extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
-        if(u.isAdmin()||u.getPermisosPersonal().getId()!=1){
+        int tipo = Integer.valueOf(request.getParameter("tipo"));
+        if(u.isAdmin()||u.getPermisosPersonal().getId()!=tipo){
             try (PrintWriter out = response.getWriter()) {
                 /* TODO output your page here. You may use following sample code. */
                 ManejadorPersonal mp = ManejadorPersonal.getInstance();
-                int tipo = Integer.valueOf(request.getParameter("tipo"));
+                int tipoListado = Integer.valueOf(request.getParameter("tipoListado"));
                 boolean orden=false;
                 if(request.getParameter("orden").equals("1")){
                     orden=true;
                 };
                 LinkedList<Personal> per=null;
+                
                // System.out.print("tipo="+tipo+";orden="+orden);
-                switch(tipo){
-                    case 1: per=mp.getCadetesListarNro(orden); break ;
-                    case 2: per=mp.getCadetesListarGrado(orden); break ;
-                    case 3: per=mp.getCadetesListarNombre(orden); break ;
-                    case 4: per=mp.getCadetesListarApellido(orden); break ;
+                switch(tipoListado){
+                    case 1: per=mp.getPersonalListarNro(tipo,orden); break ;
+                    case 2: per=mp.getPersonalListarGrado(tipo,orden); break ;
+                    case 3: per=mp.getPersonalListarNombre(tipo,orden); break ;
+                    case 4: per=mp.getPersonalListarApellido(tipo,orden); break ;
                 }
                 JsonObjectBuilder json = Json.createObjectBuilder(); 
                 if(per==null){
-                    json.add("listadoCadetes", Json.createArrayBuilder().build());
+                    json.add("listadoPersonal", Json.createArrayBuilder().build());
                 }
                 else{
                     JsonArrayBuilder jab= Json.createArrayBuilder();
-                    for (Personal p : per){
-                        jab.add(Json.createObjectBuilder()
-                            .add("Nro", p.getNroInterno())
-                            .add("grado", p.getGrado().getAbreviacion())
-                            .add("primerNombre", p.getPrimerNombre())
-                            .add("segundoNombre", p.getSegundoNombre())
-                            .add("primerApellido", p.getPrimerApellido())
-                            .add("segundoApellido", p.getSegundoApellido())
-                            .add("ci", p.getCi())
-                            .add("curso", ((Cadete)p).getCurso().getAbreviacion())
-                        );
-                    };
+                    if(tipo==1){
+                        for (Personal p : per){
+                            jab.add(Json.createObjectBuilder()
+                                .add("Nro", p.getNroInterno())
+                                .add("grado", p.getGrado().getAbreviacion())
+                                .add("primerNombre", p.getPrimerNombre())
+                                .add("segundoNombre", p.getSegundoNombre())
+                                .add("primerApellido", p.getPrimerApellido())
+                                .add("segundoApellido", p.getSegundoApellido())
+                                .add("ci", p.getCi())
+                                .add("curso", ((Cadete)p).getCurso().getAbreviacion())
+                            );
+                        };
+                    }
+                    else{
+                         for (Personal p : per){
+                            jab.add(Json.createObjectBuilder()
+                                .add("Nro", p.getNroInterno())
+                                .add("grado", p.getGrado().getAbreviacion())
+                                .add("primerNombre", p.getPrimerNombre())
+                                .add("segundoNombre", p.getSegundoNombre())
+                                .add("primerApellido", p.getPrimerApellido())
+                                .add("segundoApellido", p.getSegundoApellido())
+                                .add("ci", p.getCi())
+                                .add("arma", p.getArma().getDescripcion())
+                            );
+                        };
+                    }
 
 
-                    json.add("listadoCadetes", jab);
+                    json.add("listadoPersonal", jab);
 
 
                 }
                 out.print(json.build());
             }
             catch (Exception e){
-
+                System.out.print("Servlet Listar: "+e.getMessage());
             }
         }
         else{

@@ -15,7 +15,7 @@ import Classes.Familiar;
 import Classes.HistorialBajaCadete;
 import Classes.Personal;
 import Classes.RecordCadete;
-import Classes.RecordCadetesFiltro;
+import Classes.RecordFiltro;
 import Classes.RecordPersonal;
 import Classes.TipoPersonal;
 import Classes.Usuario;
@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,6 +31,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import javax.servlet.http.Part;
@@ -106,7 +108,6 @@ public class ManejadorPersonalBD {
          
          int i;
          String [] campos;
-         ManejadorCodigos mc= ManejadorCodigos.getInstance();
          int curso = 0;
          while((linea=br.readLine())!=null){
             i=1;
@@ -197,7 +198,120 @@ public class ManejadorPersonalBD {
       }
       return true;
     }
-    public String getFiltroSQL(RecordCadetesFiltro rc){ 
+    public boolean AgregarPersonalTXT(){
+    File archivo = null;
+    BufferedReader br = null;
+
+      try {
+         // Apertura del fichero y creacion de BufferedReader para poder
+         // hacer una lectura comoda (disponer del metodo readLine()).
+         archivo = new File ("C:\\oficiales.txt");
+         
+         br = new BufferedReader(new InputStreamReader(new FileInputStream(archivo),"UTF-8"));
+
+         // Lectura del fichero
+         String linea;
+         String sql="INSERT INTO sistemasem.personal (numero,ci,idGrado,idArma,primerNombre,segundoNombre,primerApellido,segundoApellido,observaciones,profesor,fechaAltaSistema) values (?,?,?,?,?,?,?,?,?,?,?)";
+         PreparedStatement s = connection.prepareStatement(sql);
+         int i;
+         String [] campos;
+         while((linea=br.readLine())!=null){
+            i=1;
+            campos= linea.split(";");
+            //System.out.print(Arrays.toString(campos));
+            
+            s.setInt(i++, Integer.valueOf(campos[0]));
+            s.setInt(i++, Integer.valueOf(campos[1]));
+            s.setInt(i++, Integer.valueOf(campos[2])); //grado
+            if(Integer.valueOf(campos[3])<6 || Integer.valueOf(campos[3])==8){ // no hay curso prep 8-BM EDITAR TXT
+                s.setInt(i++,Integer.valueOf(campos[3])); //arma
+            }
+            else{
+                if(Integer.valueOf(campos[3])==7){ //apoyo sist viejo
+                    s.setInt(i++,6); //apoyo sist nuevo
+                }
+                else{
+                    s.setInt(i++,0);
+                }
+            }
+            s.setString(i++,campos[4]);//primer nombre
+            s.setString(i++,campos[5]);//segundo nombre
+            s.setString(i++,campos[6]);//primer apellido
+            if(campos.length==7){
+                s.setString(i++,"");//segundo apellido
+            }
+            else{
+                System.out.print(campos.length);
+                s.setString(i++,campos[7]);//segundo apellido
+            }
+            s.setString(i++,"");//observaciones
+            s.setBoolean(i++, false);//profesor
+             
+            java.util.Calendar fecha1 = java.util.Calendar.getInstance();
+            int mes = fecha1.get(java.util.Calendar.MONTH)+1;
+            String fecha=  fecha1.get(java.util.Calendar.YEAR)+"-"+mes+"-"+fecha1.get(java.util.Calendar.DATE); //usada para log
+
+            s.setString(i++,fecha);//fecha Alta
+            s.addBatch();
+         }
+         s.executeBatch();
+         s.close();
+         return true;
+      }
+      catch(SQLException | IOException | NumberFormatException e){
+          System.out.print("AgregarPersonalTXT: "+e.getMessage());
+          return false;
+      }
+    }
+    public boolean AgregarProfesoresTXT() {
+        File archivo = null;
+        BufferedReader br = null;
+        try {
+         // Apertura del fichero y creacion de BufferedReader para poder
+         // hacer una lectura comoda (disponer del metodo readLine()).
+         archivo = new File ("C:\\profesores.txt");
+         
+         br = new BufferedReader(new InputStreamReader(new FileInputStream(archivo),"UTF-8"));
+
+         // Lectura del fichero
+         String linea;
+         String sql="INSERT INTO sistemasem.personal (numero,ci,idGrado,idArma,primerNombre,segundoNombre,primerApellido,segundoApellido,observaciones,profesor,fechaAltaSistema) values (?,?,?,?,?,?,?,?,?,?,?)";
+         PreparedStatement s = connection.prepareStatement(sql);
+         int i;
+         String [] campos;
+         while((linea=br.readLine())!=null){
+            i=1;
+            campos= linea.split(";");
+            //System.out.print(Arrays.toString(campos));
+            
+            s.setInt(i++, Integer.valueOf(campos[0]));
+            s.setInt(i++, Integer.valueOf(campos[1]));
+            s.setInt(i++, Integer.valueOf(campos[2])); //grado
+            s.setInt(i++,0);//arma
+            s.setString(i++,campos[3]);//primer nombre
+            s.setString(i++,"");//segundo nombre
+            s.setString(i++,campos[4]);//primer apellido
+            s.setString(i++,"");//segundo apellido
+            s.setString(i++,"");//observaciones
+            s.setBoolean(i++, true);//profesor
+             
+            java.util.Calendar fecha1 = java.util.Calendar.getInstance();
+            int mes = fecha1.get(java.util.Calendar.MONTH)+1;
+            String fecha=  fecha1.get(java.util.Calendar.YEAR)+"-"+mes+"-"+fecha1.get(java.util.Calendar.DATE); //usada para log
+
+            s.setString(i++,fecha);//fecha Alta
+            s.addBatch();
+         }
+         s.executeBatch();
+         s.close();
+         return true;
+      }
+      catch(SQLException | IOException | NumberFormatException e){
+          System.out.print("AgregarProfesores: "+e.getMessage());
+          return false;
+      }
+    }
+    public String getFiltroSQL(RecordFiltro rc){ 
         ManejadorCodigoBD mc =  new ManejadorCodigoBD(); 
         String filtro = "";
         String filtroMostrar = "";
@@ -350,7 +464,7 @@ public class ManejadorPersonalBD {
         }
         return filtro;
     }
-    public ArrayList<Personal> getPersonalListar(RecordCadetesFiltro rf, int usuario, TipoPersonal tp){
+    public ArrayList<Personal> getPersonalListar(RecordFiltro rf, int usuario, TipoPersonal tp){
         ArrayList<Personal> al= new ArrayList<>();
         ManejadorCodigoBD mc = new ManejadorCodigoBD();
         try {
@@ -408,13 +522,13 @@ public class ManejadorPersonalBD {
                         p.get(1).add(new Cadete(rs.getString("fotoPasaporte"),mc.getCurso(rs.getInt("idCurso")),mc.getCarrera(rs.getInt("idCarrera")), rs.getString("fechaNac"),rs.getString("sexo"),mc.getDepartamento(rs.getInt("idDepartamentoNac")),rs.getString("localidadNac"),rs.getString("cc"),rs.getInt("ccNro"),mc.getEstadoCivil(rs.getInt("idEstadoCivil")),rs.getString("domicilio"),mc.getDepartamento(rs.getInt("idDepartamentoDom")),rs.getString("localidadDom"),rs.getString("telefono"),rs.getString("email"),rs.getInt("derecha"),rs.getInt("hijos"),rs.getBoolean("repitiente"),rs.getBoolean("lmga"),rs.getBoolean("paseDirecto"),rs.getDouble("notaPaseDirecto"),madre,padre,rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor"),rs.getString("fechaAltaSistema"),rs.getString("talleOperacional"),rs.getInt("talleBotas"),rs.getInt("talleQuepi"),this.obtenerHistorialBaja(rs.getInt("ci"))));
                         break;
                     case 2:
-                        p.get(2).add(new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor"),rs.getString("fecha")));
+                        p.get(2).add(new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor"),rs.getString("fechaAltaSistema")));
                         break;
                     case 3:
-                        p.get(3).add(new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor"),rs.getString("fecha")));
+                        p.get(3).add(new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor"),rs.getString("fechaAltaSistema")));
                         break;
                     case 4:
-                        p.get(4).add(new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor"),rs.getString("fecha")));
+                        p.get(4).add(new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor"),rs.getString("fechaAltaSistema")));
                         break;
                 }
             }

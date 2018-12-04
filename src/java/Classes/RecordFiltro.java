@@ -9,7 +9,7 @@ package Classes;
  *
  * @author Gisel
  */
-public class RecordCadetesFiltro {
+public class RecordFiltro {
     public String lmga; // TODOS, S, N
     public String pd; // TODOS, S, N
     public String sexo; // TODOS, M, F
