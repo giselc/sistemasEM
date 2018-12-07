@@ -46,46 +46,7 @@ public class ManejadorPersonalBD {
     public ManejadorPersonalBD() {
         connection = ConexionDB.GetConnection();
     }
-    private int ConvertirDepartamento(int deptoViejo){
-        int dptoNuevo =0;
-        switch(deptoViejo){
-            case 1: dptoNuevo = 2; break; 
-            case 2: dptoNuevo = 9; break;
-            case 3: dptoNuevo = 14; break; 
-            case 4: dptoNuevo = 19; break;
-            case 5: dptoNuevo = 3; break; 
-            case 6: dptoNuevo = 13; break;
-            case 7: dptoNuevo = 1; break; 
-            case 8: dptoNuevo = 15; break; 
-            case 9: dptoNuevo = 11; break; 
-            case 10: dptoNuevo = 12; break; 
-            case 11: dptoNuevo = 17; break; 
-            case 12: dptoNuevo = 4; break;     
-            case 13: dptoNuevo = 16; break; 
-            case 14: dptoNuevo = 6; break; 
-            case 15: dptoNuevo = 7; break;   
-            case 16: dptoNuevo = 8; break;     
-            case 17: dptoNuevo = 5; break; 
-            case 18: dptoNuevo = 18; break; 
-            case 19: dptoNuevo = 10; break; 
-        }
-        return dptoNuevo;
-    }
-    private int convertirEstadoCivil(int estadoCivilViejo){
-        int estadoCivilNuevo=0;
-        switch(estadoCivilViejo){
-            case 1: estadoCivilNuevo=1; break;
-            case 2: estadoCivilNuevo=2; break;
-            case 3: estadoCivilNuevo=5; break;
-            case 5: estadoCivilNuevo=4; break;
-            case 6: estadoCivilNuevo=3; break;
-        }
-        return estadoCivilNuevo;
-    }
-    private String convertirFecha(String fechaVieja){
-        String [] campos= fechaVieja.split("/");
-        return campos[2]+"-"+campos[1]+"-"+campos[0];
-    }
+    
     public boolean AgregarCadetesTXT(){
       File archivo = null;
       FileReader fr = null;
@@ -100,7 +61,7 @@ public class ManejadorPersonalBD {
 
          // Lectura del fichero
          String linea;
-         String sql="INSERT INTO sistemasem.personal (numero,ci,idGrado,idArma,primerNombre,segundoNombre,primerApellido,segundoApellido,observaciones,profesor,fechaAltaSistema) values (?,?,?,?,?,?,?,?,?,?,?)";
+         String sql="INSERT INTO sistemasem.personal (numero,ci,idGrado,idArma,primerNombre,segundoNombre,primerApellido,segundoApellido,observaciones,fechaAltaSistema) values (?,?,?,?,?,?,?,?,?,?)";
          PreparedStatement s = connection.prepareStatement(sql);
          
          String sql1="INSERT INTO sistemasem.cadetes (ci,numero,idCurso,fechaNac,sexo,idDepartamentoNac,localidadNac,cc,ccNro,idEstadoCivil,domicilio,idDepartamentoDom,localidadDom,telefono,email,derecha,idCarrera) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -152,7 +113,6 @@ public class ManejadorPersonalBD {
              s.setString(i++,campos[23]);//primer apellido
              s.setString(i++,campos[21]);//segundo apellido
              s.setString(i++,"");//observaciones
-             s.setBoolean(i++, false);//profesor
              
              java.util.Calendar fecha1 = java.util.Calendar.getInstance();
              int mes = fecha1.get(java.util.Calendar.MONTH)+1;
@@ -167,15 +127,15 @@ public class ManejadorPersonalBD {
              c.setInt(i++, Integer.valueOf(campos[14])); //ci
              c.setInt(i++, Integer.valueOf(campos[0])); //nro
              c.setInt(i++,curso); //curso
-             c.setString(i++, this.convertirFecha(campos[7])); //fechaNAC
+             c.setString(i++, ManejadorCodigos.convertirFecha(campos[7])); //fechaNAC
              c.setString(i++, campos[9]); //SEXO
-             c.setInt(i++,this.ConvertirDepartamento(Integer.valueOf(campos[5]))); //idDeptoNac
+             c.setInt(i++,ManejadorCodigos.ConvertirDepartamento(Integer.valueOf(campos[5]))); //idDeptoNac
              c.setString(i++, ""); //localidadNac
              c.setString(i++, campos[13]); //cc
              c.setInt(i++, Integer.valueOf(campos[11])); //ccNro
-             c.setInt(i++, this.convertirEstadoCivil(Integer.valueOf(campos[11]))); //idEstadoCivil
+             c.setInt(i++, ManejadorCodigos.convertirEstadoCivil(Integer.valueOf(campos[11]))); //idEstadoCivil
              c.setString(i++, campos[19]); //domicilio
-             c.setInt(i++,this.ConvertirDepartamento(Integer.valueOf(campos[16]))); //dptoDom
+             c.setInt(i++,ManejadorCodigos.ConvertirDepartamento(Integer.valueOf(campos[16]))); //dptoDom
              c.setString(i++, campos[18]); //localidadDom
              c.setString(i++, campos[17]); //telefono
              c.setString(i++, ""); //email
@@ -198,20 +158,25 @@ public class ManejadorPersonalBD {
       }
       return true;
     }
-    public boolean AgregarPersonalTXT(){
+    public boolean AgregarPersonalTXT(int tipo){
     File archivo = null;
     BufferedReader br = null;
 
       try {
          // Apertura del fichero y creacion de BufferedReader para poder
          // hacer una lectura comoda (disponer del metodo readLine()).
-         archivo = new File ("C:\\oficiales.txt");
+          if(tipo==2){
+            archivo = new File ("C:\\ps.txt");
+          }
+          else{
+              archivo = new File ("C:\\oficiales.txt");
+          }
          
          br = new BufferedReader(new InputStreamReader(new FileInputStream(archivo),"UTF-8"));
 
          // Lectura del fichero
          String linea;
-         String sql="INSERT INTO sistemasem.personal (numero,ci,idGrado,idArma,primerNombre,segundoNombre,primerApellido,segundoApellido,observaciones,profesor,fechaAltaSistema) values (?,?,?,?,?,?,?,?,?,?,?)";
+         String sql="INSERT INTO sistemasem.personal (numero,ci,idGrado,idArma,primerNombre,segundoNombre,primerApellido,segundoApellido,observaciones,fechaAltaSistema) values (?,?,?,?,?,?,?,?,?,?)";
          PreparedStatement s = connection.prepareStatement(sql);
          int i;
          String [] campos;
@@ -245,7 +210,6 @@ public class ManejadorPersonalBD {
                 s.setString(i++,campos[7]);//segundo apellido
             }
             s.setString(i++,"");//observaciones
-            s.setBoolean(i++, false);//profesor
              
             java.util.Calendar fecha1 = java.util.Calendar.getInstance();
             int mes = fecha1.get(java.util.Calendar.MONTH)+1;
@@ -260,54 +224,6 @@ public class ManejadorPersonalBD {
       }
       catch(SQLException | IOException | NumberFormatException e){
           System.out.print("AgregarPersonalTXT: "+e.getMessage());
-          return false;
-      }
-    }
-    public boolean AgregarProfesoresTXT() {
-        File archivo = null;
-        BufferedReader br = null;
-        try {
-         // Apertura del fichero y creacion de BufferedReader para poder
-         // hacer una lectura comoda (disponer del metodo readLine()).
-         archivo = new File ("C:\\profesores.txt");
-         
-         br = new BufferedReader(new InputStreamReader(new FileInputStream(archivo),"UTF-8"));
-
-         // Lectura del fichero
-         String linea;
-         String sql="INSERT INTO sistemasem.personal (numero,ci,idGrado,idArma,primerNombre,segundoNombre,primerApellido,segundoApellido,observaciones,profesor,fechaAltaSistema) values (?,?,?,?,?,?,?,?,?,?,?)";
-         PreparedStatement s = connection.prepareStatement(sql);
-         int i;
-         String [] campos;
-         while((linea=br.readLine())!=null){
-            i=1;
-            campos= linea.split(";");
-            //System.out.print(Arrays.toString(campos));
-            
-            s.setInt(i++, Integer.valueOf(campos[0]));
-            s.setInt(i++, Integer.valueOf(campos[1]));
-            s.setInt(i++, Integer.valueOf(campos[2])); //grado
-            s.setInt(i++,0);//arma
-            s.setString(i++,campos[3]);//primer nombre
-            s.setString(i++,"");//segundo nombre
-            s.setString(i++,campos[4]);//primer apellido
-            s.setString(i++,"");//segundo apellido
-            s.setString(i++,"");//observaciones
-            s.setBoolean(i++, true);//profesor
-             
-            java.util.Calendar fecha1 = java.util.Calendar.getInstance();
-            int mes = fecha1.get(java.util.Calendar.MONTH)+1;
-            String fecha=  fecha1.get(java.util.Calendar.YEAR)+"-"+mes+"-"+fecha1.get(java.util.Calendar.DATE); //usada para log
-
-            s.setString(i++,fecha);//fecha Alta
-            s.addBatch();
-         }
-         s.executeBatch();
-         s.close();
-         return true;
-      }
-      catch(SQLException | IOException | NumberFormatException e){
-          System.out.print("AgregarProfesores: "+e.getMessage());
           return false;
       }
     }
@@ -505,30 +421,25 @@ public class ManejadorPersonalBD {
         try {
             Statement s= connection.createStatement();
             
-            String sql = "";
+            String sql;
             ManejadorDocumentosBD md = new ManejadorDocumentosBD();
             ManejadorCodigos mc = ManejadorCodigos.getInstance();
             sql="SELECT * FROM sistemasem.personal left join sistemasem.grado on personal.idgrado = grado.codigo left join sistemasem.cadetes on personal.ci = cadetes.ci order by idTipoPersonal asc, grado.codigo asc, idCurso asc, idArma asc";
             ResultSet rs=s.executeQuery(sql);
-            int i=0;
             Familiar madre=null;
             Familiar padre = null;
+            Personal pers;
             while (rs.next()){
                 switch (rs.getInt("idTipoPersonal")) {
                     case 1:
                         //System.out.print(i++);
                         madre = new Familiar(rs.getString("MNombreComp"), rs.getString("MFechaNac"), mc.getDepartamento(rs.getInt("MDepartamentoNac")), rs.getString("MLocalidadNac"), mc.getEstadoCivil(rs.getInt("MEstadoCivil")), rs.getString("MDomicilio"), mc.getDepartamento(rs.getInt("MDepartamento")), rs.getString("MLocalidad"), rs.getString("MTelefono"), rs.getString("MProfesion"), rs.getString("MLugarTrabajo"));
                         padre = new Familiar(rs.getString("PNombreComp"), rs.getString("PFechaNac"), mc.getDepartamento(rs.getInt("PDepartamentoNac")), rs.getString("PLocalidadNac"), mc.getEstadoCivil(rs.getInt("PEstadoCivil")), rs.getString("PDomicilio"), mc.getDepartamento(rs.getInt("PDepartamento")), rs.getString("PLocalidad"), rs.getString("PTelefono"), rs.getString("PProfesion"), rs.getString("PLugarTrabajo"));
-                        p.get(1).add(new Cadete(rs.getString("fotoPasaporte"),mc.getCurso(rs.getInt("idCurso")),mc.getCarrera(rs.getInt("idCarrera")), rs.getString("fechaNac"),rs.getString("sexo"),mc.getDepartamento(rs.getInt("idDepartamentoNac")),rs.getString("localidadNac"),rs.getString("cc"),rs.getInt("ccNro"),mc.getEstadoCivil(rs.getInt("idEstadoCivil")),rs.getString("domicilio"),mc.getDepartamento(rs.getInt("idDepartamentoDom")),rs.getString("localidadDom"),rs.getString("telefono"),rs.getString("email"),rs.getInt("derecha"),rs.getInt("hijos"),rs.getBoolean("repitiente"),rs.getBoolean("lmga"),rs.getBoolean("paseDirecto"),rs.getDouble("notaPaseDirecto"),madre,padre,rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor"),rs.getString("fechaAltaSistema"),rs.getString("talleOperacional"),rs.getInt("talleBotas"),rs.getInt("talleQuepi"),this.obtenerHistorialBaja(rs.getInt("ci"))));
+                        p.get(1).add(new Cadete(rs.getString("fotoPasaporte"),mc.getCurso(rs.getInt("idCurso")),mc.getCarrera(rs.getInt("idCarrera")), rs.getString("fechaNac"),rs.getString("sexo"),mc.getDepartamento(rs.getInt("idDepartamentoNac")),rs.getString("localidadNac"),rs.getString("cc"),rs.getInt("ccNro"),mc.getEstadoCivil(rs.getInt("idEstadoCivil")),rs.getString("domicilio"),mc.getDepartamento(rs.getInt("idDepartamentoDom")),rs.getString("localidadDom"),rs.getString("telefono"),rs.getString("email"),rs.getInt("derecha"),rs.getInt("hijos"),rs.getBoolean("repitiente"),rs.getBoolean("lmga"),rs.getBoolean("paseDirecto"),rs.getDouble("notaPaseDirecto"),madre,padre,rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getString("fechaAltaSistema"),rs.getString("talleOperacional"),rs.getInt("talleBotas"),rs.getInt("talleQuepi"),this.obtenerHistorialBaja(rs.getInt("ci"))));
                         break;
-                    case 2:
-                        p.get(2).add(new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor"),rs.getString("fechaAltaSistema")));
-                        break;
-                    case 3:
-                        p.get(3).add(new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor"),rs.getString("fechaAltaSistema")));
-                        break;
-                    case 4:
-                        p.get(4).add(new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("observaciones"),rs.getBoolean("profesor"),rs.getString("fechaAltaSistema")));
+                    case 2: case 3:
+                        pers=new Personal(rs.getInt("numero"),rs.getInt("ci"),mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"),rs.getString("segundoNombre"),rs.getString("primerApellido"),rs.getString("segundoApellido"),md.getDocumentos(rs.getInt("ci")),rs.getString("fechaAltaSistema"));
+                        p.get(rs.getInt("idTipoPersonal")).add(pers);
                         break;
                 }
             }
@@ -543,7 +454,7 @@ public class ManejadorPersonalBD {
         java.util.Calendar fecha1 = java.util.Calendar.getInstance();
         int mes = fecha1.get(java.util.Calendar.MONTH)+1;
         String fecha=  fecha1.get(java.util.Calendar.YEAR)+"-"+mes+"-"+fecha1.get(java.util.Calendar.DATE); //usada para log
-        String sql = "INSERT INTO sistemasem.personal (ci,idGrado,idArma, PrimerNombre, PrimerApellido, SegundoNombre, SegundoApellido,  OBSERVACIONES, profesor,fechaAltaSistema) values (?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO sistemasem.personal (ci,idGrado,idArma, PrimerNombre, PrimerApellido, SegundoNombre, SegundoApellido,  fechaAltaSistema) values (?,?,?,?,?,?,?,?)";
         int i=1;
         try {
             PreparedStatement statement= connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS); // sql a insertar en postulantes
@@ -554,8 +465,6 @@ public class ManejadorPersonalBD {
             statement.setString(i++,rp.primerApellido);
             statement.setString(i++,rp.segundoNombre);
             statement.setString(i++,rp.segundoApellido);
-            statement.setString(i++,rp.observaciones);
-            statement.setBoolean(i++,rp.profesor);
             statement.setString(i++, fecha);
             int row=statement.executeUpdate();
             if(row>0){
@@ -567,7 +476,7 @@ public class ManejadorPersonalBD {
                         if(rp.rc!=null){//es cadete
                             try{
                                 RecordCadete rc= rp.rc;
-                                sql = "INSERT INTO sistemasem.cadetes (fotoPasaporte,ci,numero,idCurso,fechaNac, sexo, idDepartamentoNac, localidadNac, cc,  ccNro, idEstadoCivil,domicilio,idDepartamentoDom,localidadDom,telefono,email,derecha,hijos,repitiente,lmga,paseDirecto,notaPaseDirecto,talleOperacional,talleQuepi,talleBotas) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                                sql = "INSERT INTO sistemasem.cadetes (fotoPasaporte,ci,numero,idCurso,fechaNac, sexo, idDepartamentoNac, localidadNac, cc,  ccNro, idEstadoCivil,domicilio,idDepartamentoDom,localidadDom,telefono,email,derecha,hijos,repitiente,lmga,paseDirecto,notaPaseDirecto,talleOperacional,talleQuepi,talleBotas, observaciones) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                                 i=1;
                                 statement= connection.prepareStatement(sql);
                                 String ext = ManejadorDocumentosBD.getFileName(foto).substring(ManejadorDocumentosBD.getFileName(foto).lastIndexOf("."));
@@ -596,10 +505,11 @@ public class ManejadorPersonalBD {
                                 statement.setString(i++, rc.talleOperacional);
                                 statement.setInt(i++, rc.talleQuepi);
                                 statement.setInt(i++, rc.talleBotas);
+                                statement.setString(i++,rc.observaciones);
                                 row=statement.executeUpdate();
                                 if(row>0){
                                     ManejadorDocumentosBD.subirArchivo(foto, -1, rp.ci, true);
-                                    return new Cadete(rp.ci+ext,mc.getCurso(rc.idcurso),mc.getCarrera(rc.idcarrera),rc.fechaNac,rc.sexo, mc.getDepartamento(rc.iddepartamentoNac),rc.localidadNac,rc.cc,rc.ccNro,mc.getEstadoCivil(rc.idestadoCivil),rc.domicilio,mc.getDepartamento(rc.iddepartamento), rc.localidad, rc.telefono,rc.email,rc.derecha, rc.hijos,rc.repitiente,rc.lmga,rc.paseDirecto,rc.notaPaseDirecto, null, null, clave, rp.ci, mc.getGrado(rp.idGrado),mc.getArma(rp.idArma),rp.primerNombre, rp.segundoNombre, rp.primerApellido,rp.segundoApellido, new HashMap<>(), rp.observaciones,rp.profesor,rp.fechaAltaSistema,rc.talleOperacional,rc.talleBotas,rc.talleQuepi,this.obtenerHistorialBaja(rp.ci));
+                                    return new Cadete(rp.ci+ext,mc.getCurso(rc.idcurso),mc.getCarrera(rc.idcarrera),rc.fechaNac,rc.sexo, mc.getDepartamento(rc.iddepartamentoNac),rc.localidadNac,rc.cc,rc.ccNro,mc.getEstadoCivil(rc.idestadoCivil),rc.domicilio,mc.getDepartamento(rc.iddepartamento), rc.localidad, rc.telefono,rc.email,rc.derecha, rc.hijos,rc.repitiente,rc.lmga,rc.paseDirecto,rc.notaPaseDirecto, null, null, clave, rp.ci, mc.getGrado(rp.idGrado),mc.getArma(rp.idArma),rp.primerNombre, rp.segundoNombre, rp.primerApellido,rp.segundoApellido, new HashMap<>(), rc.observaciones,rp.fechaAltaSistema,rc.talleOperacional,rc.talleBotas,rc.talleQuepi,this.obtenerHistorialBaja(rp.ci));
                                 }
                                 else{
                                     sql = "DELETE FROM sistemasem.PERSONAL WHERE CI="+ rp.ci;
@@ -617,7 +527,7 @@ public class ManejadorPersonalBD {
                             }
                         }
                         else{ //no es cadete
-                            return new Personal(clave,rp.ci,mc.getGrado(rp.idGrado),mc.getArma(rp.idArma),rp.primerNombre,rp.segundoNombre,rp.primerApellido,rp.segundoApellido, null, rp.observaciones, rp.profesor,fecha);
+                            return new Personal(clave,rp.ci,mc.getGrado(rp.idGrado),mc.getArma(rp.idArma),rp.primerNombre,rp.segundoNombre,rp.primerApellido,rp.segundoApellido, null,fecha);
                         }
                     }
                 }
@@ -633,7 +543,7 @@ public class ManejadorPersonalBD {
         return null;
     }
     boolean modificarPersonal(RecordPersonal rp, Part foto) {
-        String sql = "UPDATE sistemasem.personal set idGrado=?,idArma=?, PrimerNombre=?, PrimerApellido=?, SegundoNombre=?, SegundoApellido=?,  OBSERVACIONES=?, profesor=? where ci=?";
+        String sql = "UPDATE sistemasem.personal set idGrado=?,idArma=?, PrimerNombre=?, PrimerApellido=?, SegundoNombre=?, SegundoApellido=? where ci=?";
         int i=1;
         try {
             PreparedStatement statement= connection.prepareStatement(sql); // sql a insertar en postulantes
@@ -643,8 +553,6 @@ public class ManejadorPersonalBD {
             statement.setString(i++,rp.primerApellido);
             statement.setString(i++,rp.segundoNombre);
             statement.setString(i++,rp.segundoApellido);
-            statement.setString(i++,rp.observaciones);
-            statement.setBoolean(i++,rp.profesor);
             statement.setInt(i++,rp.ci);
             int row=statement.executeUpdate();
             if(row>0){
@@ -660,7 +568,7 @@ public class ManejadorPersonalBD {
                                 
                             }
                         }
-                        sql = "UPDATE sistemasem.cadetes set "+fotoPas+"idCurso=?,fechaNac=?, sexo=?, idDepartamentoNac=?, localidadNac=?, cc=?,  ccNro=?, idEstadoCivil=?,domicilio=?,idDepartamentoDom=?,localidadDom=?,telefono=?,email=?,derecha=?,hijos=?,repitiente=?,lmga=?,paseDirecto=?,notaPaseDirecto=?,talleOperacional=?,talleQuepi=?,talleBotas=? where ci=?";
+                        sql = "UPDATE sistemasem.cadetes set "+fotoPas+"idCurso=?,fechaNac=?, sexo=?, idDepartamentoNac=?, localidadNac=?, cc=?,  ccNro=?, idEstadoCivil=?,domicilio=?,idDepartamentoDom=?,localidadDom=?,telefono=?,email=?,derecha=?,hijos=?,repitiente=?,lmga=?,paseDirecto=?,notaPaseDirecto=?,talleOperacional=?,talleQuepi=?,talleBotas=?,  OBSERVACIONES=? where ci=?";
                         i=1;
                         statement= connection.prepareStatement(sql);
                         if(fotoPasSubida){
@@ -688,6 +596,7 @@ public class ManejadorPersonalBD {
                         statement.setString(i++, rc.talleOperacional);
                         statement.setInt(i++, rc.talleQuepi);
                         statement.setInt(i++, rc.talleBotas);
+                        statement.setString(i++,rc.observaciones);
                         statement.setInt(i++,rp.ci);
                         row=statement.executeUpdate();
                         return row>0;
@@ -719,7 +628,7 @@ public class ManejadorPersonalBD {
         Statement s;
         try {
             s = connection.createStatement();
-            String sql="insert into sistemasem.cadetesBajas (select cadetes.*,`idGrado`,`idArma`,`primerNombre`,`segundoNombre`,`primerApellido`,`segundoApellido`,`observaciones`,`profesor`,`fechaAltaSistema`,'"+causa+"'as causaBaja,'"+fecha+"' as fechaBaja from sistemasem.personal left join sistemasem.cadetes on personal.ci=cadetes.ci and personal.numero=cadetes.numero where cadetes.ci="+ci+")";
+            String sql="insert into sistemasem.cadetesBajas (select cadetes.*,`idGrado`,`idArma`,`primerNombre`,`segundoNombre`,`primerApellido`,`segundoApellido`,`observaciones`,`fechaAltaSistema`,'"+causa+"'as causaBaja,'"+fecha+"' as fechaBaja from sistemasem.personal left join sistemasem.cadetes on personal.ci=cadetes.ci and personal.numero=cadetes.numero where cadetes.ci="+ci+")";
             s.addBatch(sql);
             sql="DELETE FROM sistemasem.personal where ci="+ci;
             s.addBatch(sql);
@@ -735,7 +644,7 @@ public class ManejadorPersonalBD {
     public Cadete crearCadeteHistorial(int ci){
         try {
             Statement s= connection.createStatement();
-            String sql="Insert into sistemasem.personal SELECT numero, ci, idGrado, idArma, primerNombre, segundoNombre,primerApellido, segundoApellido, observaciones, profesor, fechaAltaSistema FROM sistemasem.cadetesBajas where ci="+ci+" order by fechaBaja desc LIMIT 1";
+            String sql="Insert into sistemasem.personal SELECT numero, ci, idGrado, idArma, primerNombre, segundoNombre,primerApellido, segundoApellido, observaciones, fechaAltaSistema FROM sistemasem.cadetesBajas where ci="+ci+" order by fechaBaja desc LIMIT 1";
             s.addBatch(sql);
             sql="Insert into sistemasem.cadetes SELECT ci,fotopasaporte,numero,idCurso,idCarrera,fechaNac,sexo,idDepartamentoNac,localidadNac,cc,ccNro,idEstadoCivil,domicilio,idDepartamentoDom,localidadDom,telefono,email,derecha,hijos,repitiente,lmga,pasedirecto,notapaseDirecto,"
                     + "talleoperacional,tallequepi,tallebotas,PNombreComp,PFechaNac,PDepartamentoNac,PLocalidadNac,PEstadoCivil,PDomicilio,PDepartamento,PLocalidad,PTelefono,PProfesion,PLugarTrabajo,"
@@ -749,7 +658,7 @@ public class ManejadorPersonalBD {
                 ManejadorCodigos mc = ManejadorCodigos.getInstance();
                 Familiar madre = new Familiar(rs.getString("MNombreComp"), rs.getString("MFechaNac"), mc.getDepartamento(rs.getInt("MDepartamentoNac")), rs.getString("MLocalidadNac"), mc.getEstadoCivil(rs.getInt("MEstadoCivil")),rs.getString("MDomicilio"),mc.getDepartamento(rs.getInt("MDepartamento")),rs.getString("MLocalidad"),rs.getString("Mtelefono"), rs.getString("MProfesion"), rs.getString("MLugarTrabajo"));
                 Familiar padre = new Familiar(rs.getString("PNombreComp"), rs.getString("PFechaNac"), mc.getDepartamento(rs.getInt("PDepartamentoNac")), rs.getString("PLocalidadNac"), mc.getEstadoCivil(rs.getInt("PEstadoCivil")),rs.getString("PDomicilio"),mc.getDepartamento(rs.getInt("PDepartamento")),rs.getString("PLocalidad"),rs.getString("Ptelefono"), rs.getString("PProfesion"), rs.getString("PLugarTrabajo"));
-                return new Cadete(rs.getString("fotopasaporte"),mc.getCurso(rs.getInt("idCurso")),mc.getCarrera(rs.getInt("idCarrera")),rs.getString("fechaNac"),rs.getString("sexo"), mc.getDepartamento(rs.getInt("iddepartamentoNac")),rs.getString("localidadNac"),rs.getString("cc"),rs.getInt("ccNro"),mc.getEstadoCivil(rs.getInt("idestadoCivil")),rs.getString("domicilio"),mc.getDepartamento(rs.getInt("iddepartamentodom")), rs.getString("localidaddom"), rs.getString("telefono"),rs.getString("email"),rs.getInt("derecha"), rs.getInt("hijos"),rs.getBoolean("repitiente"),rs.getBoolean("lmga"),rs.getBoolean("paseDirecto"),rs.getDouble("notaPaseDirecto"), madre,padre, rs.getInt("numero"), rs.getInt("ci"), mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"), rs.getString("segundoNombre"), rs.getString("primerApellido"),rs.getString("segundoApellido"), new HashMap<Integer, Documento>(), rs.getString("observaciones"),rs.getBoolean("profesor"),rs.getString("fechaAltaSistema"),rs.getString("talleOperacional"),rs.getInt("talleBotas"),rs.getInt("talleQuepi"),this.obtenerHistorialBaja(ci));
+                return new Cadete(rs.getString("fotopasaporte"),mc.getCurso(rs.getInt("idCurso")),mc.getCarrera(rs.getInt("idCarrera")),rs.getString("fechaNac"),rs.getString("sexo"), mc.getDepartamento(rs.getInt("iddepartamentoNac")),rs.getString("localidadNac"),rs.getString("cc"),rs.getInt("ccNro"),mc.getEstadoCivil(rs.getInt("idestadoCivil")),rs.getString("domicilio"),mc.getDepartamento(rs.getInt("iddepartamentodom")), rs.getString("localidaddom"), rs.getString("telefono"),rs.getString("email"),rs.getInt("derecha"), rs.getInt("hijos"),rs.getBoolean("repitiente"),rs.getBoolean("lmga"),rs.getBoolean("paseDirecto"),rs.getDouble("notaPaseDirecto"), madre,padre, rs.getInt("numero"), rs.getInt("ci"), mc.getGrado(rs.getInt("idGrado")),mc.getArma(rs.getInt("idArma")),rs.getString("primerNombre"), rs.getString("segundoNombre"), rs.getString("primerApellido"),rs.getString("segundoApellido"), new HashMap<Integer, Documento>(), rs.getString("observaciones"),rs.getString("fechaAltaSistema"),rs.getString("talleOperacional"),rs.getInt("talleBotas"),rs.getInt("talleQuepi"),this.obtenerHistorialBaja(ci));
             }
         } catch (Exception ex) {
             try{
@@ -810,5 +719,17 @@ public class ManejadorPersonalBD {
             System.out.print(ex);
             return false;
         }
+    }
+
+    boolean eliminarPersonal(int ci) {
+        String sql="DELETE from sistemasem.personal where ci="+ci;
+        try {
+            Statement s= connection.createStatement(); // sql a insertar en postulantes
+            return (s.executeUpdate(sql)>0);
+        }
+        catch(Exception e){
+            System.out.print("EliminarPersonal: "+e.getMessage());
+        }
+        return false;
     }
 }

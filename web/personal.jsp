@@ -124,9 +124,9 @@
                         var obj = jQuery.parseJSON( xmlhttp.responseText );
                         var existe = obj.Personal;
                         if(existe.length>0){
-                                alert("El personal ya existe en el sistema.");                        
+                                alert("El personal ya existe en el sistema.");     
+                                ciInput.value="";
                         }
-                        ciInput.value="";
                     };
                 };
                 xmlhttp.open("POST","Personal?existe=1&ci="+ciInput.value+"&tipo="+tipo);

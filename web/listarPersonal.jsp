@@ -74,16 +74,20 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
                         Cadete c= (Cadete) p;
                         out.print("<td style='width: 15%' align='center'>"+c.getCurso().getAbreviacion()+"</td>"
                         +"<td style='width: 5%' align='center'><a href='cadete.jsp?id="+c.getCi()+"'><img src='images/ver.png' width='60%' /></a></td>");
-                        }
+                       out.print("<td style='width: 5%' align='center'><a href='baja.jsp?id="+p.getCi()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
+                        +"</tr>"); 
+                       }
                         else{
                         out.print("<td style='width: 15%' align='center'>");
                         if(p.getArma()!=null){
                             out.print(p.getArma().getDescripcion());
                         }
                        out.print("</td>");
+                       out.print("<td style='width: 5%' align='center'><a href='Personal?elim=0&tipo="+tipo+"&ci="+p.getCi()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
+                        +"</tr>");
                         }
-                        out.print("<td style='width: 5%' align='center'><a href='baja.jsp?id="+p.getCi()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
-                       +"</tr>");
+                        
+                       
                 }
                 out.print("</table>");
             %> 

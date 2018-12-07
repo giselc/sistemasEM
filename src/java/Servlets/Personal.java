@@ -9,6 +9,7 @@ import Classes.RecordCadete;
 import Classes.RecordPersonal;
 import Classes.Usuario;
 import Manejadores.ManejadorPersonal;
+import Manejadores.ManejadorProfesores;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.json.Json;
@@ -55,13 +56,13 @@ public class Personal extends HttpServlet {
                 /* TODO output your page here. You may use following sample code. */
                 ManejadorPersonal mp = ManejadorPersonal.getInstance();
                 int ci= Integer.valueOf(request.getParameter("ci"));
-                if(request.getParameter("baja")!=null){
+                if(request.getParameter("elim")!=null){
                     //baja
-                    if( mp.bajaPersonal(ci)){
-                        mensaje="Cadete eliminado sastisfactoriamente.";
+                    if( mp.bajaPersonal(ci,tipo)){
+                        mensaje="Personal eliminado sastisfactoriamente.";
                     }
                     else{
-                        mensaje="ERROR al eliminar el cadete.";
+                        mensaje="ERROR al eliminar el Personal.";
                     }
                     redirect="/personal.jsp?tipo="+tipo;
                     sesion.setAttribute("Mensaje", mensaje);
@@ -70,7 +71,8 @@ public class Personal extends HttpServlet {
                 else{
                     if(request.getParameter("existe")!=null){
                         JsonObjectBuilder json = Json.createObjectBuilder(); 
-                        if(mp.getPersonal(ci,tipo)==null){
+                        Boolean existe= mp.getPersonal(ci,2)!=null || mp.getPersonal(ci,3)!=null || mp.getPersonal(ci,1)!=null || ManejadorProfesores.getInstance().getProfesor(ci)!=null;
+                        if(!existe){
                             json.add("Personal", Json.createArrayBuilder().build());
                         }
                         else{
@@ -95,13 +97,12 @@ public class Personal extends HttpServlet {
                             rp.idGrado = Integer.parseInt(request.getParameter("grado"));
                             rp.fechaAltaSistema = request.getParameter("fechaAltaSistema");
                             rp.rc=null;
-                            rp.observaciones =request.getParameter("observaciones");
-                            if(mp.agregarPersonal(rp)){
+                            if(mp.agregarPersonal(rp,tipo)){
                                 mensaje="Personal insertado sastisfactoriamente.";
                                 redirect="/personal.jsp?tipo="+tipo;
                             }
                             else{
-                                mensaje="ERROR al agregar al cadete.";
+                                mensaje="ERROR al agregar el personal.";
                                 redirect="/personal.jsp?tipo="+tipo;
                             };
                             sesion.setAttribute("Mensaje", mensaje);
@@ -112,7 +113,7 @@ public class Personal extends HttpServlet {
             catch(Exception ex){
                 mensaje = "ERROR: " + ex.getMessage();
                 System.out.print(mensaje);
-                response.sendRedirect("/cadetes.jsp");
+                response.sendRedirect("/personal.jsp");
             }
         }
         else{

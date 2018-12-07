@@ -13,7 +13,7 @@ import java.util.HashMap;
  */
 public class Personal {
     private int nroInterno;
-    private int ci;
+    private final int ci;
     private Grado grado;
     private Arma arma;
     private String primerNombre;
@@ -21,11 +21,9 @@ public class Personal {
     private String primerApellido;
     private String segundoApellido;
     private HashMap<Integer,Documento> documentos;
-    private String observaciones;
-    private boolean profesor;
     private String fechaAltaSistema;
     
-    public Personal(int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String observaciones, boolean profesor,String fechaAltaSistema) {
+    public Personal(int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String fechaAltaSistema) {
         this.nroInterno = nroInterno;
         this.ci = ci;
         this.grado = grado;
@@ -35,8 +33,6 @@ public class Personal {
         this.primerApellido = primerApellido;
         this.segundoApellido = segundoApellido;
         this.documentos = documentos;
-        this.observaciones = observaciones;
-        this.profesor = profesor;
         this.fechaAltaSistema = fechaAltaSistema;
     }
 
@@ -46,10 +42,6 @@ public class Personal {
 
     public void setFechaAltaSistema(String fechaAltaSistema) {
         this.fechaAltaSistema = fechaAltaSistema;
-    }
-
-    public boolean isProfesor() {
-        return profesor;
     }
 
     public Arma getArma() {
@@ -88,16 +80,10 @@ public class Personal {
         return documentos;
     }
 
-    public String getObservaciones() {
-        return observaciones;
-    }
+   
 
     public void setNroInterno(int nroInterno) {
         this.nroInterno = nroInterno;
-    }
-
-    public void setCi(int ci) {
-        this.ci = ci;
     }
 
     public void setGrado(Grado grado) {
@@ -128,13 +114,7 @@ public class Personal {
         this.documentos = documentos;
     }
 
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
-    }
-
-    public void setProfesor(boolean profesor) {
-        this.profesor = profesor;
-    }
+   
 
     public void agregarDocumento(Documento doc) {
         documentos.put(doc.getId(), doc);

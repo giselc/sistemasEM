@@ -34,4 +34,6 @@ public class RecordCadete {
     public String talleOperacional;
     public int talleBotas;
     public int talleQuepi;
+    public String observaciones;
+
 }

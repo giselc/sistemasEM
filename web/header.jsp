@@ -97,7 +97,12 @@
                                                             </li>
                                                             <li>
                                                                 <form action="AgregarPersonal?tipo=2" method="POST" style="font-size: 100%">
-                                                                    <a align="center"><input type="submit" value="Agregar Personal"/></a>
+                                                                    <a align="center"><input type="submit" value="Agregar Se&ntilde;ores Oficiales"/></a>
+                                                                </form>
+                                                            </li>
+                                                            <li>
+                                                                <form action="AgregarPersonal?tipo=1" method="POST" style="font-size: 100%">
+                                                                    <a align="center"><input type="submit" value="Agregar Personal Subalterno"/></a>
                                                                 </form>
                                                             </li>
                                                             <li>

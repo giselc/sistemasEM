@@ -24,18 +24,27 @@
                     var existe = obj.Cadete;
                     if(existe.length>0){
                         if(existe[0].historial=="1"){
-                            var r=confirm("Existe el cadete en el historial, si confirma, sus datos son cargados automaticamente.");
-                            if (r==true){
-                                window.location.href="Cadete?ci="+ciInput.value+"&crearDesdeHistorial=1";
-                            }
-                            else{
-                                alert("No es posible crear el cadete si no es a través del historial.");
-                                window.location.href="cadetes.jsp";
+                            if(existe[0].cadete=="true"){
+                                window.location.href="cadete.jsp?id="+ciInput.value;
+                            }else{
+                                var r=confirm("Existe el cadete en el historial, si confirma, sus datos son cargados automaticamente.");
+                                if (r==true){
+                                    window.location.href="Cadete?ci="+ciInput.value+"&crearDesdeHistorial=1";
+                                }
+                                else{
+                                    alert("No es posible crear el cadete si no es a través del historial.");
+                                    window.location.href="cadetes.jsp";
+                                }
                             }
                         }
                         else{
-                            alert("El cadete ya existe en el sistema.");
-                            window.location.href="cadete.jsp?id="+ciInput.value;
+                            alert("La cédula ya existe en el sistema.");
+                            if(existe[0].cadete=="true"){
+                                window.location.href="cadete.jsp?id="+ciInput.value;
+                            }
+                            else{
+                                ciInput.value="";
+                            }
                         }
                     }
                     else{
@@ -121,7 +130,7 @@
                </tr>
            </table>
      
-    <p id="mensaje" style="color: #990000"><% if(session.getAttribute("mensaje")!=null){out.print("<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+session.getAttribute("mensaje"));}%></p>
+    <p id="mensaje" style="color: #990000"><% if(session.getAttribute("Mensaje")!=null){out.print("<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+session.getAttribute("Mensaje"));}%></p>
     <%
         session.setAttribute("mensaje",null);
     %>

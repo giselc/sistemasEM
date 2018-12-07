@@ -49,6 +49,47 @@ public class ManejadorCodigos {
         private static final ManejadorCodigos INSTANCE = new ManejadorCodigos();
     }
 
+    public static int ConvertirDepartamento(int deptoViejo){
+        int dptoNuevo =0;
+        switch(deptoViejo){
+            case 1: dptoNuevo = 2; break; 
+            case 2: dptoNuevo = 9; break;
+            case 3: dptoNuevo = 14; break; 
+            case 4: dptoNuevo = 19; break;
+            case 5: dptoNuevo = 3; break; 
+            case 6: dptoNuevo = 13; break;
+            case 7: dptoNuevo = 1; break; 
+            case 8: dptoNuevo = 15; break; 
+            case 9: dptoNuevo = 11; break; 
+            case 10: dptoNuevo = 12; break; 
+            case 11: dptoNuevo = 17; break; 
+            case 12: dptoNuevo = 4; break;     
+            case 13: dptoNuevo = 16; break; 
+            case 14: dptoNuevo = 6; break; 
+            case 15: dptoNuevo = 7; break;   
+            case 16: dptoNuevo = 8; break;     
+            case 17: dptoNuevo = 5; break; 
+            case 18: dptoNuevo = 18; break; 
+            case 19: dptoNuevo = 10; break; 
+        }
+        return dptoNuevo;
+    }
+    public static int convertirEstadoCivil(int estadoCivilViejo){
+        int estadoCivilNuevo=0;
+        switch(estadoCivilViejo){
+            case 1: estadoCivilNuevo=1; break;
+            case 2: estadoCivilNuevo=2; break;
+            case 3: estadoCivilNuevo=5; break;
+            case 5: estadoCivilNuevo=4; break;
+            case 6: estadoCivilNuevo=3; break;
+        }
+        return estadoCivilNuevo;
+    }
+    public static String convertirFecha(String fechaVieja){
+        String [] campos= fechaVieja.split("/");
+        return campos[2]+"-"+campos[1]+"-"+campos[0];
+    } 
+    
     public HashMap<Integer, Departamento> getDepartamentos() {
         return departamentos;
     }

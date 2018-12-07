@@ -55,10 +55,10 @@ public class Documento extends HttpServlet {
                         String descripcion = request.getParameter("descipcion");
                         boolean exito = mp.altaDocumento(mc.getTipoDocumento(tipoDocumento), ci,mc.getTipoPersonal(idTipoPersonal), documento,descripcion);
                         if(exito){
-                            sesion.setAttribute("mensaje", "Documento agregado correctamente.");
+                            sesion.setAttribute("Mensaje", "Documento agregado correctamente.");
                         }
                         else{
-                            sesion.setAttribute("mensaje", "ERROR al agregar el documento.");
+                            sesion.setAttribute("Mensaje", "ERROR al agregar el documento.");
                         }
                     }
                 }
@@ -66,10 +66,10 @@ public class Documento extends HttpServlet {
                     if(request.getParameter("elim")!= null){
                         int idDocumento=Integer.valueOf(request.getParameter("elim"));
                         if(mp.bajaDocumento(ci, mc.getTipoPersonal(idTipoPersonal), idDocumento)){
-                            sesion.setAttribute("mensaje", "Documento eliminado correctamente.");
+                            sesion.setAttribute("Mensaje", "Documento eliminado correctamente.");
                         }
                         else{
-                            sesion.setAttribute("mensaje", "ERROR al eliminar el documento.");
+                            sesion.setAttribute("Mensaje", "ERROR al eliminar el documento.");
                         }
                     }
                 }

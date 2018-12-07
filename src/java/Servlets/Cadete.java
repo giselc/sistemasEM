@@ -9,6 +9,7 @@ import Classes.RecordCadete;
 import Classes.RecordPersonal;
 import Classes.Usuario;
 import Manejadores.ManejadorPersonal;
+import Manejadores.ManejadorProfesores;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.json.Json;
@@ -78,7 +79,7 @@ public class Cadete extends HttpServlet {
                     if(request.getParameter("existe")!=null){
                         JsonObjectBuilder json = Json.createObjectBuilder(); 
                         boolean historial = mp.existeCadeteHistorial(ci);
-                        boolean sistema = mp.getCadete(ci)!=null;
+                        boolean sistema = mp.getPersonal(ci,2)!=null || mp.getPersonal(ci,3)!=null || mp.getPersonal(ci,1)!=null || ManejadorProfesores.getInstance().getProfesor(ci)!=null;
                         if(!historial && !sistema){
                             json.add("Cadete", Json.createArrayBuilder().build());
                         }
@@ -87,6 +88,7 @@ public class Cadete extends HttpServlet {
                                 JsonArrayBuilder jab= Json.createArrayBuilder();
                                 jab.add(Json.createObjectBuilder()
                                     .add("historial", "1")
+                                    .add("cadete",String.valueOf((mp.getPersonal(ci,1)!=null)) )
                                         //agregar resto
                                 );
                                 json.add("Cadete", jab);
@@ -95,6 +97,7 @@ public class Cadete extends HttpServlet {
                                 JsonArrayBuilder jab= Json.createArrayBuilder();
                                 jab.add(Json.createObjectBuilder()
                                     .add("historial", "0")
+                                    .add("cadete",String.valueOf((mp.getPersonal(ci,1)!=null)) ) //true or false
                                         //agregar resto
                                 );
                                 json.add("Cadete", jab);
@@ -185,7 +188,7 @@ public class Cadete extends HttpServlet {
                             rc.notaPaseDirecto = Double.parseDouble(request.getParameter("notaPaseDirecto"));
                             rp.fechaAltaSistema = request.getParameter("fechaAltaSistema");
                             rp.rc=rc;
-                            rp.observaciones =request.getParameter("observaciones");
+                            rc.observaciones =request.getParameter("observaciones");
                             if(request.getParameter("id")!=null){
                                 if(mp.modificarCadete(rp, foto)){
                                     mensaje="Cadete modificado correctamente.";

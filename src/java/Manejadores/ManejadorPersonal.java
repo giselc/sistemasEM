@@ -8,6 +8,7 @@ package Manejadores;
 import Classes.Cadete;
 import Classes.Documento;
 import Classes.Personal;
+import Classes.Profesor;
 import Classes.RecordFiltro;
 import Classes.RecordCamposListar;
 import Classes.RecordPersonal;
@@ -430,106 +431,139 @@ out.print("                </td>\n" +
             }
         }
         else{
-            imprimirEncabezado(out,rl,tipoPersonal);
-            Cadete c;
-            int i=0;
-            String color;
-            for(Personal p: personal.get(tipoPersonal)){
-                if ((i%2)==0){
-                    color=" #ccccff";
-                }
-                else{
-                    color=" #ffff99";
-                }
-                i++;
-                if(Arrays.toString(lista).contains(String.valueOf(p.getCi()))){
-                    out.print("<tr style='background-color:"+color+"'>");
-                    switch(tipoPersonal){
-                        case 1:
-                            c = (Cadete)p;
-                            out.print("<td style='width: 5%' align='center'><h3 style='margin:2%;'></h3></td>");
-                            if(rl.carrera){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCarrera().getDescripcion()+"</h3></td>");
-                            }
-                            if(rl.numero){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getNroInterno()+"</h3></td>");
-                            }
-                            if(rl.ci){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCi()+"</h3></td>");
-                            }
-                            if(rl.grado){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getGrado().getAbreviacion()+"</h3></td>");
-                            }
-                            if(rl.primerNombre){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getPrimerNombre()+"</h3></td>");
-                            }
-                            if(rl.segundoNombre){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSegundoNombre()+"</h3></td>");
-                            }
-                            if(rl.primerApellido){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getPrimerApellido()+"</h3></td>");
-                            }
-                            if(rl.segundoApellido){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSegundoApellido()+"</h3></td>");
-                            }
-                            if(rl.curso){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCurso().getAbreviacion()+"</h3></td>");
-                            }
-                            if(rl.arma){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getArma().getDescripcion()+"</h3></td>");
-                            }
-                            if(rl.lmga){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.isLmga()+"</h3></td>");
-                            }
-                            if(rl.pd){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.isPaseDirecto()+"</h3></td>");
-                            }
-                            if(rl.sexo){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSexo()+"</h3></td>");
-                            }
-                            if(rl.dptoNac){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getDepartamentoNac().getDescripcion()+"</h3></td>");
-                            }
-                            if(rl.localidadNac){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getLocalidadNac()+"</h3></td>");
-                            }
-                            if(rl.dptoDom){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getDepartamento().getDescripcion()+"</h3></td>");
-                            }
-                            if(rl.localidadDom){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getLocalidad()+"</h3></td>");
-                            }
-                            if(rl.repitiente){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.isRepitiente()+"</h3></td>");
-                            }
-                            if(rl.cantHijos){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getHijos()+"</h3></td>");
-                            }
-                            if(rl.talleOperacional){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleOperacional()+"</h3></td>");
-                            }
-                            if(rl.talleBotas){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleBotas()+"</h3></td>");
-                            }
-                            if(rl.talleQuepi){
-                                out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleQuepi()+"</h3></td>");
-                            }
-                        break;
-                        case 2: case 3: case 4:
-                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getNroInterno()+"</h3></td>");
-                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getCi()+"</h3></td>");
-                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getGrado().getAbreviacion()+"</h3></td>");
-                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getPrimerNombre()+"</h3></td>");
-                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getSegundoNombre()+"</h3></td>");
-                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getPrimerApellido()+"</h3></td>");
-                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getSegundoApellido()+"</h3></td>");
-                            out.print("<td align='center'><h3 style='margin:2%;'>"+p.getArma().getDescripcion()+"</h3></td>");
-                        break;
+            if(tipoPersonal!=4){
+                imprimirEncabezado(out,rl,tipoPersonal);
+                Cadete c;
+                int i=0;
+                String color;
+                for(Personal p: personal.get(tipoPersonal)){
+                    if ((i%2)==0){
+                        color=" #ccccff";
                     }
-                 out.print("</tr>");
+                    else{
+                        color=" #ffff99";
+                    }
+                    i++;
+                    if(Arrays.toString(lista).contains(String.valueOf(p.getCi()))){
+                        out.print("<tr style='background-color:"+color+"'>");
+                        switch(tipoPersonal){
+                            case 1:
+                                c = (Cadete)p;
+                                out.print("<td style='width: 5%' align='center'><h3 style='margin:2%;'></h3></td>");
+                                if(rl.carrera){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCarrera().getDescripcion()+"</h3></td>");
+                                }
+                                if(rl.numero){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getNroInterno()+"</h3></td>");
+                                }
+                                if(rl.ci){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCi()+"</h3></td>");
+                                }
+                                if(rl.grado){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getGrado().getAbreviacion()+"</h3></td>");
+                                }
+                                if(rl.primerNombre){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getPrimerNombre()+"</h3></td>");
+                                }
+                                if(rl.segundoNombre){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSegundoNombre()+"</h3></td>");
+                                }
+                                if(rl.primerApellido){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getPrimerApellido()+"</h3></td>");
+                                }
+                                if(rl.segundoApellido){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSegundoApellido()+"</h3></td>");
+                                }
+                                if(rl.curso){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getCurso().getAbreviacion()+"</h3></td>");
+                                }
+                                if(rl.arma){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getArma().getDescripcion()+"</h3></td>");
+                                }
+                                if(rl.lmga){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.isLmga()+"</h3></td>");
+                                }
+                                if(rl.pd){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.isPaseDirecto()+"</h3></td>");
+                                }
+                                if(rl.sexo){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getSexo()+"</h3></td>");
+                                }
+                                if(rl.dptoNac){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getDepartamentoNac().getDescripcion()+"</h3></td>");
+                                }
+                                if(rl.localidadNac){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getLocalidadNac()+"</h3></td>");
+                                }
+                                if(rl.dptoDom){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getDepartamento().getDescripcion()+"</h3></td>");
+                                }
+                                if(rl.localidadDom){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getLocalidad()+"</h3></td>");
+                                }
+                                if(rl.repitiente){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.isRepitiente()+"</h3></td>");
+                                }
+                                if(rl.cantHijos){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getHijos()+"</h3></td>");
+                                }
+                                if(rl.talleOperacional){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleOperacional()+"</h3></td>");
+                                }
+                                if(rl.talleBotas){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleBotas()+"</h3></td>");
+                                }
+                                if(rl.talleQuepi){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+c.getTalleQuepi()+"</h3></td>");
+                                }
+                            break;
+                            case 2: case 3: case 4:
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+p.getNroInterno()+"</h3></td>");
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+p.getCi()+"</h3></td>");
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+p.getGrado().getAbreviacion()+"</h3></td>");
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+p.getPrimerNombre()+"</h3></td>");
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+p.getSegundoNombre()+"</h3></td>");
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+p.getPrimerApellido()+"</h3></td>");
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+p.getSegundoApellido()+"</h3></td>");
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+p.getArma().getDescripcion()+"</h3></td>");
+                            break;
+                        }
+                     out.print("</tr>");
+                    }
                 }
+                out.print("</table>");
             }
-            out.print("</table>");
+            else{
+                imprimirEncabezado(out,rl,tipoPersonal);
+                Profesor c;
+                int i=0;
+                String color;
+                for(Profesor p: ManejadorProfesores.getInstance().getProfesores()){
+                    if ((i%2)==0){
+                        color=" #ccccff";
+                    }
+                    else{
+                        color=" #ffff99";
+                    }
+                    i++;
+                    if(Arrays.toString(lista).contains(String.valueOf(p.getCi()))){
+                        out.print("<tr style='background-color:"+color+"'>");
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+p.getCi()+"</h3></td>");
+                                if(p.getGrado()!=null){
+                                    out.print("<td align='center'><h3 style='margin:2%;'>"+p.getGrado().getAbreviacion()+"</h3></td>");
+                                }
+                                else{
+                                     out.print("<td align='center'><h3 style='margin:2%;'></h3></td>");
+                                }
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+p.getPrimerNombre()+"</h3></td>");
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+p.getSegundoNombre()+"</h3></td>");
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+p.getPrimerApellido()+"</h3></td>");
+                                out.print("<td align='center'><h3 style='margin:2%;'>"+p.getSegundoApellido()+"</h3></td>");
+                     out.print("</tr>");
+                    }
+                }
+                out.print("</table>");
+            }
         }
     }
     public ArrayList<Personal> getPersonalFiltro(RecordFiltro rf,int tipoPersonal) {
@@ -555,6 +589,52 @@ out.print("                </td>\n" +
         }
         setFiltroMostrarPersonal(rf);
         return ap;
+    }
+
+    public boolean bajaPersonal(int ci,int tipo) {
+        ManejadorPersonalBD mp= new ManejadorPersonalBD();
+        if(mp.eliminarPersonal(ci)){
+            boolean continuo=true;
+            Iterator it = personal.get(tipo).iterator();
+            Personal profActual;
+            while(it.hasNext() && continuo){
+                profActual = (Personal)it.next();
+                if(ci==profActual.getCi()){
+                    it.remove();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean agregarPersonal(RecordPersonal rp, int tipo) {
+        ManejadorPersonalBD mp= new ManejadorPersonalBD();
+        Personal p= mp.agregarPersonal(rp,null);
+        if(p!=null){
+            if(personal.get(tipo).isEmpty()){
+                personal.get(tipo).add(p);
+            }
+            else{
+                int i=0;
+                boolean agregue=false;
+                Iterator it = personal.get(tipo).iterator();
+                Personal profActual;
+                while(it.hasNext() && !agregue){
+                    profActual = (Personal)it.next();
+                    if(p.getGrado().getId()> profActual.getGrado().getId()){
+                       personal.get(tipo).add(i, p);
+                       agregue=true;
+                   }
+                   i++;
+                }
+                if(!agregue){
+                    personal.get(tipo).addLast(p);
+                }
+            }
+            return true;
+        }
+        return false;
     }
     private static class ManejadorPersonalHolder {
 
@@ -996,11 +1076,10 @@ out.print("                </td>\n" +
                     cadActual.setLocalidad(rp.rc.localidad);
                     cadActual.setLocalidadNac(rp.rc.localidadNac);
                     cadActual.setNotaPaseDirecto(rp.rc.notaPaseDirecto);
-                    cadActual.setObservaciones(rp.observaciones);
+                    cadActual.setObservaciones(rp.rc.observaciones);
                     cadActual.setPaseDirecto(rp.rc.paseDirecto);
                     cadActual.setPrimerApellido(rp.primerApellido);
                     cadActual.setPrimerNombre(rp.primerNombre);
-                    cadActual.setProfesor(rp.profesor);
                     cadActual.setRepitiente(rp.rc.repitiente);
                     cadActual.setSegundoApellido(rp.segundoApellido);
                     cadActual.setSegundoNombre(rp.segundoNombre);

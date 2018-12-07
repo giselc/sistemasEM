@@ -38,12 +38,13 @@ public class Cadete extends Personal{
     private String talleOperacional;
     private int talleBotas;
     private int talleQuepi;
+    private String observaciones;
     private Familiar madre;
     private Familiar padre;
     private final LinkedList<HistorialBajaCadete> historialBaja; 
 
-    public Cadete(String foto,Curso curso, Carrera carrera, String fechaNac, String sexo, Departamento departamentoNac, String localidadNac, String cc, int ccNro, EstadoCivil estadoCivil, String domicilio, Departamento departamento, String localidad, String telefono, String email, int derecha, int hijos, boolean repitiente, boolean lmga, boolean paseDirecto, double notaPaseDirecto, Familiar madre,Familiar padre, int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String observaciones, boolean profesor,String fechaAltaSistema,String talleOperacional,int talleBotas,int talleQuepi,LinkedList<HistorialBajaCadete> historialBaja) {
-        super(nroInterno, ci, grado, arma, primerNombre, segundoNombre, primerApellido, segundoApellido, documentos, observaciones, profesor,fechaAltaSistema);
+    public Cadete(String foto,Curso curso, Carrera carrera, String fechaNac, String sexo, Departamento departamentoNac, String localidadNac, String cc, int ccNro, EstadoCivil estadoCivil, String domicilio, Departamento departamento, String localidad, String telefono, String email, int derecha, int hijos, boolean repitiente, boolean lmga, boolean paseDirecto, double notaPaseDirecto, Familiar madre,Familiar padre, int nroInterno, int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, HashMap<Integer,Documento> documentos, String observaciones,String fechaAltaSistema,String talleOperacional,int talleBotas,int talleQuepi,LinkedList<HistorialBajaCadete> historialBaja) {
+        super(nroInterno, ci, grado, arma, primerNombre, segundoNombre, primerApellido, segundoApellido, documentos, fechaAltaSistema);
         this.curso = curso;
         this.carrera = carrera;
         this.fechaNac = fechaNac;
@@ -72,7 +73,12 @@ public class Cadete extends Personal{
         this.talleQuepi=talleQuepi;
         this.historialBaja = historialBaja;
     }
-
+ public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+  public String getObservaciones() {
+        return observaciones;
+    }
     public String getTalleOperacional() {
         return talleOperacional;
     }
@@ -576,7 +582,7 @@ boolean sigo=true;
 int ultIndex=0;
 int cant=1;
 while(sigo){
-    ultIndex=super.getObservaciones().indexOf("\n", ultIndex);
+    ultIndex=observaciones.indexOf("\n", ultIndex);
     if(ultIndex!=-1){
         cant++;
         ultIndex++;
@@ -585,7 +591,7 @@ while(sigo){
         sigo=false;
     }
 }
-        impr+=cant+" style=\"resize: none\" cols=\"80\"  name=\"observaciones\">"+ super.getObservaciones() +"</textarea>\n" +
+        impr+=cant+" style=\"resize: none\" cols=\"80\"  name=\"observaciones\">"+ observaciones +"</textarea>\n" +
 "                            </td>\n" +
 "                        </tr>\n" +
 "                        \n" +

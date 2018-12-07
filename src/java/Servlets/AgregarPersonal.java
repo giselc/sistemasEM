@@ -7,6 +7,8 @@ package Servlets;
 
 import Classes.Usuario;
 import Manejadores.ManejadorPersonalBD;
+import Manejadores.ManejadorProfesores;
+import Manejadores.ManejadorProfesoresBD;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -38,8 +40,10 @@ public class AgregarPersonal extends HttpServlet {
         if(u.isAdmin()){
             switch(tipo){
                 case 1: mp.AgregarCadetesTXT(); break;
-                case 2: mp.AgregarPersonalTXT(); break;
-                case 4: mp.AgregarProfesoresTXT(); break;
+                case 2: case 3: mp.AgregarPersonalTXT(tipo); break;
+                case 4: 
+                    ManejadorProfesoresBD mprof = new ManejadorProfesoresBD();
+                    mprof.agregarProfesoresTXT(); break;
             }
         }
         else{

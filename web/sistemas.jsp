@@ -73,10 +73,7 @@
                         <a href="personal.jsp?tipo=3"><p align="center" style="margin:0px"><img  class="boton" title="Oficiales" src="images/button_oficiales.png"/></p></a>
                     </li>
                     <li style="width: 90%">
-                        <a href="personal.jsp?tipo=4"><p align="center" style="margin:0px"><img  class="boton" title="Profesores" src="images/button_profesores.png"/></p></a>
-                    </li>
-                    <li style="width: 90%">
-                        <a href="S1-admin.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Admin" src="images/button_admin.png"/></p></a>
+                        <a href="profesores.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Profesores" src="images/button_profesores.png"/></p></a>
                     </li>
                 </ul>
             </li>
