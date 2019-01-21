@@ -44,6 +44,23 @@
             xmlhttp.send();
             return false;
         }
+        function Validar(f){
+            var r=confirm("¿Seguro que desea guardar los cambios?");
+            if (r==true)
+            {
+                //alert(f.elements["ci"].value);
+                if(f.elements["ci"].value.length == 8 ){
+                    return true;
+                }
+                else{
+                alert("Cédula incorrecta.");
+                    return false;
+            }
+            }
+            else{
+                return false;
+            }
+        }
 
      </script>
      <%
@@ -70,7 +87,7 @@
     </ul>
     <div id="content">
         <div id="Datos-Personales">
-            <form <% if (request.getParameter("id")==null){ out.print("action='Profesores'");} else{out.print("action='Profesores?id="+request.getParameter("id")+"'");} %> method="post" id="formularioAlta">
+            <form <% if (request.getParameter("id")==null){ out.print("action='Profesores'");} else{out.print("action='Profesores?id="+request.getParameter("id")+"'");} %> method="post" id="formularioAlta" onsubmit="return Validar(this);">
                 <table>
                     <tr>
                         <td>C.I.: </td>

@@ -201,7 +201,7 @@ public class Cadete extends HttpServlet {
                             else{
                                 //agregar
                                 if(mp.agregarCadete(rp, foto)){
-                                    mensaje="Cadete insertado sastisfactoriamente.";
+                                    mensaje="Cadete agregado sastisfactoriamente.";
                                     redirect="/cadete.jsp?id="+request.getParameter("ci");
                                 }
                                 else{

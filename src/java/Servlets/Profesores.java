@@ -125,7 +125,7 @@ public class Profesores extends HttpServlet {
                         else{
                             //agregar
                             if(mp.agregarProfesor(rp)){
-                                mensaje="Profesor insertado sastisfactoriamente.";
+                                mensaje="Profesor agregado sastisfactoriamente.";
                                 redirect="/profesor.jsp?id="+request.getParameter("ci");
                             }
                             else{

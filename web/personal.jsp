@@ -141,6 +141,23 @@
                 }
             }
         }
+        function Validar(f){
+            var r=confirm("¿Seguro que desea guardar los cambios?");
+            if (r==true)
+            {
+                //alert(f.elements["ci"].value);
+                if(f.elements["ci"].value.length == 8 ){
+                    return true;
+                }
+                else{
+                alert("Cédula incorrecta.");
+                    return false;
+            }
+            }
+            else{
+                return false;
+            }
+        }
     </script>
 
     <script>
@@ -339,7 +356,7 @@
                     </td>   
                 </tr>
             </table>
-                <form action="Personal?tipo=<%= tipo %>" method="post" id="formularioAlta">
+                    <form action="Personal?tipo=<%= tipo %>" method="post" id="formularioAlta" onsubmit="return Validar(this);">
                     <table>
                         <tr>
                             <td>C.I.: </td>

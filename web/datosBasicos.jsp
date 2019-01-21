@@ -58,6 +58,7 @@
         var r=confirm("¿Seguro que desea guardar los cambios?");
         if (r==true)
         {
+            //alert(f.elements["ci"].value);
             if(f.elements["ci"].value.length == 8 ){
                 var patron=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/;
                 if(f.elements["email"].value.search(patron)==0){

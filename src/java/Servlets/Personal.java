@@ -98,7 +98,7 @@ public class Personal extends HttpServlet {
                             rp.fechaAltaSistema = request.getParameter("fechaAltaSistema");
                             rp.rc=null;
                             if(mp.agregarPersonal(rp,tipo)){
-                                mensaje="Personal insertado sastisfactoriamente.";
+                                mensaje="Personal agregado sastisfactoriamente.";
                                 redirect="/personal.jsp?tipo="+tipo;
                             }
                             else{
