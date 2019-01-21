@@ -42,12 +42,12 @@
                         int j = 0;
                         for (Grado g : ag.values()){
                             if(g.getIdTipoPersonal().getId()== tipo ){ //CADETES
-                                if (j==0){
+                                /*if (j==0){
                                     j++;
                                 }
-                                else{
+                                else{*/
                                     out.print("<option value='"+String.valueOf(g.getId())+"'>"+g.getDescripcion()+"</option>");
-                                }
+                                //}
                             }
                         }
                     %>
@@ -67,12 +67,12 @@
                         HashMap<Integer, Curso> ac = mc.getCursos();
                         j = 0;
                         for (Curso g : ac.values()){
-                            if (j==0){
+                            /*if (j==0){
                                 j++;
                             }
-                            else{
+                            else{*/
                                 out.print("<option value='"+String.valueOf(g.getId())+"'>"+g.getDescripcion()+"</option>");
-                            }
+                            //}
                         }
                     %>
                 </select>
@@ -91,12 +91,12 @@
                         HashMap<Integer, Arma> aa = mc.getArmas();
                         j = 0;
                         for (Arma g : aa.values()){
-                            if (j==0){
+                           /*if (j==0){
                                 j++;
                             }
-                            else{
+                            else{*/
                                 out.print("<option value='"+String.valueOf(g.getId())+"'>"+g.getDescripcion()+"</option>");
-                            }
+                           // }
                         }
                     %>
                 </select>
