@@ -20,28 +20,36 @@
 
     <script>
         function existeProfesor(ciInput){
-            xmlhttp=new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function() {
-                if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-                    var obj = jQuery.parseJSON( xmlhttp.responseText );
-                    var existe = obj.Profesor;
-                    if(existe.length>0){
-                        alert("El profesor ya existe en el sistema.");
-                        window.location.href="profesor.jsp?id="+ciInput.value;
-                    }
-                    else{
-                        var form= document.getElementById("formularioAlta");
-                        var ci =document.getElementById("ci").value;
-                        form.reset;
-                        document.getElementById("ci").value=ci;
-                        document.getElementById("rellenarOtrosDatos").style.display = '';
-                        
-                        
-                    }
+           // alert(ciInput.value.length);
+            if(ciInput.value.length==8){
+                xmlhttp=new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                        var obj = jQuery.parseJSON( xmlhttp.responseText );
+                        var existe = obj.Profesor;
+                        if(existe.length>0){
+                            alert("El profesor ya existe en el sistema.");
+                            window.location.href="profesor.jsp?id="+ciInput.value;
+                        }
+                        else{
+                            var form= document.getElementById("formularioAlta");
+                            var ci =document.getElementById("ci").value;
+                            form.reset;
+                            document.getElementById("ci").value=ci;
+                            document.getElementById("rellenarOtrosDatos").style.display = '';
+
+
+                        }
+                    };
                 };
-            };
-            xmlhttp.open("POST","Profesores?existe=1&ci="+ciInput.value);
-            xmlhttp.send();
+                xmlhttp.open("POST","Profesores?existe=1&ci="+ciInput.value);
+                xmlhttp.send();
+            }
+            else{
+                alert("Cédula incorrecta.");
+                document.getElementById("rellenarOtrosDatos").style.display = 'none';
+                //ciInput.focus();
+            }
             return false;
         }
         function Validar(f){
