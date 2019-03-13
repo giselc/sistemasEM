@@ -37,14 +37,13 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
                             +"<td style='width: 10%' align='center'>Cédula</td>");
                 if(tipo==1){
                 out.print(  "<td style='width: 15%' align='center'>Curso</td>"
-                            +"<td style='width: 5%' align='center'>Ver</td>");
-                
+                           +"<td style='width: 5%' align='center'>Ver</td>");
                 }
                 else{
-                 out.print(  "<td style='width: 15%' align='center'>Arma</td>"); 
+                out.print(  "<td style='width: 15%' align='center'>Arma</td>"); 
                 }
                 out.print(  "<td style='width: 5%' align='center'>Elim</td>"   
-                +"</tr>" );
+                        +"</tr>" );
                 int i=0;
                 String color;
                 for (  Personal p : hmp){
@@ -56,7 +55,7 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
                         }
                         i++;
                         
-                       out.print("<tr style='background-color:"+color+"'>"
+            out.print("<tr style='background-color:"+color+"'>"
                        +"<td style='width: 5%' align='center'>"+i+"</td>"
                        +"<td style='width: 5%"+display+"' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(p.getCi())+"' form='formCadeteListar' /></td>"
                        +"<td style='width: 5%' align='center'>"+p.getNroInterno()+"</td>"
@@ -64,7 +63,7 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
                        if(p.getGrado()!=null){
                            out.print(p.getGrado().getAbreviacion());
                        }
-                       out.print("</td>"
+              out.print("</td>"
                        +"<td style='width: 10%' align='center'>"+p.getPrimerNombre()+"</td>"
                        +"<td style='width: 10%' align='center'>"+p.getSegundoNombre()+"</td>"
                        +"<td style='width: 10%' align='center'>"+p.getPrimerApellido()+"</td>"
@@ -72,10 +71,10 @@ ManejadorPersonal mp = ManejadorPersonal.getInstance();
                        +"<td style='width: 10%' align='center'>"+p.getCi()+"</td>");
                        if(tipo==1){
                         Cadete c= (Cadete) p;
-                        out.print("<td style='width: 15%' align='center'>"+c.getCurso().getAbreviacion()+"</td>"
-                        +"<td style='width: 5%' align='center'><a href='cadete.jsp?id="+c.getCi()+"'><img src='images/ver.png' width='60%' /></a></td>");
-                       out.print("<td style='width: 5%' align='center'><a href='baja.jsp?id="+p.getCi()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
-                        +"</tr>"); 
+              out.print("<td style='width: 15%' align='center'>"+c.getCurso().getAbreviacion()+"</td>"
+                       +"<td style='width: 5%' align='center'><a href='cadete.jsp?id="+c.getCi()+"'><img src='images/ver.png' width='60%' /></a></td>");
+              out.print("<td style='width: 5%' align='center'><a href='baja.jsp?id="+p.getCi()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
+                    +"</tr>"); 
                        }
                         else{
                         out.print("<td style='width: 15%' align='center'>");

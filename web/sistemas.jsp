@@ -101,7 +101,7 @@
                 </ul>
             </li>
             <li style="width: 25%">
-                <a href="notas.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Notas" src="images/button_notas.png"/></p></a>
+                <a href="bedelia.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Bedelía" src="images/button_bedelia.png"/></p></a>
             </li>
             <li style="width: 25%">
                 <a href="habilitacion.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Habilitacion" src="images/button_habilitacion.png"/></p></a>
