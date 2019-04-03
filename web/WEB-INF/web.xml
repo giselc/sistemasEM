@@ -46,7 +46,11 @@
     </servlet>
     <servlet>
         <servlet-name>Profesores</servlet-name>
-        <servlet-class>Servlets.Profesores</servlet-class>
+        <servlet-class>Servlets.Bedelia.Profesores</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Curso</servlet-name>
+        <servlet-class>Servlets.Bedelia.CursoBedelia</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>login</servlet-name>
@@ -95,6 +99,10 @@
     <servlet-mapping>
         <servlet-name>Profesores</servlet-name>
         <url-pattern>/Profesores</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Curso</servlet-name>
+        <url-pattern>/Curso</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

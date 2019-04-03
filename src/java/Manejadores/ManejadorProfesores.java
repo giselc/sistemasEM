@@ -5,7 +5,7 @@
  */
 package Manejadores;
 
-import Classes.Profesor;
+import Classes.Bedelia.Profesor;
 import Classes.RecordProfesores;
 import java.util.Iterator;
 import java.util.LinkedList;

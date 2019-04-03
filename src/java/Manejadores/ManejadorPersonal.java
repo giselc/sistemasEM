@@ -8,7 +8,7 @@ package Manejadores;
 import Classes.Cadete;
 import Classes.Documento;
 import Classes.Personal;
-import Classes.Profesor;
+import Classes.Bedelia.Profesor;
 import Classes.RecordFiltro;
 import Classes.RecordCamposListar;
 import Classes.RecordPersonal;

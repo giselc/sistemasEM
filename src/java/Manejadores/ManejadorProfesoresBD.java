@@ -9,7 +9,7 @@ import Classes.Cadete;
 import Classes.ConexionDB;
 import Classes.Familiar;
 import Classes.Personal;
-import Classes.Profesor;
+import Classes.Bedelia.Profesor;
 import Classes.RecordProfesores;
 import java.io.BufferedReader;
 import java.io.File;
