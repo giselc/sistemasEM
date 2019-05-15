@@ -19,7 +19,8 @@ import javax.servlet.http.HttpSession;
  *
  * @author Gisel
  */
-public class CursoBedelia extends HttpServlet {
+public class Materia extends HttpServlet {
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -33,7 +34,7 @@ public class CursoBedelia extends HttpServlet {
             throws ServletException, IOException {
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
-        //.out.print("aca");
+        //System.out.print("aca");
         if(u.isAdmin()||u.getPermisosPersonal().getId()==4){
             response.setContentType("text/html;charset=UTF-8");
             String mensaje="";
@@ -51,76 +52,64 @@ public class CursoBedelia extends HttpServlet {
                 //String mensaje;
                 if(request.getParameter("elim")!=null){
                     //baja
-                    switch(mp.eliminarCurso(id)){
-                        case 0:
+                    if(mp.eliminarMateria(id)){
                             mensaje="Curso eliminado sastisfactoriamente.";
-                            redirect="/cursos.jsp";
-                            break;
-                        case 1:
-                            mensaje="ERROR al eliminar el curso. Tiene materias asociadas";
-                            redirect="/cursos.jsp";
-                            break;
-                        case 2:
-                            mensaje="ERROR al eliminar el curso. Tiene libretas asociadas";
-                            redirect="/cursos.jsp";
-                            break;
+                            redirect="/materias.jsp";
+                    }
+                    else{
+                            mensaje="ERROR al eliminar la materia. Puede estar asociada a algún curso";
+                            redirect="/materias.jsp";
+                         
                     }
                     sesion.setAttribute("Mensaje", mensaje);
                     response.sendRedirect(redirect);
                 }
-                else{     
-                    if(request.getParameter("desvincular")!=null){
-                        if( mp.desasociarMateriaCurso(Integer.parseInt(request.getParameter("desvincular")), Integer.parseInt(request.getParameter("idCurso")))){
-                            sesion.setAttribute("Mensaje", "No se puede desvincular materia, puede que existan libretas creadas.");
-                            response.sendRedirect("curso.jsp?id="+request.getParameter("idCurso"));
-                        };
-                    }
-                    else{
-                        if(request.getParameter("vincular")!=null){
-                            //pendiente
+                else{ 
+                    boolean secundaria=false;
+                    if (request.getParameter("secundaria")!=null){
+                        secundaria = request.getParameter("secundaria").equals("on");
+                   }
+                    boolean semestral=false;
+                    if (request.getParameter("semestral")!=null){
+                        secundaria = request.getParameter("semestral").equals("on");
+                   }
+                    boolean activo=false;
+                    if (request.getParameter("activo")!=null){
+                        secundaria = request.getParameter("activo").equals("on");
+                   }
+                    Classes.Bedelia.Materia m = new Classes.Bedelia.Materia(id, request.getParameter("nombre"), request.getParameter("codigo"),semestral, Integer.valueOf(request.getParameter("semestre")), secundaria, Double.valueOf(request.getParameter("coeficiente")),activo);
+                    if(id!=-1){
+                        if(mp.modificarMateria(m)){
+                            mensaje="Materia modificada sastisfactoriamente.";
                         }
                         else{
-                            boolean activo = false;
-                            if (request.getParameter("activo")!=null){
-                                activo = request.getParameter("activo").equals("on");
-                            }
-                            Classes.Bedelia.CursoBedelia cb = new Classes.Bedelia.CursoBedelia(id, request.getParameter("codigo"), request.getParameter("nombre"), Integer.parseInt(request.getParameter("anioCurricular")), request.getParameter("jefatura").equals("JE"),activo);
-                            if(id!=-1){
-                                switch(mp.modificarCurso(cb)){
-                                    case 0:
-                                        mensaje="Curso modificado sastisfactoriamente.";
-                                        break;
-                                    case 1:
-                                        mensaje="ERROR al modificar el curso. Tiene materias asociadas";
-                                        break;
-                                    case 2:
-                                        mensaje="ERROR al modificar el curso. Tiene libretas asociadas";
-                                        break;
-                                }
-                                redirect="/curso.jsp?id="+request.getParameter("id");
-                            }
-                            else{
-                                //agregar
-                                if(mp.agregarCurso(cb)){
-                                    mensaje="Curso agregado sastisfactoriamente.";
-                                    redirect="/cursos.jsp";
-                                }
-                                else{
-                                    mensaje="ERROR al agregar al curso.";
-                                    redirect="/cursos.jsp";
-                                };
-                            }
+                            mensaje="ERROR al modificar la materia.";
                         }
-                        sesion.setAttribute("Mensaje", mensaje);
-                        response.sendRedirect(redirect);
+                        redirect="/materias.jsp";
                     }
+                    else{
+                        //agregar
+                        int idCurso = 0;
+                        if(request.getParameter("idCurso")!=null){
+                            idCurso= Integer.valueOf(request.getParameter("idCurso"));
+                        }
+                        if(mp.agregarMateria(m,idCurso)){
+                            mensaje="Materia agregada sastisfactoriamente.";
+                            redirect="/materias.jsp";
+                        }
+                        else{
+                            mensaje="ERROR al agregar la materia.";
+                            redirect="/materias.jsp";
+                        }
+                    }
+                    sesion.setAttribute("Mensaje", mensaje);
+                    response.sendRedirect(redirect);
                 }
-                
             }
             catch(Exception ex){
                 mensaje = "ERROR: " + ex.getMessage();
                 sesion.setAttribute("Mensaje", mensaje);
-                response.sendRedirect("/cursos.jsp");
+                response.sendRedirect("/materias.jsp");
             }        
         }
         else{

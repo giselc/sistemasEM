@@ -72,9 +72,9 @@
                     <li style="width: 90%">
                         <a href="personal.jsp?tipo=3"><p align="center" style="margin:0px"><img  class="boton" title="Oficiales" src="images/button_oficiales.png"/></p></a>
                     </li>
-                    <li style="width: 90%">
+                    <%--li style="width: 90%">
                         <a href="profesores.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Profesores" src="images/button_profesores.png"/></p></a>
-                    </li>
+                    </li--%>
                 </ul>
             </li>
             <li style="width: 25%">

@@ -1,9 +1,11 @@
 <%-- 
-    Document   : cursos
-    Created on : Mar 19, 2019, 9:39:46 AM
+    Document   : materias
+    Created on : May 4, 2019, 5:16:51 AM
     Author     : Gisel
 --%>
 
+<%@page import="Classes.Bedelia.Materia"%>
+<%@page import="java.util.HashMap"%>
 <%@page import="Classes.Bedelia.CursoBedelia"%>
 <%@page import="Manejadores.ManejadorBedelia"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -129,7 +131,7 @@
     sesion.setAttribute("atras","bedelia.jsp");
 %> 
     <ul id="tabs">
-        <li><a href="#"><b>CURSOS</b></a></li>
+        <li><a href="#"><b>MATERIAS</b></a></li>
     </ul>
     <div id="loader" style="z-index: 50;position: fixed; top:0; left:0; width:100%; height: 100%;background: url('images/loading-verde.gif') center center no-repeat; background-size: 10%"></div>
     <div id="content">
@@ -140,39 +142,44 @@
                 </form>
             </div>
             <table style="float: right">
-                <tr>
-                    <td style="width: 55%"><h3 style="float: left; font-family: sans-serif">CURSOS</h3></td>
-                    <td style="width: 15%"><a href="curso.jsp" title="Agregar"><img width="30%" src='images/agregarLista.png' /></a> </td>
-                    <td style="width: 15%"><img  width="30%" title="Imprimir" src="images/imprimir.png" onclick="listar(4);"/></td>
-                </tr>
-                <tr>
-                    <td colspan="8">
-                        <p style="font-size: 70%" id="filtroTexto"></p>
-                    </td>   
-                </tr>
-            </table>
-                
+    <tr>
+        <td style="width: 55%"><h3 style="float: left; font-family: sans-serif">Materias</h3></td>
+        <td style="width: 15%"><a href="materia.jsp" title="Agregar"><img width="30%" src='images/agregarLista.png' /></a> </td>
+        <td style="width: 15%"><a onclick='abrir_dialog(dialog1)' title="Aplicar filtro"><img width="35%" src='images/filtro_1.png' /></a> </td>
+        <td style="width: 15%"><img  width="30%" title="Imprimir" src="images/imprimir.png" onclick="listado(dialog2)"/></td>
+    </tr>
+    <tr>
+        <td colspan="8">
+            <p style="font-size: 70%" id="filtroTexto"></p>
+        </td>   
+    </tr>
+</table>
+<%--
+<div id='dialog1' style="display:none" title="Filtro">
+    <%@include file="filtroPersonal.jsp" %>
+</div>
+   --%>     
             <%
-            ManejadorBedelia mp = ManejadorBedelia.getInstance();
-            %>   
-
-    
-            <%
+                ManejadorBedelia mb= ManejadorBedelia.getInstance();
+                HashMap<Integer,Materia> materiasCurso=mb.getMaterias();
+                String display="";
                 out.print("<table style='width: 100%;' id='tablalistado'>"
                         + "<tr style='background-color:#ffcc66'>"
                             +"<td style='width: 5%' align='center'></td>"
-                            +"<td style='width: 5%; display:none' align='center'><input type='checkbox' onclick='seleccionar_todo()' id='selTodo'></td>"
-                            +"<td style='width: 10%' align='center'>id</td>"
-                            +"<td style='width: 10%' align='center'>Codigo</td>"
-                            +"<td style='width: 10%' align='center'>Nombre</td>"
-                            +"<td style='width: 10%' align='center'>Anio Curricular</td>"
-                            +"<td style='width: 10%' align='center'>Jefatura</td>");
-                out.print(  "<td style='width: 5%' align='center'>Ver</td>");
-                out.print(  "<td style='width: 5%' align='center'>Elim</td>"   
-                +"</tr>" );
+                            +"<td style='width: 5%' align='center'><input type='checkbox' onclick='seleccionar_todo()' id='selTodo'></td>"
+                            +"<td style='width: 5%' align='center'> ID </td>"
+                            +"<td style='width: 15%' align='center'>C&oacute;digo</td>"
+                            +"<td colspan=2 style='width: 20%' align='center'>Nombre</td>"
+                            +"<td colspan=2 style='width: 10%' align='center'>Semestral</td>"
+                            +"<td style='width: 10%' align='center'>Semestre</td>"
+                            +"<td style='width: 10%' align='center'>Secundaria</td>"
+                            +"<td style='width: 5%' align='center'>Coeficiente</td>"
+                           +"<td style='width: 5%' align='center'>Ver</td>"
+                        +"<td style='width: 5%' align='center'>Elim</td>");
+                
                 int i=0;
                 String color;
-                for (  CursoBedelia p : mp.getCursos().values()){
+                for (  Materia m : materiasCurso.values()){
                         if ((i%2)==0){
                             color=" #ccccff";
                         }
@@ -181,25 +188,22 @@
                         }
                         i++;
                         
-                       out.print("<tr style='background-color:"+color+"'>"
+            out.print("<tr style='background-color:"+color+"'>"
                        +"<td style='width: 5%' align='center'>"+i+"</td>"
-                       +"<td style='width: 5%;display:none' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(p.getId())+"' form='formCadeteListar' /></td>"
-                       +"<td style='width: 10%' align='center'>"+p.getId()+"</td>"
-                       +"<td style='width: 10%' align='center'>"+p.getCodigo()+"</td>"
-                       +"<td style='width: 10%' align='center'>"+p.getNombre()+"</td>"
-                       +"<td style='width: 10%' align='center'>"+p.getAnioCurricular()+"</td>"
-                       +"<td style='width: 10%' align='center'>");
-                       if(p.isJefatura()){
-                            out.print("JE");
-                       }else{
-                            out.print("JCC");
+                       +"<td style='width: 5%"+display+"' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(m.getId())+"' form='formCadeteListar' /></td>"
+                       +"<td style='width: 5%' align='center'>"+m.getId()+"</td>"
+                       +"<td style='width: 15%' align='center'>"+ m.getCodigo() +"</td>"
+                       +"<td style='width: 20%' align='center'>"+ m.getNombre() +"</td>"
+                       +"<td style='width: 5%' align='center'>"+ m.isSemestral() +"</td>"
+                       +"<td style='width: 10%' align='center'>"+ m.getSemestre() +"</td>"
+                       +"<td style='width: 10%' align='center'>"+ m.isSecundaria() +"</td>"
+                       +"<td style='width: 10%' align='center'>"+m.getCoeficiente()+"</td>"
+                       +"<td style='width: 5%' align='center'><a href='materia.jsp?id="+m.getId()+"'><img src='images/ver.png' width='60%' /></a></td>");
+              out.print("<td style='width: 5%' align='center'><a href='Materia?elimMateria="+m.getId()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
+                    +"</tr>"); 
                        }
-                       out.print("</td>");
-                        out.print("<td style='width: 5%' align='center'><a href='curso.jsp?id="+p.getId()+"'><img src='images/ver.png' width='60%' /></a></td>");
-                        out.print("<td style='width: 5%' align='center'><a href='Curso?elim=1&id="+p.getId()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
-                       +"</tr>");
-                }
-                out.print("</table>");
+                
+            out.print("</table>");
             %> 
          </div>
      </div>    

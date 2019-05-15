@@ -6,6 +6,7 @@
 package Classes.Bedelia;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -30,6 +31,8 @@ public class CursoBedelia {
         this.anioCurricular = anioCurricular;
         this.Jefatura = Jefatura;
         this.activo= activo;
+        this.materias = new HashMap<>();
+        this.grupos =  new LinkedList<>();
     }
 
     
@@ -81,7 +84,17 @@ public class CursoBedelia {
     public LinkedList<Grupo> getGrupos() {
         return grupos;
     }
-
+    public Grupo getGrupo(int anio, String nombre){
+        Grupo actual;
+        Iterator it=grupos.iterator();
+        while (it.hasNext()){
+            actual=(Grupo)it.next();
+            if(actual.getAnio()==anio && actual.getNombre().equals(nombre)){
+                return actual;
+            }
+        }
+        return null;
+    }
     public void setMaterias(HashMap<Integer, Materia> materias) {
         this.materias = materias;
     }

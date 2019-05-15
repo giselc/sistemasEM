@@ -12,29 +12,57 @@ import java.util.HashMap;
  *
  * @author Gisel
  */
-class LibretaIndividual {
-    private Libreta libreta;
+public class LibretaIndividual {
+    private int idLibreta;
     private Cadete alumno;
+    private double promedioAnual;
+    private double notaFinal; //calculado en base al promedioAnual y nota de Examen
     HashMap<Integer, Falta> faltas;
     HashMap<Integer, Nota> notas;
     HashMap<Integer,Promedio> promedios;
-    HashMap<Integer,Sanciones> sanciones;
+    HashMap<Integer,Sancion> sanciones;
 
-    public LibretaIndividual(Libreta libreta, Cadete alumno, HashMap<Integer, Falta> faltas, HashMap<Integer, Nota> notas, HashMap<Integer, Promedio> promedios, HashMap<Integer, Sanciones> sanciones) {
-        this.libreta = libreta;
+    public LibretaIndividual(int idLibreta, Cadete alumno, HashMap<Integer, Falta> faltas, HashMap<Integer, Nota> notas, HashMap<Integer, Promedio> promedios, HashMap<Integer, Sancion> sanciones, double promedioAnual, double notaFinal) {
+        this.idLibreta = idLibreta;
         this.alumno = alumno;
         this.faltas = faltas;
         this.notas = notas;
         this.promedios = promedios;
         this.sanciones = sanciones;
-    }
-    
-    public Libreta getLibreta() {
-        return libreta;
+        this.promedioAnual = promedioAnual;
+        this.notaFinal = notaFinal;
     }
 
-    public void setLibreta(Libreta libreta) {
-        this.libreta = libreta;
+    public int getIdLibreta() {
+        return idLibreta;
+    }
+
+    public void setIdLibreta(int idLibreta) {
+        this.idLibreta = idLibreta;
+    }
+
+    public double getPromedioAnual() {
+        return promedioAnual;
+    }
+
+    public void setPromedioAnual(double promedioAnual) {
+        this.promedioAnual = promedioAnual;
+    }
+
+    public double getNotaFinal() {
+        return notaFinal;
+    }
+
+    public void setNotaFinal(double notaFinal) {
+        this.notaFinal = notaFinal;
+    }
+    
+    public int getLibreta() {
+        return idLibreta;
+    }
+
+    public void setLibreta(int idLibreta) {
+        this.idLibreta = idLibreta;
     }
 
     public Cadete getAlumno() {
@@ -69,11 +97,11 @@ class LibretaIndividual {
         this.promedios = promedios;
     }
 
-    public HashMap<Integer, Sanciones> getSanciones() {
+    public HashMap<Integer, Sancion> getSanciones() {
         return sanciones;
     }
 
-    public void setSanciones(HashMap<Integer, Sanciones> sanciones) {
+    public void setSanciones(HashMap<Integer, Sancion> sanciones) {
         this.sanciones = sanciones;
     }
     

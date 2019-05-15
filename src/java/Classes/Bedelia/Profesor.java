@@ -7,6 +7,7 @@ package Classes.Bedelia;
 
 import Classes.Arma;
 import Classes.Grado;
+import java.util.HashMap;
 
 /**
  *
@@ -182,8 +183,6 @@ public class Profesor {
     public void setBedelia(boolean adminBedelia) {
         this.adminBedelia = adminBedelia;
     }
-
-    
     
     
 }

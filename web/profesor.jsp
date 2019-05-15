@@ -7,7 +7,7 @@
 <%@page import="Classes.Arma"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="Classes.Grado"%>
-<%@page import="Classes.Profesor"%>
+<%@page import="Classes.Bedelia.Profesor"%>
 <%@page import="Manejadores.ManejadorProfesores"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>

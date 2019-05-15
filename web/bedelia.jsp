@@ -85,15 +85,7 @@
                     <li style="width: 90%">
                         <a href="sanciones.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Sanciones" src="images/button_sanciones.png"/></p></a>
                     </li>
-                     <li style="width: 90%">
-                         <a href="escolaridad.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Libretas" src="images/button_libretas.png"/></p></a>
-                    </li>
-                     <li style="width: 90%">
-                         <a href="examenes.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Exámenes" src="images/button_examenes.png"/></p></a>
-                    </li>
-                     <li style="width: 90%">
-                         <a href="libretas.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Escolaridad" src="images/button_escolaridad.png"/></p></a>
-                    </li>
+                     
                 </ul>
             </li>
             <li style="width: 30%">
@@ -105,18 +97,27 @@
                     <li style="width: 90%">
                         <a href="materias.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Materias" src="images/button_materias.png"/></p></a>
                     </li>
-                    <li style="width: 90%">
+                    <%--li style="width: 90%">
                         <a href="grupos.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Grupos" src="images/button_grupos.png"/></p></a>
-                    </li>
+                    </li --%>
                     <li style="width: 90%">
                         <a href="profesores.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Profesores" src="images/button_profesores_1.png"/></p></a>
                     </li>
                     <li style="width: 90%">
+                         <a href="libretas.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Libretas" src="images/button_libretas.png"/></p></a>
+                    </li>
+                     <li style="width: 90%">
+                         <a href="examenes.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Exámenes" src="images/button_examenes.png"/></p></a>
+                    </li>
+                     <li style="width: 90%">
+                         <a href="escolaridad.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Escolaridad" src="images/button_escolaridad.png"/></p></a>
+                    </li>
+                    <%--li style="width: 90%">
                         <a href="horarios.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Horarios" src="images/button_horarios.png"/></p></a>
                     </li>
                     <li style="width: 90%">
                         <a href="salones.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Salones" src="images/button_salones.png"/></p></a>
-                    </li>
+                    </li--%>
                 </ul>
             </li>
             <li style="width: 30%">

@@ -9,7 +9,7 @@ package Classes.Bedelia;
  *
  * @author Gisel
  */
-class Falta {
+public class Falta {
     private int id;
     private String fecha;
     private int canthoras;

@@ -89,7 +89,6 @@ public class ManejadorProfesoresBD {
        LinkedList<Profesor> p= new LinkedList<>();
         try {
             Statement s= connection.createStatement();
-            
             String sql;
             ManejadorCodigos mc = ManejadorCodigos.getInstance();
             sql="SELECT * FROM sistemasem.profesores left join sistemasem.grado on profesores.idgrado = grado.codigo order by primerApellido asc;";
