@@ -38,8 +38,8 @@
                             +"<td style='width: 5%' align='center'><input type='checkbox' onclick='seleccionar_todo()' id='selTodo'></td>"
                             +"<td style='width: 5%' align='center'> ID </td>"
                             +"<td style='width: 15%' align='center'>C&oacute;digo</td>"
-                            +"<td colspan=2 style='width: 20%' align='center'>Nombre</td>"
-                            +"<td colspan=2 style='width: 10%' align='center'>Semestral</td>"
+                            +"<td  style='width: 20%' align='center'>Nombre</td>"
+                            +"<td  style='width: 10%' align='center'>Semestral</td>"
                             +"<td style='width: 10%' align='center'>Semestre</td>"
                             +"<td style='width: 10%' align='center'>Secundaria</td>"
                             +"<td style='width: 5%' align='center'>Coeficiente</td>"
@@ -68,7 +68,7 @@
                        +"<td style='width: 10%' align='center'>"+ m.isSecundaria() +"</td>"
                        +"<td style='width: 10%' align='center'>"+m.getCoeficiente()+"</td>"
                        +"<td style='width: 5%' align='center'><a href='materia.jsp?id="+m.getId()+"'><img src='images/ver.png' width='60%' /></a></td>");
-              out.print("<td style='width: 5%' align='center'><a href='CursoBedelia?desvincular="+m.getId()+"&idCurso="+d.getId()+"'><img src='images/desvincular.png' width='60%' /></a></td>"
+              out.print("<td style='width: 5%' align='center'><a href='Curso?desvincular="+m.getId()+"&idCurso="+d.getId()+"'><img src='images/desvincular.png' width='60%' /></a></td>"
                     +"</tr>"); 
                        }
                 

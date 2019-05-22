@@ -44,16 +44,15 @@ public class Materia extends HttpServlet {
                 String paramName = params.nextElement();
                 System.out.println("Parameter Name - "+paramName+", Value - "+request.getParameter(paramName));
             }*/
-
             try (PrintWriter out = response.getWriter()) {
                 /* TODO output your page here. You may use following sample code. */
                 ManejadorBedelia mp = ManejadorBedelia.getInstance();
-                int id= Integer.valueOf(request.getParameter("id"));
+                
                 //String mensaje;
                 if(request.getParameter("elim")!=null){
                     //baja
-                    if(mp.eliminarMateria(id)){
-                            mensaje="Curso eliminado sastisfactoriamente.";
+                    if(mp.eliminarMateria(Integer.valueOf(request.getParameter("elim")))){
+                            mensaje="Materia eliminado sastisfactoriamente.";
                             redirect="/materias.jsp";
                     }
                     else{
@@ -65,6 +64,7 @@ public class Materia extends HttpServlet {
                     response.sendRedirect(redirect);
                 }
                 else{ 
+                    int id= Integer.valueOf(request.getParameter("id"));
                     boolean secundaria=false;
                     if (request.getParameter("secundaria")!=null){
                         secundaria = request.getParameter("secundaria").equals("on");
@@ -77,7 +77,12 @@ public class Materia extends HttpServlet {
                     if (request.getParameter("activo")!=null){
                         secundaria = request.getParameter("activo").equals("on");
                    }
-                    Classes.Bedelia.Materia m = new Classes.Bedelia.Materia(id, request.getParameter("nombre"), request.getParameter("codigo"),semestral, Integer.valueOf(request.getParameter("semestre")), secundaria, Double.valueOf(request.getParameter("coeficiente")),activo);
+                    int semestre=0;
+                    if(request.getParameter("semestre")!=null){
+                        semestre=Integer.valueOf(request.getParameter("semestre"));
+                    }
+                    System.out.print(request.getParameter("nombre"));
+                    Classes.Bedelia.Materia m = new Classes.Bedelia.Materia(id, request.getParameter("nombre"), request.getParameter("codigo"),semestral, semestre, secundaria, Double.valueOf(request.getParameter("coeficiente")),activo);
                     if(id!=-1){
                         if(mp.modificarMateria(m)){
                             mensaje="Materia modificada sastisfactoriamente.";

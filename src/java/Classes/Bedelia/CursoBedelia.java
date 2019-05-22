@@ -110,7 +110,26 @@ public class CursoBedelia {
     public void setActivo(boolean activo) {
         this.activo = activo;
     }
-    
-    
-    
+
+    synchronized public void agregarGrupoEnOrden(Grupo g) {
+       if(grupos.isEmpty()){
+           grupos.add(g);
+           return;
+       }
+       Iterator it = grupos.iterator();
+       Grupo actual;
+       int i=0;
+       while(it.hasNext()){
+           actual = (Grupo)it.next();
+           if(actual.getAnio()==g.getAnio()){
+               if(actual.getNombre().toLowerCase().compareTo(g.getNombre().toLowerCase())>0){
+                   grupos.add(i, g);
+                   return;
+               }
+           }
+           i++;
+       }
+       grupos.addLast(g);
+       return;
+    }
 }

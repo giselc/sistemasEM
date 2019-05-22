@@ -6,6 +6,7 @@
 package Manejadores;
 
 import Classes.Bedelia.CursoBedelia;
+import Classes.Bedelia.Grupo;
 import Classes.Bedelia.Libreta;
 import Classes.Bedelia.Materia;
 import java.util.HashMap;
@@ -29,6 +30,18 @@ public class ManejadorBedelia {
     
     public static ManejadorBedelia getInstance() {
         return ManejadorBedeliaHolder.INSTANCE;
+    }
+
+    public boolean asociarMateriasCurso(String[] idMaterias, String idCurso) {
+        ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
+        if(mb.asociarMateriasCurso(idMaterias,idCurso)){
+            HashMap mateCurso= cursos.get(Integer.valueOf(idCurso)).getMaterias();
+            for(String m: idMaterias){
+               mateCurso.put(Integer.valueOf(m), materias.get(Integer.valueOf(m)));
+            }
+            return true;
+        };
+        return false;
     }
 
     private static class ManejadorBedeliaHolder {
@@ -215,5 +228,26 @@ public class ManejadorBedelia {
     public HashMap<Integer, HashMap<Integer,Libreta>> getLibretas() {
         return libretas;
     }
-
+    
+    public HashMap<Integer, CursoBedelia> getCursosMateria(int idMateria){
+        HashMap<Integer, CursoBedelia> hcb= new HashMap<>();
+        for(CursoBedelia cb: cursos.values()){
+            if(cb.getMaterias().containsKey(idMateria)){
+                hcb.put(cb.getId(), cb);
+            }
+        }
+        return hcb;
+    }
+    
+    public boolean agregarGrupoCurso(int idCurso, int anio, String nombre){
+        ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
+        if(mb.agregarGrupoCurso(idCurso,anio,nombre)){
+            CursoBedelia c = cursos.get(idCurso);
+            Grupo g = new Grupo(c, anio, nombre, new HashMap<>());
+            c.agregarGrupoEnOrden(g);
+            return true;
+        }
+        return false;
+    }
+    
 }

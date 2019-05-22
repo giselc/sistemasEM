@@ -76,8 +76,22 @@ public class CursoBedelia extends HttpServlet {
                         };
                     }
                     else{
-                        if(request.getParameter("vincular")!=null){
-                            //pendiente
+                        if(request.getParameter("grupo")!=null){
+                             System.out.print("acac2");
+                            if(Integer.valueOf(request.getParameter("grupo"))==-1){
+                                System.out.print("acaca");
+                               if(mp.agregarGrupoCurso(id, Integer.valueOf(request.getParameter("anio")), request.getParameter("nombre"))){
+                                    sesion.setAttribute("Mensaje", "Grupo agregado correctamente.");
+                               }
+                               else{
+                                   sesion.setAttribute("Mensaje", "ERROR al agregar al grupo. Contáctese con el administrador.");
+                               }
+                               response.sendRedirect("curso.jsp?id="+id);
+
+                            }
+                            else{
+                                //eliminar
+                            }
                         }
                         else{
                             boolean activo = false;

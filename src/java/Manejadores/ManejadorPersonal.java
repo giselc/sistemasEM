@@ -829,7 +829,7 @@ out.print("                </td>\n" +
         }
         return personalLista;
     }
-    private String reemplazarTildes(String s){
+    public static String reemplazarTildes(String s){
         String original = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ";
         String ascii = "AAAAAAACEEEEIIIIDNOOOOOOUUUUYBaaaaaaaceeeeiiiionoooooouuuuyy";
         String output = s;

@@ -53,11 +53,11 @@ public class ManejadorBedeliaBD {
                 while (rs1.next()){ //materias
                     cb.getMaterias().put(rs1.getInt("idMateria"), materias.get(rs1.getInt("idMateria")));
                 }
-                sql1="SELECT * FROM sistemasem.`cursos-grupos` where idCursoBedelia="+rs.getInt("id")+" order by idCursoBedelia asc, anio desc, nombre asc;";
+                sql1="SELECT * FROM sistemasem.`cursos-grupos` where idCursoBedelia="+rs.getInt("id")+" order by anio desc, nombre asc;";
                 s1= connection.createStatement();
                 rs1=s1.executeQuery(sql1);
                 while (rs1.next()){ //grupos
-                    sql2="SELECT * FROM sistemasem.`grupos-alumnos` where idCursoBedelia="+rs.getInt("id")+" and anio="+rs1.getInt("anio")+" and nombre="+rs1.getString("nombre")+" order by ciAlumno asc;";
+                    sql2="SELECT * FROM sistemasem.`grupos-alumnos` where idCursoBedelia="+rs.getInt("id")+" and anio="+rs1.getInt("anio")+" and nombre='"+rs1.getString("nombre")+"' order by ciAlumno asc;";
                     s2= connection.createStatement();
                     rs2=s2.executeQuery(sql2);
                     HashMap<Integer,Cadete> alumnos = new HashMap<>();
@@ -84,7 +84,7 @@ public class ManejadorBedeliaBD {
             sql="SELECT * FROM sistemasem.materias order by nombre asc;";
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                p.put(rs.getInt("id"),new Materia(rs.getInt("id"),rs.getString("nombre"),rs.getString("codigo"),rs.getBoolean("semestral"),rs.getInt("semestr"),rs.getBoolean("secundaria"),rs.getDouble("coeficiente"),rs.getBoolean("activo")));
+                p.put(rs.getInt("id"),new Materia(rs.getInt("id"),rs.getString("nombre"),rs.getString("codigo"),rs.getBoolean("semestral"),rs.getInt("semestre"),rs.getBoolean("secundaria"),rs.getDouble("coeficiente"),rs.getBoolean("activo")));
             }
             
         } catch (Exception ex) {
@@ -274,7 +274,7 @@ public class ManejadorBedeliaBD {
 
     boolean agregarMateria(Materia m) {
         try {
-            String sql= "insert into sistemasEM.materias (nombre,codigo,semestral, semestre,secuandaria,coeficiente) values(?,?,?,?,?,?,?)";
+            String sql= "insert into sistemasEM.materias (nombre,codigo,semestral, semestre,secundaria,coeficiente,activo) values(?,?,?,?,?,?,?)";
             PreparedStatement s= connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             int i=1;
             int clave;
@@ -284,6 +284,7 @@ public class ManejadorBedeliaBD {
             s.setInt(i++, m.getSemestre());
             s.setBoolean(i++, m.isSecundaria());
             s.setDouble(i++, m.getCoeficiente());
+            s.setBoolean(i++, m.isActivo());
             int row=s.executeUpdate();
             if(row>0){
                 ResultSet rs=s.getGeneratedKeys(); //obtengo las ultimas llaves generadas
@@ -303,7 +304,7 @@ public class ManejadorBedeliaBD {
 
     boolean asociarMateriaCurso(int idMateria, int idCurso) {
         try {
-            String sql= "insert into sistemasEM.cursos-materias (idCurso,idMateria) values(?,?)";
+            String sql= "insert into sistemasEM.`cursos-materias` (idCursoBedelia,idMateria) values(?,?)";
             PreparedStatement s= connection.prepareStatement(sql);
             int i=1;
             s.setInt(i++, idCurso);
@@ -322,7 +323,7 @@ public class ManejadorBedeliaBD {
         Statement s;
         try {
             s = connection.createStatement();
-            String sql="DELETE FROM sistemasem.cursos-materias where idCurso="+idCurso+" and idMateria="+idMateria;
+            String sql="DELETE FROM sistemasem.`cursos-materias` where idCursoBedelia="+idCurso+" and idMateria="+idMateria;
             s.executeUpdate(sql);
             return true;
         } catch (SQLException ex) {
@@ -336,7 +337,7 @@ public class ManejadorBedeliaBD {
         Statement s;
         try {
             s = connection.createStatement();
-            String sql="DELETE FROM sistemasem.cursos-materias where idMateria="+idMateria;
+            String sql="DELETE FROM sistemasem.`cursos-materias` where idMateria="+idMateria;
             s.executeUpdate(sql);
             return true;
         } catch (SQLException ex) {
@@ -349,7 +350,7 @@ public class ManejadorBedeliaBD {
         Statement s;
         try {
             s = connection.createStatement();
-            String sql="DELETE FROM sistemasem.materias where idMateria="+idMateria;
+            String sql="DELETE FROM sistemasem.materias where id="+idMateria;
             s.executeUpdate(sql);
             return true;
         } catch (SQLException ex) {
@@ -377,6 +378,47 @@ public class ManejadorBedeliaBD {
             System.out.print("modificarMateria-ManejadorBedeliaBD: "+ex);
             return false;
         }
+    }
+
+    public boolean asociarMateriasCurso(String[] idMaterias, String idCurso) {
+        try {
+            String sql= "insert into sistemasEM.`cursos-materias` (idCursoBedelia,idMateria) values(?,?)";
+            PreparedStatement s= connection.prepareStatement(sql);
+            int i;
+            for(String m:idMaterias){
+                i=1;
+                s.setInt(i++, Integer.valueOf(idCurso));
+                s.setInt(i++, Integer.valueOf(m));
+                s.addBatch();
+            }
+            int[] row=s.executeBatch();
+            for(int ret:row){
+                if(ret<0){
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception ex) {
+            System.out.print("asociarMateriasCurso-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return false;
+    }
+
+    public boolean agregarGrupoCurso(int idCurso, int anio, String nombre) {
+        try {
+            System.out.print("agregar");
+            String sql= "insert into sistemasEM.`cursos-grupos` (idCursoBedelia,anio,nombre) values(?,?,?)";
+            PreparedStatement s= connection.prepareStatement(sql);
+            int i=1;
+            s.setInt(i++, idCurso);
+            s.setInt(i++, anio);
+            s.setString(i++, nombre);
+            int row=s.executeUpdate();
+            return row>0;
+        } catch (Exception ex) {
+            System.out.print("agregarGrupoCurso-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return false;
     }
     
 }
