@@ -122,7 +122,7 @@
            <table style="width: 100%">
                <tr>
                    <td>
-                       <p align="left"><a href="<%=sesion.getAttribute("atras")%>"><img src="images/atras.png" width="20%"/></a></p>
+                        <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
                    </td>
                    <td>
                        <img src="images/imprimir.png" width="20%" onclick="abrir_dialog(dialog2)" />

@@ -5,12 +5,17 @@
  */
 package Servlets.Bedelia;
 
+import Classes.Cadete;
+import Manejadores.ManejadorBedelia;
+import Manejadores.ManejadorPersonal;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.LinkedList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -30,17 +35,48 @@ public class VincularAlumnosGrupo extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet VincularAlumnosGrupo</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet VincularAlumnosGrupo at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        HttpSession sesion = request.getSession();
+        if (sesion.getAttribute("usuarioID")!=null){
+            try (PrintWriter out = response.getWriter()) {
+                ManejadorBedelia mb= ManejadorBedelia.getInstance();
+                if(request.getParameter("desvincular")!=null){
+                    if(Integer.valueOf(request.getParameter("desvincular"))!=-1){
+                        if(mb.desasociarAlumnoGrupo(Integer.valueOf(request.getParameter("desvincular")),mb.getCurso(Integer.valueOf(request.getParameter("idCurso"))).getGrupo(Integer.valueOf(request.getParameter("anioGrupo")), request.getParameter("nombreGrupo")))){
+                            sesion.setAttribute("Mensaje", "Alumno desvinculado con éxito.");
+                            response.sendRedirect("/grupo.jsp?idCurso="+request.getParameter("idCurso")+"&nombreGrupo="+request.getParameter("nombreGrupo")+"&anioGrupo="+request.getParameter("anioGrupo")); 
+                        }  
+                    }
+                    else{
+                        if(request.getParameterValues("List[]").length!=0){
+                            if(mb.desasociarAlumnosGrupo(request.getParameterValues("List[]"),mb.getCurso(Integer.valueOf(request.getParameter("idCurso"))).getGrupo(Integer.valueOf(request.getParameter("anioGrupo")), request.getParameter("nombreGrupo")))){
+                                sesion.setAttribute("Mensaje", "Alumno desvinculado con éxito.");
+                                response.sendRedirect("/grupo.jsp?idCurso="+request.getParameter("idCurso")+"&nombreGrupo="+request.getParameter("nombreGrupo")+"&anioGrupo="+request.getParameter("anioGrupo")); 
+                            }   
+                        }
+                        else{
+                            sesion.setAttribute("Mensaje", "Ningún alumno seleccionado.");
+                            response.sendRedirect("/grupo.jsp?idCurso="+request.getParameter("idCurso")+"&nombreGrupo="+request.getParameter("nombreGrupo")+"&anioGrupo="+request.getParameter("anioGrupo")); 
+                        }
+                    }
+                }
+                else{
+                    if(request.getParameterValues("List[]")!=null){
+                        //System.out.print(request.getParameterValues("List[]").length);
+                        ManejadorPersonal mp= ManejadorPersonal.getInstance();
+
+                        LinkedList<Cadete> cadetes = new LinkedList();
+                        int ci;
+                        for(String s:request.getParameterValues("List[]")){
+                            ci=Integer.valueOf(s);
+                            cadetes.add(mp.getCadete(ci));
+                        }
+                        if(mb.asociarAlumnosGrupo(cadetes,mb.getCurso(Integer.valueOf(request.getParameter("idCurso"))).getGrupo(Integer.valueOf(request.getParameter("anioGrupo")),request.getParameter("nombreGrupo")))){
+                            sesion.setAttribute("Mensaje", "Alumnos vinculados con éxito.");
+                            response.sendRedirect("/grupo.jsp?idCurso="+request.getParameter("idCurso")+"&nombreGrupo="+request.getParameter("nombreGrupo")+"&anioGrupo="+request.getParameter("anioGrupo"));
+                        };
+                    }
+                }
+            }
         }
     }
 

@@ -15,6 +15,7 @@ import java.util.HashMap;
 public class LibretaIndividual {
     private int idLibreta;
     private Cadete alumno;
+    private boolean activo;
     private double promedioAnual;
     private double notaFinal; //calculado en base al promedioAnual y nota de Examen
     HashMap<Integer, Falta> faltas;
@@ -22,7 +23,7 @@ public class LibretaIndividual {
     HashMap<Integer,Promedio> promedios;
     HashMap<Integer,Sancion> sanciones;
 
-    public LibretaIndividual(int idLibreta, Cadete alumno, HashMap<Integer, Falta> faltas, HashMap<Integer, Nota> notas, HashMap<Integer, Promedio> promedios, HashMap<Integer, Sancion> sanciones, double promedioAnual, double notaFinal) {
+    public LibretaIndividual(int idLibreta, Cadete alumno, HashMap<Integer, Falta> faltas, HashMap<Integer, Nota> notas, HashMap<Integer, Promedio> promedios, HashMap<Integer, Sancion> sanciones, double promedioAnual, double notaFinal, boolean activo) {
         this.idLibreta = idLibreta;
         this.alumno = alumno;
         this.faltas = faltas;
@@ -31,8 +32,27 @@ public class LibretaIndividual {
         this.sanciones = sanciones;
         this.promedioAnual = promedioAnual;
         this.notaFinal = notaFinal;
+        this.activo= activo;
+    }
+    public LibretaIndividual(int idLibreta, Cadete alumno) {
+        this.idLibreta = idLibreta;
+        this.alumno = alumno;
+        this.faltas = new HashMap<>();
+        this.notas = new HashMap<>();
+        this.promedios = new HashMap<>();
+        this.sanciones = new HashMap<>();
+        this.promedioAnual = 0;
+        this.notaFinal = 0;
     }
 
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+    
     public int getIdLibreta() {
         return idLibreta;
     }

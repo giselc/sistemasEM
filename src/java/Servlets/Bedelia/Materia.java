@@ -32,11 +32,12 @@ public class Materia extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
         //System.out.print("aca");
         if(u.isAdmin()||u.getPermisosPersonal().getId()==4){
-            response.setContentType("text/html;charset=UTF-8");
             String mensaje="";
             String redirect="";
            /* Enumeration<String> params = request.getParameterNames(); 
@@ -65,24 +66,26 @@ public class Materia extends HttpServlet {
                 }
                 else{ 
                     int id= Integer.valueOf(request.getParameter("id"));
+                    String nombre=request.getParameter("nombre");
+                    String codigo=request.getParameter("codigo");
                     boolean secundaria=false;
                     if (request.getParameter("secundaria")!=null){
                         secundaria = request.getParameter("secundaria").equals("on");
-                   }
+                    }
                     boolean semestral=false;
                     if (request.getParameter("semestral")!=null){
-                        secundaria = request.getParameter("semestral").equals("on");
-                   }
+                        semestral = request.getParameter("semestral").equals("on");
+                    }
                     boolean activo=false;
                     if (request.getParameter("activo")!=null){
-                        secundaria = request.getParameter("activo").equals("on");
+                        activo = request.getParameter("activo").equals("on");
                    }
                     int semestre=0;
                     if(request.getParameter("semestre")!=null){
                         semestre=Integer.valueOf(request.getParameter("semestre"));
                     }
-                    System.out.print(request.getParameter("nombre"));
-                    Classes.Bedelia.Materia m = new Classes.Bedelia.Materia(id, request.getParameter("nombre"), request.getParameter("codigo"),semestral, semestre, secundaria, Double.valueOf(request.getParameter("coeficiente")),activo);
+                    double coeficiente=Double.valueOf(request.getParameter("coeficiente"));
+                    Classes.Bedelia.Materia m = new Classes.Bedelia.Materia(id, nombre, codigo,semestral, semestre, secundaria, coeficiente,activo);
                     if(id!=-1){
                         if(mp.modificarMateria(m)){
                             mensaje="Materia modificada sastisfactoriamente.";

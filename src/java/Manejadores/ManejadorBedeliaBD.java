@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  *
@@ -173,7 +174,7 @@ public class ManejadorBedeliaBD {
                     p.put(ciProfesor, new HashMap<>());
                 }
                 HashMap<Integer,LibretaIndividual> libretasIndividuales = obtenerLibretasIndividuales(rs.getInt("id"));
-                p.get(rs.getInt("ciProfesor")).put(rs.getInt("id"), new Libreta(mb.getMaterias().get(rs.getInt("idMateria")),mb.getCurso(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombre")),mp.getProfesor(ciProfesor),rs.getString("salon"),libretasIndividuales));
+                p.get(rs.getInt("ciProfesor")).put(rs.getInt("id"), new Libreta(rs.getInt("id"),mb.getMaterias().get(rs.getInt("idMateria")),mb.getCurso(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombre")),mp.getProfesor(ciProfesor),rs.getString("salon"),libretasIndividuales));
             }
             
         } catch (Exception ex) {
@@ -199,7 +200,7 @@ public class ManejadorBedeliaBD {
                 promedios = obtenerPromediosLibretaIndividual(rs.getInt("id"));
                 notas = obtenerNotasLibretaIndividual(rs.getInt("id"));
                 faltas = obtenerFaltasLibretaIndividual(rs.getInt("id"));
-                p.put(rs.getInt("id"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciCadete")), faltas, notas, promedios, sanciones,rs.getDouble("PromedioAnual"),rs.getDouble("NotaFinal")));
+                p.put(rs.getInt("id"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciCadete")), faltas, notas, promedios, sanciones,rs.getDouble("PromedioAnual"),rs.getDouble("NotaFinal"),rs.getBoolean("activo")));
             }
             
         } catch (Exception ex) {
@@ -360,21 +361,21 @@ public class ManejadorBedeliaBD {
     }
 
     boolean modificarMateria(Materia m) {
-       String sql = "UPDATE sistemasem.materias set nombre=?,semestral=?, semestre=?, secundaria=?, coeficiente=?, activo=? where id=?";
+        String sql = "UPDATE sistemasem.materias set nombre=?, semestral=?, secundaria=?, activo=?,semestre=? , coeficiente=? where id=?";
         int i=1;
         try {
             PreparedStatement statement= connection.prepareStatement(sql); // sql a insertar en postulantes
             statement.setString(i++,m.getNombre());
             statement.setBoolean(i++,m.isSemestral());
-            statement.setInt(i++,m.getSemestre());
             statement.setBoolean(i++,m.isSecundaria());
-            statement.setDouble(i++,m.getCoeficiente());
             statement.setBoolean(i++,m.isActivo());
+            statement.setInt(i++,m.getSemestre());
+            statement.setDouble(i++,m.getCoeficiente());
             statement.setInt(i++,m.getId());
             int row=statement.executeUpdate();
             return(row>0);
             
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.print("modificarMateria-ManejadorBedeliaBD: "+ex);
             return false;
         }
@@ -417,6 +418,90 @@ public class ManejadorBedeliaBD {
             return row>0;
         } catch (Exception ex) {
             System.out.print("agregarGrupoCurso-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return false;
+    }
+
+    boolean asociarAlumnosGrupo(LinkedList<Cadete> alumnos, LinkedList<Libreta> listaL,Grupo g) {
+        try {
+            String sql= "insert into sistemasEM.`grupos-alumnos` (idCursoBedelia,anio,nombre,ciAlumno) values(?,?,?,?)";
+            PreparedStatement s= connection.prepareStatement(sql);
+            String sql1= "insert into sistemasEM.`libretasIndividuales` (idLibreta,ciAlumno,promedioAnual,notaFinal,activo) values(?,?,?,?,?)";
+            PreparedStatement s1= connection.prepareStatement(sql1);
+            int i,j;
+            for(Cadete alumno:alumnos){
+                i=1;
+                s.setInt(i++, g.getCusoBedelia().getId());
+                s.setInt(i++, g.getAnio());
+                s.setString(i++, g.getNombre());
+                s.setInt(i++, alumno.getCi());
+                s.addBatch();
+                for(Libreta l:listaL){
+                    j=1;
+                    s1.setInt(j++, l.getId());
+                    s1.setInt(j++, alumno.getCi());
+                    s1.setInt(j++, 0);
+                    s1.setInt(j++, 0);
+                    s1.setBoolean(j++, true);
+                    s1.addBatch();
+                }
+            }
+            
+            s.executeBatch();
+            s1.executeBatch();
+            return true;
+        } catch (Exception ex) {
+            System.out.print("asociarAlumnosGrupo-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return false;
+    }
+
+    boolean desasociarAlumnoGrupo(Integer ciAlumno, Grupo grupo, LinkedList<Libreta> listaL) {
+        try{
+            String sql= "DELETE FROM sistemasEM.`grupos-alumnos` where ciAlumno="+ciAlumno;
+            Statement s= connection.createStatement();
+            String sql1= "UPDATE sistemasEM.`libretasindividuales` SET `activo`=0 WHERE idLibreta=? and ciAlumno=?";
+            PreparedStatement s1= connection.prepareStatement(sql1);
+            int j;
+            if(s.executeUpdate(sql)>0){
+                for(Libreta l:listaL){
+                    j=1;
+                    s1.setInt(j++, l.getId());
+                    s1.setInt(j++, ciAlumno);
+                    s1.addBatch();
+                }
+                s1.executeBatch();
+                return true;
+            }
+        } catch (Exception ex) {
+            System.out.print("desasociarAlumnoGrupo-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return false;
+    }
+
+    boolean desasociarAlumnosGrupo(String[] listaAlumnos, Grupo grupo, LinkedList<Libreta> listL) {
+        try{
+            String sql= "DELETE FROM sistemasEM.`grupos-alumnos` where ciAlumno=?";
+            PreparedStatement s= connection.prepareStatement(sql);
+            String sql1= "UPDATE sistemasEM.`libretasindividuales` SET `activo`=0 WHERE idLibreta=? and ciAlumno=?";
+            PreparedStatement s1= connection.prepareStatement(sql1);
+            int j;
+            for(String ci:listaAlumnos){
+                s.setInt(1, Integer.valueOf(ci));
+                s.addBatch();
+                for(Libreta l:listL){
+                    j=1;
+                    s1.setInt(j++, l.getId());
+                    s1.setInt(j++, Integer.valueOf(ci));
+                    s1.addBatch();
+                }
+            }
+            s.executeBatch();
+            s1.executeBatch();
+            return true;
+        
+        } catch (Exception ex) {
+            System.out.print("desasociarAlumnoGrupo-ManejadorBedeliaBD:"+ex.getMessage());
         }
         return false;
     }

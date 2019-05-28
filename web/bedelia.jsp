@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%@ include file="header.jsp" %>
-<% if(u!=null && u.isAdmin()){%>
+<% if(u!=null && (u.isAdmin()|| u.getPermisosPersonal().getId()==4)){%>
 <style type="text/css">
                         
 			.nav2 > li {
@@ -58,6 +58,8 @@
     <%
         session.setAttribute("Mensaje",null);
     %>
+    
+    <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
     <ul class="nav2" style="width: 80%;padding-left: 10%;min-height: 400px;">
             <li  style="width: 30%">
                 <a><p align="center" style="margin:0px"><img  class="boton" title="Listados" src="images/button_listados.png"/></p></a>

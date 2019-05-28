@@ -62,7 +62,6 @@
         <title>Sistemas internos de la Escuela Militar</title>
     </head>
     <body style="background-color: #bfd070;">
-        
         <table style="width: 100%;">
             <tr>
                 <td class="fondo">

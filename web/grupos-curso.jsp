@@ -22,6 +22,7 @@ function agregarShow(){
     }
 } 
 </script>
+<p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
 <table style="float: right">
     <tr>
         <td style="width: 55%"><h3 style="float: left; font-family: sans-serif">Grupos</h3></td>

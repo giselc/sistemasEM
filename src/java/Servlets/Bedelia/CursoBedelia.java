@@ -32,6 +32,7 @@ public class CursoBedelia extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession sesion = request.getSession();
+        request.setCharacterEncoding("UTF-8");
         Usuario u = (Usuario)sesion.getAttribute("usuario");
         //.out.print("aca");
         if(u.isAdmin()||u.getPermisosPersonal().getId()==4){
@@ -47,10 +48,10 @@ public class CursoBedelia extends HttpServlet {
             try (PrintWriter out = response.getWriter()) {
                 /* TODO output your page here. You may use following sample code. */
                 ManejadorBedelia mp = ManejadorBedelia.getInstance();
-                int id= Integer.valueOf(request.getParameter("id"));
                 //String mensaje;
                 if(request.getParameter("elim")!=null){
                     //baja
+                    int id= Integer.valueOf(request.getParameter("id"));
                     switch(mp.eliminarCurso(id)){
                         case 0:
                             mensaje="Curso eliminado sastisfactoriamente.";
@@ -70,16 +71,18 @@ public class CursoBedelia extends HttpServlet {
                 }
                 else{     
                     if(request.getParameter("desvincular")!=null){
-                        if( mp.desasociarMateriaCurso(Integer.parseInt(request.getParameter("desvincular")), Integer.parseInt(request.getParameter("idCurso")))){
+                        if( !mp.desasociarMateriaCurso(Integer.parseInt(request.getParameter("desvincular")), Integer.parseInt(request.getParameter("idCurso")))){
                             sesion.setAttribute("Mensaje", "No se puede desvincular materia, puede que existan libretas creadas.");
-                            response.sendRedirect("curso.jsp?id="+request.getParameter("idCurso"));
+                        }
+                        else{
+                            sesion.setAttribute("Mensaje", "Materia desvinculada correctamente.");
                         };
+                        response.sendRedirect("curso.jsp?id="+request.getParameter("idCurso"));
                     }
                     else{
+                        int id= Integer.valueOf(request.getParameter("id"));
                         if(request.getParameter("grupo")!=null){
-                             System.out.print("acac2");
                             if(Integer.valueOf(request.getParameter("grupo"))==-1){
-                                System.out.print("acaca");
                                if(mp.agregarGrupoCurso(id, Integer.valueOf(request.getParameter("anio")), request.getParameter("nombre"))){
                                     sesion.setAttribute("Mensaje", "Grupo agregado correctamente.");
                                }

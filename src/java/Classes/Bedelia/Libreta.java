@@ -12,18 +12,28 @@ import java.util.HashMap;
  * @author Gisel
  */
 public class Libreta {
+    private int id;
     private Materia materia;
     private Grupo grupo;
     private Profesor profesor;
     private String salon;
     private HashMap<Integer,LibretaIndividual> libretasIndividuales;
 
-    public Libreta(Materia materia, Grupo grupo, Profesor profesor, String salon, HashMap<Integer, LibretaIndividual> libretasIndividuales) {
+    public Libreta(int id,Materia materia, Grupo grupo, Profesor profesor, String salon, HashMap<Integer, LibretaIndividual> libretasIndividuales) {
+        this.id=id;
         this.materia = materia;
         this.grupo = grupo;
         this.profesor = profesor;
         this.salon = salon;
         this.libretasIndividuales = libretasIndividuales;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     

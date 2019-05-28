@@ -54,8 +54,8 @@
     <p id="mensaje" style="color: #ffffff"><% if(sesion.getAttribute("Mensaje")!=null){out.print("<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+sesion.getAttribute("Mensaje"));}%></p>
 <%
     sesion.setAttribute("Mensaje",null);
-    sesion.setAttribute("atras","curso.jsp?=id"+request.getParameter("idCurso"));
 %> 
+ <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
     <ul id="tabs">
         <li><a href="#"><b>ASOCIACI&Oacute;N DE MATERIAS A CURSO</b></a></li>
     </ul>

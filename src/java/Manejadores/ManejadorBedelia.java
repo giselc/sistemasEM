@@ -6,11 +6,18 @@
 package Manejadores;
 
 import Classes.Bedelia.CursoBedelia;
+import Classes.Bedelia.Falta;
 import Classes.Bedelia.Grupo;
 import Classes.Bedelia.Libreta;
+import Classes.Bedelia.LibretaIndividual;
 import Classes.Bedelia.Materia;
+import Classes.Bedelia.Nota;
+import Classes.Bedelia.Promedio;
+import Classes.Bedelia.Sancion;
+import Classes.Cadete;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  *
@@ -41,6 +48,64 @@ public class ManejadorBedelia {
             }
             return true;
         };
+        return false;
+    }
+
+    public boolean asociarAlumnosGrupo(LinkedList<Cadete> alumnos, Grupo g) {
+       //si existen libretas asociadas, crear las libretas individuales para los nuevos alumnos a asociar
+       ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
+       LinkedList<Libreta> listaL= this.getLibretasAsociadasAGrupo(g);
+       if(mb.asociarAlumnosGrupo(alumnos,listaL,g)){
+            for(Cadete c:alumnos){
+                if(!g.getAlumnos().containsKey(c.getCi())){
+                    g.getAlumnos().put(c.getCi(), c);
+                    for(Libreta l:listaL){
+                        l.getLibretasIndividuales().put(c.getCi(), new LibretaIndividual(l.getId(), c));
+                    }
+                }
+            } 
+            return true;
+       }
+       return false;
+    }
+
+    private LinkedList<Libreta> getLibretasAsociadasAGrupo(Grupo g) {
+        LinkedList<Libreta> l=new LinkedList<>();
+        for(HashMap<Integer,Libreta> libretaXProfe:libretas.values()){
+            for(Libreta libreta:libretaXProfe.values()){
+                if(libreta.getGrupo().getCusoBedelia().getId()==g.getCusoBedelia().getId() && libreta.getGrupo().getNombre().equals(g.getNombre()) && libreta.getGrupo().getAnio()==g.getAnio()){
+                    l.add(libreta);
+                }
+            }
+        }
+        return l;
+    }
+
+    public boolean desasociarAlumnoGrupo(Integer ciAlumno, Grupo grupo) {
+        LinkedList<Libreta> listL = this.getLibretasAsociadasAGrupo(grupo);
+        ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
+        if(mb.desasociarAlumnoGrupo(ciAlumno,grupo,listL)){
+            grupo.getAlumnos().remove(ciAlumno);
+            for(Libreta l: listL){
+                l.getLibretasIndividuales().get(ciAlumno).setActivo(false); //baja pero no elimino las notas que ya estaban
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean desasociarAlumnosGrupo(String[] listaAlumnos, Grupo grupo) {
+        LinkedList<Libreta> listL = this.getLibretasAsociadasAGrupo(grupo);
+        ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
+        if(mb.desasociarAlumnosGrupo(listaAlumnos,grupo,listL)){
+            for (String s:listaAlumnos){
+                grupo.getAlumnos().remove(Integer.valueOf(s));
+                for(Libreta l: listL){
+                    l.getLibretasIndividuales().get(Integer.valueOf(s)).setActivo(false); //baja pero no elimino las notas que ya estaban
+                }
+            }
+            return true;
+        }
         return false;
     }
 
@@ -97,6 +162,7 @@ public class ManejadorBedelia {
             mat.setSecundaria(m.isSecundaria());
             mat.setSemestre(m.getSemestre());
             mat.setSemestral(m.isSemestral());
+            mat.setActivo(m.isActivo());
             return true;
         }
         return false;//error BD

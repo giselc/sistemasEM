@@ -130,8 +130,8 @@
     <p id="mensaje" style="color: #ffffff"><% if(sesion.getAttribute("Mensaje")!=null){out.print("<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+sesion.getAttribute("Mensaje"));}%></p>
 <%
     sesion.setAttribute("Mensaje",null);
-    sesion.setAttribute("atras","profesores.jsp");
 %> 
+<p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
     <ul id="tabs">
         <li><a href="#"><b>PROFESORES</b></a></li>
     </ul>

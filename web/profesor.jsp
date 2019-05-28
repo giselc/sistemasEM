@@ -78,18 +78,13 @@
            c = mp.getProfesor(Integer.valueOf(request.getParameter("id")));
         }
      %>
-           <table style="width: 100%">
-               <tr>
-                   <td>
-                       <p align="left"><a href="<%=sesion.getAttribute("atras")%>"><img src="images/atras.png" width="20%"/></a></p>
-                   </td>
-               </tr>
-           </table>
+          
      
     <p id="mensaje" style="color: #990000"><% if(session.getAttribute("Mensaje")!=null){out.print("<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+session.getAttribute("Mensaje"));}%></p>
     <%
         session.setAttribute("Mensaje",null);
     %>
+    <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
      <ul id="tabs">
         <li><a href="#" title="Datos-Personales">Datos Personales</a></li>
     </ul>

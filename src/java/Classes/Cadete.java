@@ -72,6 +72,7 @@ public class Cadete extends Personal{
         this.talleOperacional=talleOperacional;
         this.talleQuepi=talleQuepi;
         this.historialBaja = historialBaja;
+        this.observaciones = observaciones;
     }
  public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
@@ -335,14 +336,14 @@ public class Cadete extends Personal{
 "                            <td>N&uacute;mero: </td>\n" +
 "                            <td>"+ super.getNroInterno() +"\n" +
 "                                "+ carrera.getDescripcion() +"\n" +
-"                            </td>\n" +
-                            
-"                        <tr>\n" +
+"                            </td>\n" ;
+                            if(super.getArma()!=null){
+impr+="                        <tr>\n" +
 "                            <td>Arma: </td>\n" +
 "                            <td>"+ super.getArma().getDescripcion()+"</td>\n" +
-"                        </tr>\n" +
-                            
-"                        <tr>\n" +
+"                        </tr>\n" ;
+        }
+impr+="                        <tr>\n" +
 "                            <td>Curso: </td>\n" +
 "                            <td>"+ curso.getDescripcion()+"</td>\n" +
 "                        </tr>\n" +

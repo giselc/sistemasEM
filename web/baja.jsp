@@ -33,7 +33,7 @@
 %>
 <h1 align="center"><u>BAJA<% out.print(" "+c.getGrado().getAbreviacion()+" "+c.getPrimerNombre()+" "+c.getPrimerApellido()) ; %></u></h1>
 <div id="enviando"  style="position: fixed; top:0; left:0; width:100%; height: 100%;background: url('images/loading-verde.gif') center center no-repeat; background-size: 20%; display: none"></div>
-<%--<p align="left"><a href="personal.jsp?id=<%=request.getParameter("ci")%>"><img src="images/atras.png" width="15%"/></a></p>--%>
+ <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
 <form method="post" name="formulario" id="formulario" onsubmit="confirmar(this)" action="Cadete?baja=1&ci=<%= request.getParameter("id") %>">
     <table  width='70%' align='center' style="text-align: left">
         <tr>
