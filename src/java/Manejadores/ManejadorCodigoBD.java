@@ -285,7 +285,7 @@ public class ManejadorCodigoBD {
             if (rs.next()){
                 TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
                 TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
-                d= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"));
+                d= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"));
 
             }
         } catch (Exception ex) {
@@ -302,7 +302,7 @@ public class ManejadorCodigoBD {
             while (rs.next()){
                 TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
                 TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
-                al.add( new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion")));
+                al.add( new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor")));
             }
         } catch (Exception ex) {
             Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -463,7 +463,7 @@ public class ManejadorCodigoBD {
                 while(rs.next()){
                     TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
                     TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
-                    al.add( new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion")));
+                    al.add( new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor")));
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -483,7 +483,7 @@ public class ManejadorCodigoBD {
                 while(rs.next()){
                     TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
                     TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
-                    u= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"));
+                    u= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"));
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -502,7 +502,7 @@ public class ManejadorCodigoBD {
                 while(rs.next()){
                     TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
                     TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
-                    u= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"));
+                    u= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"));
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);

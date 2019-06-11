@@ -183,6 +183,13 @@ public class Profesor {
     public void setBedelia(boolean adminBedelia) {
         this.adminBedelia = adminBedelia;
     }
-    
+    public String obtenerNombreCompleto(){
+        String out="";
+        if(grado!=null){
+            out+=grado.getAbreviacion()+" ";
+        }
+        out+=primerApellido+" "+primerNombre;
+        return out;
+    }
     
 }

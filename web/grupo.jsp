@@ -57,8 +57,7 @@
     <p id="mensaje" style="color: #ffffff"><% if(sesion.getAttribute("Mensaje")!=null){out.print("<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+sesion.getAttribute("Mensaje"));}%></p>
 <%
     sesion.setAttribute("Mensaje",null);
-    CursoBedelia cb= mb.getCurso(Integer.valueOf(request.getParameter("idCurso")));
-    Grupo g= cb.getGrupo(Integer.valueOf(request.getParameter("anioGrupo")), request.getParameter("nombreGrupo"));
+    Grupo g= c.getGrupo(Integer.valueOf(request.getParameter("anioGrupo")), request.getParameter("nombreGrupo"));
 %> 
 <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
     <ul id="tabs">
@@ -69,7 +68,7 @@
         <div>
             <table>
                 <tr>
-                    <td><h2 style="font-family: arial;margin: 0px">CURSO <%= cb.getCodigo()+" - "+cb.getNombre() %></h2></td>
+                    <td><h2 style="font-family: arial;margin: 0px">CURSO <%= c.getCodigo()+" - "+c.getNombre() %></h2></td>
                 </tr>
                 <tr>
                     <td><h3 style="font-family: arial">Grupo <%= request.getParameter("nombreGrupo")+" - "+request.getParameter("anioGrupo") %></h3></td>

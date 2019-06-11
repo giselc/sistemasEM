@@ -15,6 +15,7 @@ import Classes.Bedelia.Nota;
 import Classes.Bedelia.Promedio;
 import Classes.Bedelia.Sancion;
 import Classes.Cadete;
+import com.sun.faces.util.CollectionsUtils;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -60,7 +61,12 @@ public class ManejadorBedelia {
                 if(!g.getAlumnos().containsKey(c.getCi())){
                     g.getAlumnos().put(c.getCi(), c);
                     for(Libreta l:listaL){
-                        l.getLibretasIndividuales().put(c.getCi(), new LibretaIndividual(l.getId(), c));
+                        if(l.getLibretasIndividuales().containsKey(c.getCi())){
+                            l.getLibretasIndividuales().get(c.getCi()).setActivo(true);
+                        }
+                        else{
+                            l.getLibretasIndividuales().put(c.getCi(), new LibretaIndividual(l.getId(), c));
+                        }
                     }
                 }
             } 
@@ -107,6 +113,30 @@ public class ManejadorBedelia {
             return true;
         }
         return false;
+    }
+
+    public Libreta crearLibreta(int idCurso, int anioGrupo, String nombreGrupo, int idMateria, int ciProfesor, String salon) {
+        ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
+        ManejadorProfesores mp = ManejadorProfesores.getInstance();
+        Grupo g= cursos.get(idCurso).getGrupo(anioGrupo, nombreGrupo);
+        int idLibreta = mb.crearLibreta(idCurso,anioGrupo,nombreGrupo,idMateria,ciProfesor,salon,g.getAlumnos());
+        if(idLibreta!=-1){
+            HashMap<Integer,LibretaIndividual> libretasIndividuales= new HashMap<>();
+            for(Cadete c: g.getAlumnos().values()){
+                libretasIndividuales.put(c.getCi(), new LibretaIndividual(idLibreta, c));
+            }
+            Libreta l = new Libreta(idLibreta,materias.get(idMateria),g,mp.getProfesor(ciProfesor),salon,libretasIndividuales);
+            if(!libretas.containsKey(ciProfesor)){
+                libretas.put(ciProfesor, new HashMap<>());
+            }
+            libretas.get(ciProfesor).put(idLibreta, l);
+            return l;
+        }
+        return null;
+    }
+
+    public void agregarFalta(Libreta l, Cadete c, String fecha, String codigoFalta, String observaciones) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private static class ManejadorBedeliaHolder {
@@ -315,5 +345,12 @@ public class ManejadorBedelia {
         }
         return false;
     }
-    
+    public Libreta getLibreta(int id){
+        for(HashMap<Integer,Libreta> lista:libretas.values()){
+            if(lista.containsKey(id)){
+                return lista.get(id);
+            }
+        }
+        return null;
+    }
 }

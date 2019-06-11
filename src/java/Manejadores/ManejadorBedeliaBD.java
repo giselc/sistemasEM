@@ -23,6 +23,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -174,7 +176,7 @@ public class ManejadorBedeliaBD {
                     p.put(ciProfesor, new HashMap<>());
                 }
                 HashMap<Integer,LibretaIndividual> libretasIndividuales = obtenerLibretasIndividuales(rs.getInt("id"));
-                p.get(rs.getInt("ciProfesor")).put(rs.getInt("id"), new Libreta(rs.getInt("id"),mb.getMaterias().get(rs.getInt("idMateria")),mb.getCurso(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombre")),mp.getProfesor(ciProfesor),rs.getString("salon"),libretasIndividuales));
+                p.get(rs.getInt("ciProfesor")).put(rs.getInt("id"), new Libreta(rs.getInt("id"),materias.get(rs.getInt("idMateria")),cursos.get(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombreGrupo")),mp.getProfesor(ciProfesor),rs.getString("salon"),libretasIndividuales));
             }
             
         } catch (Exception ex) {
@@ -196,25 +198,25 @@ public class ManejadorBedeliaBD {
             HashMap<Integer, Falta> faltas;
             ManejadorPersonal mp = ManejadorPersonal.getInstance();
             while (rs.next()){
-                sanciones= obtenerSancionesLibretaIndividual(rs.getInt("id"));
-                promedios = obtenerPromediosLibretaIndividual(rs.getInt("id"));
-                notas = obtenerNotasLibretaIndividual(rs.getInt("id"));
-                faltas = obtenerFaltasLibretaIndividual(rs.getInt("id"));
-                p.put(rs.getInt("id"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciCadete")), faltas, notas, promedios, sanciones,rs.getDouble("PromedioAnual"),rs.getDouble("NotaFinal"),rs.getBoolean("activo")));
+                sanciones= obtenerSancionesLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
+                promedios = obtenerPromediosLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
+                notas = obtenerNotasLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
+                faltas = obtenerFaltasLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
+                p.put(rs.getInt("ciAlumno"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciAlumno")), faltas, notas, promedios, sanciones,rs.getDouble("PromedioAnual"),rs.getDouble("NotaFinal"),rs.getBoolean("activo")));
             }
             
         } catch (Exception ex) {
-            System.out.print("obtenerMaterias-ManejadorBedeliaBD:"+ex.getMessage());
+            System.out.print("obtenerLibretasIndividuales-ManejadorBedeliaBD:"+ex.getMessage());
         }
         return p;
     }
 
-    private HashMap<Integer, Sancion> obtenerSancionesLibretaIndividual(int idLibretaIndividual) {
+    private HashMap<Integer, Sancion> obtenerSancionesLibretaIndividual(int idLibretaIndividual, int ciAlumno) {
         HashMap<Integer, Sancion> p= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql;
-            sql="SELECT * FROM sistemasem.sanciones where idLibretaIndividual="+idLibretaIndividual;
+            sql="SELECT * FROM sistemasem.sanciones where idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno;
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
                 p.put(rs.getInt("id"),new Sancion(rs.getInt("id"),rs.getInt("tipo"), rs.getInt("minutosTarde"),rs.getString("causa"), rs.getString("fecha"), rs.getInt("estado")));
@@ -225,15 +227,15 @@ public class ManejadorBedeliaBD {
         return p;
     }
 
-    private HashMap<Integer, Promedio> obtenerPromediosLibretaIndividual(int idLibretaIndividual) {
+    private HashMap<Integer, Promedio> obtenerPromediosLibretaIndividual(int idLibretaIndividual, int ciAlumno) {
         HashMap<Integer, Promedio> p= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql;
-            sql="SELECT * FROM sistemasem.promedios where idLibretaIndividual="+idLibretaIndividual;
+            sql="SELECT * FROM sistemasem.promedios where  idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno;
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                p.put(rs.getInt("id"),new Promedio(rs.getInt("id"),rs.getInt("tipo"), rs.getDouble("nota"),rs.getInt("mes")));
+                p.put(rs.getInt("id"),new Promedio(rs.getInt("id"),rs.getInt("tipoPromedio"), rs.getDouble("nota"),rs.getInt("mes")));
             }
         } catch (Exception ex) {
             System.out.print("obtenerPromediosLibretaIndividual-ManejadorBedeliaBD:"+ex.getMessage());
@@ -241,12 +243,12 @@ public class ManejadorBedeliaBD {
         return p;
     }
 
-    private HashMap<Integer, Nota> obtenerNotasLibretaIndividual(int idLibretaIndividual) {
+    private HashMap<Integer, Nota> obtenerNotasLibretaIndividual(int idLibretaIndividual, int ciAlumno) {
         HashMap<Integer, Nota> p= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql;
-            sql="SELECT * FROM sistemasem.notas where idLibretaIndividual="+idLibretaIndividual;
+            sql="SELECT * FROM sistemasem.notas where idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno;
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
                 p.put(rs.getInt("id"),new Nota(rs.getInt("id"),rs.getString("fecha"),rs.getInt("tipo"), rs.getString("observacion"),rs.getDouble("nota")));
@@ -257,15 +259,15 @@ public class ManejadorBedeliaBD {
         return p;
     }
 
-    private HashMap<Integer, Falta> obtenerFaltasLibretaIndividual(int idLibretaIndividual) {
+    private HashMap<Integer, Falta> obtenerFaltasLibretaIndividual(int idLibretaIndividual, int ciAlumno) {
         HashMap<Integer, Falta> p= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql;
-            sql="SELECT * FROM sistemasem.faltas where idLibretaIndividual="+idLibretaIndividual;
+            sql="SELECT * FROM sistemasem.faltas where idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno;
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                p.put(rs.getInt("id"),new Falta(rs.getInt("id"),rs.getString("fecha"),rs.getInt("canthoras"), rs.getString("motivo"),rs.getInt("estado")));
+                p.put(rs.getInt("id"),new Falta(rs.getInt("id"),rs.getString("fecha"),rs.getInt("canthoras"), rs.getInt("codigoMotivo"),rs.getString("observaciones"),rs.getInt("estado")));
             }
         } catch (Exception ex) {
             System.out.print("obtenerFaltasLibretaIndividual-ManejadorBedeliaBD:"+ex.getMessage());
@@ -273,7 +275,7 @@ public class ManejadorBedeliaBD {
         return p;
     }
 
-    boolean agregarMateria(Materia m) {
+    public boolean agregarMateria(Materia m) {
         try {
             String sql= "insert into sistemasEM.materias (nombre,codigo,semestral, semestre,secundaria,coeficiente,activo) values(?,?,?,?,?,?,?)";
             PreparedStatement s= connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -505,5 +507,44 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-    
+
+    public int crearLibreta(int idCurso, int anioGrupo, String nombreGrupo, int idMateria, int ciProfesor,String salon, HashMap<Integer, Cadete> alumnos) {
+        try {
+            String sql="insert into sistemasEM.libretas(ciProfesor,idCurso,anio,nombreGrupo,idMateria,salon) values (?,?,?,?,?,?)";
+            String sql1= "insert into sistemasEM.`libretasIndividuales` (idLibreta,ciAlumno,promedioAnual,notaFinal,activo) values(?,?,?,?,?)";
+            PreparedStatement s= connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement s1= connection.prepareStatement(sql1);
+            int i,j;
+            i=1;
+            s.setInt(i++, ciProfesor);
+            s.setInt(i++, idCurso);
+            s.setInt(i++, anioGrupo);
+            s.setString(i++, nombreGrupo);
+            s.setInt(i++, idMateria);
+            s.setString(i++, salon);
+            int row=s.executeUpdate();
+            if(row>0){
+                ResultSet rs=s.getGeneratedKeys(); //obtengo las ultimas llaves generadas
+                if(rs.next()){ 
+                    int clave=rs.getInt(1);
+                    if(clave!=-1){
+                        for(Cadete alumno:alumnos.values()){
+                            j=1;
+                            s1.setInt(j++, clave);
+                            s1.setInt(j++, alumno.getCi());
+                            s1.setInt(j++, 0);
+                            s1.setInt(j++, 0);
+                            s1.setBoolean(j++, true);
+                            s1.addBatch();
+                        }
+                        s1.executeBatch();
+                    }
+                    return clave;
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.print("crearLibreta-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return -1;
+    }
 }

@@ -18,8 +18,9 @@ public class Usuario {
     private TipoDescuento permisosDescuento; 
     private boolean notas;
     private boolean habilitacion;
+    private boolean profesor;
 
-    public Usuario(int id, String nombre, String nombreMostrar, boolean admin, TipoPersonal permisosPersonal, TipoDescuento tipoDescuento, boolean notas, boolean habilitacion) {
+    public Usuario(int id, String nombre, String nombreMostrar, boolean admin, TipoPersonal permisosPersonal, TipoDescuento tipoDescuento, boolean notas, boolean habilitacion,boolean profesor) {
         this.id = id;
         this.nombre = nombre;
         this.nombreMostrar = nombreMostrar;
@@ -28,6 +29,11 @@ public class Usuario {
         this.permisosDescuento = tipoDescuento;
         this.notas = notas;
         this.habilitacion = habilitacion;
+        this.profesor = profesor;
+    }
+
+    public boolean isProfesor() {
+        return profesor;
     }
 
     public int getId() {

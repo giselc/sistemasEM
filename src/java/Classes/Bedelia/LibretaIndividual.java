@@ -43,6 +43,7 @@ public class LibretaIndividual {
         this.sanciones = new HashMap<>();
         this.promedioAnual = 0;
         this.notaFinal = 0;
+        this.activo=true;
     }
 
     public boolean isActivo() {

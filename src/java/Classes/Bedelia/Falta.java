@@ -13,15 +13,17 @@ public class Falta {
     private int id;
     private String fecha;
     private int canthoras;
-    private String motivo;
+    private String observaciones;
+    private int codigoMotivo; //F1,F2,F3
     private int estado; //1 enviado a bedelia, 0 leido por bedelia
 
-    public Falta(int id, String fecha, int canthoras, String motivo, int estado) {
+    public Falta(int id, String fecha, int canthoras, int codigoMotivo,String observaciones, int estado) {
         this.id = id;
         this.fecha = fecha;
         this.canthoras = canthoras;
-        this.motivo = motivo;
+        this.codigoMotivo = codigoMotivo;
         this.estado = estado;
+        this.observaciones=observaciones;
     }
 
     public int getId() {
@@ -48,12 +50,20 @@ public class Falta {
         this.canthoras = canthoras;
     }
 
-    public String getMotivo() {
-        return motivo;
+    public String getObservaciones() {
+        return observaciones;
     }
 
-    public void setMotivo(String motivo) {
-        this.motivo = motivo;
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    public int getCodigoMotivo() {
+        return codigoMotivo;
+    }
+
+    public void setCodigoMotivo(int codigoMotivo) {
+        this.codigoMotivo = codigoMotivo;
     }
 
     public int getEstado() {
