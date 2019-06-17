@@ -60,17 +60,17 @@
 %> 
 <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
     <ul id="tabs">
-        <li><a href="#" style="font-family: arial"><b>ASOCIACI&Oacute;N DE ALUMNOS:</b></a></li>
+        <li><a href="#"><b>ASOCIACI&Oacute;N DE ALUMNOS:</b></a></li>
     </ul>
     <div id="loader" style="z-index: 50;position: fixed; top:0; left:0; width:100%; height: 100%;background: url('images/loading-verde.gif') center center no-repeat; background-size: 10%"></div>
     <div id="content">
         <div>
             <table>
                 <tr>
-                    <td><h2 style="font-family: arial;margin: 0px">CURSO <%= cb.getCodigo()+" - "+cb.getNombre() %></h2></td>
+                    <td><h2 style="margin: 0px">CURSO <%= cb.getCodigo()+" - "+cb.getNombre() %></h2></td>
                 </tr>
                 <tr>
-                    <td><h3 style="font-family: arial">Asociar alumnos al grupo <%= request.getParameter("nombreGrupo")+" - "+request.getParameter("anioGrupo") %></h3></td>
+                    <td><h3 >Asociar alumnos al grupo <%= request.getParameter("nombreGrupo")+" - "+request.getParameter("anioGrupo") %></h3></td>
                 </tr>
             </table>
 <%--

@@ -339,7 +339,7 @@
             </div>
             <table style="float: right">
                 <tr>
-                    <td style="width: 55%"><h3 style="float: left; font-family: sans-serif"><%
+                    <td style="width: 55%"><h3 style="float: left;"><%
             switch(Integer.valueOf(request.getParameter("tipo"))){
                 case 2:out.print("PERSONAL SUBALTERNO");break;
                 case 3:out.print("OFICIALES");break;

@@ -65,7 +65,7 @@
             
             <table style="float: right">
                 <tr>
-                    <td style="width: 55%"><h3 style="float: left; font-family: sans-serif">Asociar materias al curso <%= c.getNombre() %></h3></td>
+                    <td style="width: 55%"><h3 style="float: left;">Asociar materias al curso <%= c.getNombre() %></h3></td>
                 </tr>
             </table>
 <%--

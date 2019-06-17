@@ -76,5 +76,4 @@ public class Libreta {
     public void setLibretasIndividuales(HashMap<Integer, LibretaIndividual> libretasIndividuales) {
         this.libretasIndividuales = libretasIndividuales;
     }
-    
 }

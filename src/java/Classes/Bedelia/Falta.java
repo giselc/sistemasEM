@@ -14,15 +14,13 @@ public class Falta {
     private String fecha;
     private int canthoras;
     private String observaciones;
-    private int codigoMotivo; //F1,F2,F3
-    private int estado; //1 enviado a bedelia, 0 leido por bedelia
+    private String codigoMotivo; //F1,F2,F3
 
-    public Falta(int id, String fecha, int canthoras, int codigoMotivo,String observaciones, int estado) {
+    public Falta(int id, String fecha, int canthoras, String codigoMotivo,String observaciones) {
         this.id = id;
         this.fecha = fecha;
         this.canthoras = canthoras;
         this.codigoMotivo = codigoMotivo;
-        this.estado = estado;
         this.observaciones=observaciones;
     }
 
@@ -58,22 +56,11 @@ public class Falta {
         this.observaciones = observaciones;
     }
 
-    public int getCodigoMotivo() {
+    public String getCodigoMotivo() {
         return codigoMotivo;
     }
 
-    public void setCodigoMotivo(int codigoMotivo) {
+    public void setCodigoMotivo(String codigoMotivo) {
         this.codigoMotivo = codigoMotivo;
     }
-
-    public int getEstado() {
-        return estado;
-    }
-
-    public void setEstado(int estado) {
-        this.estado = estado;
-    }
-    
-    
-    
 }

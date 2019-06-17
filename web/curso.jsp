@@ -44,7 +44,7 @@
     sesion.setAttribute("Mensaje",null);
 %>
  <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>   
-<h1 align="center" style="font-family: arial"><u><% if (d!=null){out.print("Editar Curso");}else{out.print("Agregar Curso");}%></u></h1>
+<h1 align="center"><u><% if (d!=null){out.print("Editar Curso");}else{out.print("Agregar Curso");}%></u></h1>
 <div id="enviando"  style="position: fixed; top:0; left:0; width:100%; height: 100%;background: url('images/loading-verde.gif') center center no-repeat; background-size: 20%; display: none"></div>
 <form method="post" name="formulario" id="formulario"  action="Curso?id=<%if (d!=null){out.print(d.getId());}else{out.print("-1");} %>" >
     <table  width='70%' align='center' style="text-align: left">

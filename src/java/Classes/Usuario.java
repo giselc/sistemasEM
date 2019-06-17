@@ -10,17 +10,18 @@ package Classes;
  * @author Gisel
  */
 public class Usuario {
-    private int id;
-    private String nombre;
-    private String nombreMostrar;
-    private boolean admin;
-    private TipoPersonal permisosPersonal;
-    private TipoDescuento permisosDescuento; 
-    private boolean notas;
-    private boolean habilitacion;
-    private boolean profesor;
+    private final int id;
+    private final String nombre;
+    private final String nombreMostrar;
+    private final boolean admin;
+    private final TipoPersonal permisosPersonal;
+    private final TipoDescuento permisosDescuento; 
+    private final boolean notas;
+    private final boolean habilitacion;
+    private final boolean profesor;
+    private final int ciProfesor;
 
-    public Usuario(int id, String nombre, String nombreMostrar, boolean admin, TipoPersonal permisosPersonal, TipoDescuento tipoDescuento, boolean notas, boolean habilitacion,boolean profesor) {
+    public Usuario(int id, String nombre, String nombreMostrar, boolean admin, TipoPersonal permisosPersonal, TipoDescuento tipoDescuento, boolean notas, boolean habilitacion,boolean profesor,int ciProfesor) {
         this.id = id;
         this.nombre = nombre;
         this.nombreMostrar = nombreMostrar;
@@ -30,6 +31,11 @@ public class Usuario {
         this.notas = notas;
         this.habilitacion = habilitacion;
         this.profesor = profesor;
+        this.ciProfesor= ciProfesor;
+    }
+
+    public int getCiProfesor() {
+        return ciProfesor;
     }
 
     public boolean isProfesor() {

@@ -24,7 +24,7 @@
             </td>
         </tr>
         <tr>
-            <td style="width: 55%"><h3 style="float: left; font-family: sans-serif">Documentos:</h3></td>
+            <td style="width: 55%"><h3 style="float: left;">Documentos:</h3></td>
             <td style="width: 15%"><a href="documento.jsp?ci=<%=ci%>&idTipoPersonal=<%=idTipoPersonal%>" title="Agregar"><img width="30%" src='images/agregarLista.png' /></a> </td>
         </tr>
     </table>

@@ -9,7 +9,7 @@
 <%@page import="Manejadores.ManejadorBedelia"%>
 <%@ include file="header.jsp" %>   
 <% 
-    if(u!=null && (u.isAdmin() || u.getPermisosPersonal().getId()==4)){
+    if(u!=null && (u.isAdmin() || u.getPermisosPersonal().getId()==4 || u.isProfesor())){
 %>
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/jquery-ui.js"></script>
@@ -137,7 +137,7 @@
             </div>
             <table style="float: right">
                 <tr>
-                    <td style="width: 55%"><h3 style="float: left; font-family: sans-serif">LIBRETAS</h3></td>
+                    <td style="width: 55%"><h3 style="float: left;">LIBRETAS</h3></td>
                     <td style="width: 15%"><a href="libreta.jsp" title="Agregar"><img width="40%" src='images/agregarLista.png' /></a> </td>
                     <td style="width: 15%"><a href="generarlibretas.jsp" title="Generar libretas por curso"><img width="40%" src='images/agregarlibretas.png' /></a> </td>
                     <td style="width: 15%"><img  width="40%" title="Imprimir" src="images/imprimir.png" onclick="listar(4);"/></td>
@@ -168,26 +168,52 @@
                 +"</tr>" );
                 int i=0;
                 String color;
-                for (  HashMap<Integer,Libreta> p : mp.getLibretas().values()){
-                    for (  Libreta l : p.values()){
-                        if ((i%2)==0){
-                            color=" #ccccff";
+                if(u.isAdmin()||u.getPermisosPersonal().getId()==4){
+                    for (  HashMap<Integer,Libreta> p : mp.getLibretas().values()){
+                        for (  Libreta l : p.values()){
+                            if ((i%2)==0){
+                                color=" #ccccff";
+                            }
+                            else{
+                                color=" #ffff99";
+                            }
+                            i++;
+
+                           out.print("<tr style='background-color:"+color+"'>"
+                           +"<td style='width: 5%' align='center'>"+i+"</td>"
+                           +"<td style='width: 5%;display:none' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(l.getId())+"' form='formCadeteListar' /></td>"
+                           +"<td style='width: 10%' align='center'>"+l.getMateria().getNombre()+"</td>"
+                           +"<td style='width: 10%' align='center'>"+l.getGrupo().getCusoBedelia().getNombre()+"</td>"
+                           +"<td style='width: 10%' align='center'>"+l.getGrupo().getAnio()+" - "+l.getGrupo().getNombre()+"</td>"
+                           +"<td style='width: 10%' align='center'>"+ l.getProfesor().obtenerNombreCompleto() +"</td>");
+                            out.print("<td style='width: 5%' align='center'><a href='libreta.jsp?id="+l.getId()+"'><img src='images/ver.png' width='60%' /></a></td>");
+                            out.print("<td style='width: 5%' align='center'><a href='Libreta?elim=1&id="+l.getId()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
+                           +"</tr>");
                         }
-                        else{
-                            color=" #ffff99";
+                    }
+                }
+                else{
+                    if(u.isProfesor()){
+                        for (  Libreta l : mp.getLibretas().get(u.getCiProfesor()).values()){
+                            if ((i%2)==0){
+                                color=" #ccccff";
+                            }
+                            else{
+                                color=" #ffff99";
+                            }
+                            i++;
+
+                           out.print("<tr style='background-color:"+color+"'>"
+                           +"<td style='width: 5%' align='center'>"+i+"</td>"
+                           +"<td style='width: 5%;display:none' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(l.getId())+"' form='formCadeteListar' /></td>"
+                           +"<td style='width: 10%' align='center'>"+l.getMateria().getNombre()+"</td>"
+                           +"<td style='width: 10%' align='center'>"+l.getGrupo().getCusoBedelia().getNombre()+"</td>"
+                           +"<td style='width: 10%' align='center'>"+l.getGrupo().getAnio()+" - "+l.getGrupo().getNombre()+"</td>"
+                           +"<td style='width: 10%' align='center'>"+ l.getProfesor().obtenerNombreCompleto() +"</td>");
+                            out.print("<td style='width: 5%' align='center'><a href='libreta.jsp?id="+l.getId()+"'><img src='images/ver.png' width='60%' /></a></td>");
+                            out.print("<td style='width: 5%' align='center'><a href='Libreta?elim=1&id="+l.getId()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
+                           +"</tr>");
                         }
-                        i++;
-                        
-                       out.print("<tr style='background-color:"+color+"'>"
-                       +"<td style='width: 5%' align='center'>"+i+"</td>"
-                       +"<td style='width: 5%;display:none' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(l.getId())+"' form='formCadeteListar' /></td>"
-                       +"<td style='width: 10%' align='center'>"+l.getMateria().getNombre()+"</td>"
-                       +"<td style='width: 10%' align='center'>"+l.getGrupo().getCusoBedelia().getNombre()+"</td>"
-                       +"<td style='width: 10%' align='center'>"+l.getGrupo().getAnio()+" - "+l.getGrupo().getNombre()+"</td>"
-                       +"<td style='width: 10%' align='center'>"+ l.getProfesor().obtenerNombreCompleto() +"</td>");
-                        out.print("<td style='width: 5%' align='center'><a href='libreta.jsp?id="+l.getId()+"'><img src='images/ver.png' width='60%' /></a></td>");
-                        out.print("<td style='width: 5%' align='center'><a href='Libreta?elim=1&id="+l.getId()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
-                       +"</tr>");
                     }
                 }
                 out.print("</table>");

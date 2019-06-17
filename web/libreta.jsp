@@ -4,6 +4,11 @@
     Author     : Gisel
 --%>
 
+<%@page import="java.util.GregorianCalendar"%>
+<%@page import="java.util.Calendar"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="Classes.Bedelia.Falta"%>
+<%@page import="java.util.LinkedList"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="Classes.Bedelia.LibretaIndividual"%>
 <%@page import="Classes.Bedelia.CursoBedelia"%>
@@ -163,25 +168,105 @@
         function cambiarEstadoPresenteAusente(boton){
             //alert("P-"+boton.value);
             var input= document.getElementById("P-"+boton.value);
-            var CF = document.getElementById("CF-"+boton.value);
-            var OBS = document.getElementById("OBS-"+boton.value);
+            var div = document.getElementById("DIV-"+boton.value);
             if(input.value==1){
                 boton.innerText="Ausente";
                 boton.style="color: red";
-                CF.style="display:block";
-                OBS.style="display:block";
+                div.style="display:block";
                 input.value=2;
             }
             else{
                 boton.innerText="Presente";
                 boton.style="color: green";
-                CF.style="display:none";
-                OBS.style="display:none";
+                div.style="display:none";
                 input.value=1;
             }
             return false;
         }
+        function cambiarGrilla(select,idLibreta){
+            var mes=select.value;
+            xmlhttp=new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                        /*
+                        var obj = jQuery.parseJSON( xmlhttp.responseText );
+                        var mat = obj.grupos;
+                        var tabla= document.getElementById("tablaformulario");
+                        var tblBody = tabla.getElementsByTagName("tbody");
+                        if(mat.length>0){
+                           // var textoCelda = "<select name=\"materia\" form=\"formulario\" required=\"required\" id=\"materia\">";
+                            var hilera = document.createElement("tr");
+                            var celda1=document.createElement("td");
+                            celda1.appendChild(document.createTextNode("Grupo:"));
+                            hilera.appendChild(celda1);
+                            var celda = document.createElement("td");    
+                            var sel = document.createElement('select');
+                            sel.id="grupo";
+                            sel.name="grupo";
+                            var option;
+                            option=document.createElement("option");
+                            option.setAttribute("value",-1);
+                            option.setAttribute("label","");
+                            sel.appendChild(option);
+                            sel.setAttribute("onchange","alerta(this.value)")
+                            for (var i=0; i<mat.length;i++) {
+                                    option=document.createElement("option");
+                                    option.setAttribute("value",mat[i].anio+"/"+mat[i].nombre+"/"+mat[i].cantAlumnos);
+                                    option.setAttribute("label",mat[i].anio+"/"+mat[i].nombre);
+                                    sel.appendChild(option);
+                            }
+                            //textoCelda+="</select>";
+                            celda.appendChild(sel);
+                            hilera.appendChild(celda);
+                            tblBody[0].appendChild(hilera);
+                        }
+                            //tabla.appendChild(tblBody[0]);
+                        mat = obj.materias;
+                        if(mat.length>0){
+                           // var textoCelda = "<select name=\"materia\" form=\"formulario\" required=\"required\" id=\"materia\">";
+                                hilera = document.createElement("tr");
+                                celda1=document.createElement("td");
+                                celda1.appendChild(document.createTextNode("Materia:"));
+                                hilera.appendChild(celda1);
+                                celda = document.createElement("td");    
+                                sel = document.createElement('select');
+                                sel.id="materia";
+                                sel.name="materia";
+                                var option;
+                                option=document.createElement("option");
+                                option.setAttribute("value",-1);
+                                option.setAttribute("label","");
+                                sel.appendChild(option);
+                                for (var i=0; i<mat.length;i++) {
+                                    option=document.createElement("option");
+                                    option.setAttribute("value",mat[i].id);
+                                    option.setAttribute("label",mat[i].codigo + " - "+mat[i].nombre);
+                                    sel.appendChild(option);
+                                }
+                                //textoCelda+="</select>";
+
+                                celda.appendChild(sel);
+                                hilera.appendChild(celda);
+                                tblBody[0].appendChild(hilera);
+                                //tabla.appendChild(tblBody[0]);
+                            
+                        }*/
+                    };
+                };
+                xmlhttp.open("POST","ObtenerCamposParaLibreta?grilla="+mes+"&idLibreta="+idLibreta);
+                xmlhttp.send();
+                return false;
+        }
 </script>
+<style>
+    table tr td{
+        padding: 0px;
+    }
+    p{
+        margin: 0px;
+    }
+</style>
+
 <% 
     
 %>
@@ -199,14 +284,14 @@
     sesion.setAttribute("Mensaje",null);
 %>
 <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
-<h1 align="center" style="font-family: arial"><u><% if (d!=null){out.print("Ver Libreta");}else{out.print("Agregar Libreta");}%></u></h1>
+<h1 align="center"><u><% if (d!=null){out.print("Ver Libreta");}else{out.print("Agregar Libreta");}%></u></h1>
 <div id="enviando"  style="position: fixed; top:0; left:0; width:100%; height: 100%;background: url('images/loading-verde.gif') center center no-repeat; background-size: 20%; display: none"></div>
 <%
 if(d==null){
     if(u.isAdmin() || u.getPermisosPersonal().getId()==4){
 %>
         <form method="post"  name="formulario" id="formulario"  onsubmit="return verificarFormulario();" action="Libreta?id=<%if (d!=null){out.print(d.getId());}else{out.print("-1");}%>">
-            <table  width='70%' align='center' style="text-align: left; font-family: arial" id="tablaformulario">
+            <table  width='70%' align='center' style="text-align: left;" id="tablaformulario">
                  <tr>
                     <td>Profesor: </td>
                     <td>
@@ -257,11 +342,11 @@ if(d==null){
     }
 }
 else{
-    if(u.isAdmin()||u.getPermisosPersonal().getId()==4||u.isProfesor()){
+    if(u.isAdmin()||u.getPermisosPersonal().getId()==4||(u.isProfesor()&& u.getCiProfesor()==d.getProfesor().getCi())){
         if(u.isAdmin()||u.getPermisosPersonal().getId()==4){
             %>
             <form method="post"  name="formulario1" id="formulario1" action="Libreta?id=<%=d.getId()%>">
-            <table  width='70%' align='center' style="text-align: left; font-family: arial" >
+            <table  width='70%' align='center' style="text-align: left;" >
                  <tr>
                     <td>Profesor: </td>
                     <td>
@@ -291,7 +376,7 @@ else{
             <p align='right'><input type="submit"  value="Modificar" /></p>
             </form>
             
-            <table  width='70%' align='center' style="text-align: left; font-family: arial">
+            <table  width='70%' align='center' style="text-align: left;">
                 <tr>
                     <td>
                         Curso:
@@ -321,7 +406,7 @@ else{
         }
         else{
           %>
-            <table  width='70%' align='center' style="text-align: left; font-family: arial" >
+            <table  width='70%' align='center' style="text-align: left" >
                  <tr>
                     <td>Profesor: </td>
                     <td>
@@ -384,10 +469,9 @@ else{
                        
                        %> id="fecha" name="fecha">
                         <%
-                            out.print("<table style='width: 100%;' id='tablalistado'>"
-                                    + "<tr style='background-color:#ffcc66'>"
+                            out.print("<table style='width: 100%;' id='tablalistado' >"
+                                    + "<tr style='background-color:#ffcc66;padding:0px'>"
                                         +"<td style='width: 5%' align='center'></td>"
-
                                         +"<td style='width: 10%' align='center'>Foto</td>"
                                         +"<td style='width: 10%' align='center'>Grado</td>"
                                         +"<td style='width: 10%' align='center'>Primer Apellido</td>"
@@ -405,7 +489,7 @@ else{
                                     }
                                     i++;
 
-                                   out.print("<tr style='background-color:"+color+"'>"
+                                   out.print("<tr style='background-color:"+color+";'>"
                                    +"<td style='width: 5%' align='center'>"+i+"</td>"
 
                                    +"<td style='width: 10%' align='center'>");
@@ -429,17 +513,43 @@ else{
                                 if(p.isActivo()){
                                 out.print("<button width=100% value=\""+p.getAlumno().getCi()+"\" onclick=\"return cambiarEstadoPresenteAusente(this);\" style=\"color: green\">Presente</button><input name=\"P-"+p.getAlumno().getCi()+"\" id=\"P-"+p.getAlumno().getCi()+"\" type=\"number\" value=\"1\" hidden=\"hidden\"/>");
                                 %>
-                                    <select name="CF-<%=p.getAlumno().getCi()%>" form="pasarLista" style="display:none" id="CF-<%=p.getAlumno().getCi()%>" >
-                                        <option value="-1">Seleccionar causa:</option>
-                                        <option value="F0">F0 - Sin causa justificada</option>
-                                        <option value="F1">F1 - Guardia</option>
-                                        <option value="F2">F2 - Enfermer&iacute;a</option>
-                                        <option value="F3">F3 - Comisi&oacute;n</option>
-                                        <option value="F4">F4 - Internado en H.C.FF.AA.</option>
-                                        <option value="F5">F5 - Eximido</option>
-                                        <option value="F6">F6 - Consejero Acad&eacute;mico</option>
-                                    </select>
-                                    <input id="OBS-<%=p.getAlumno().getCi()%>" name="OBS-<%=p.getAlumno().getCi()%>" style="display: none" type="text" value="Observaciones" style="color:#999999" onClick="if(this.value=='Observaciones'){this.value=''}" onblur="if(this.value==''){this.value='Observaciones'}"/>
+                                <div style="display:none" id="DIV-<%= p.getAlumno().getCi() %>">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                Causa:
+                                            </td>
+                                            <td>
+                                                <select name="CF-<%=p.getAlumno().getCi()%>" form="pasarLista" >
+                                                    <option value="-1">Seleccionar causa:</option>
+                                                    <option value="F0">F0 - Sin causa justificada</option>
+                                                    <option value="F1">F1 - Guardia</option>
+                                                    <option value="F2">F2 - Enfermer&iacute;a</option>
+                                                    <option value="F3">F3 - Comisi&oacute;n</option>
+                                                    <option value="F4">F4 - Internado en H.C.FF.AA.</option>
+                                                    <option value="F5">F5 - Eximido</option>
+                                                    <option value="F6">F6 - Consejero Acad&eacute;mico</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Cantidad de horas:
+                                            </td>
+                                            <td>
+                                                <input  name="CANTHORAS-<%=p.getAlumno().getCi()%>"  type="number" value="0" min="0" step="1"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Obs.:
+                                            </td>
+                                            <td>
+                                                <input  name="OBS-<%=p.getAlumno().getCi()%>"  type="text" value="Observaciones" style="color:#999999" onClick="if(this.value=='Observaciones'){this.value='';this.color=black;}" onblur="if(this.value==''){this.value='Observaciones';this.color=grey;}"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
                                     <%
                                 }
                                 else{
@@ -455,7 +565,90 @@ else{
                         %> 
                         <input type="submit" value="ACEPTAR" />
                      </div>
-                        <div id="historiaDeInasistencias"></div>    
+                        <div id="historiaDeInasistencias">
+                            <select onchange="cambiarGrilla(this,<%=d.getId()%>);">
+                                <option value="1" <% if(mes==1){out.print("selected");} %> > ENERO </option>
+                                <option value="2" <% if(mes==2){out.print("selected");} %> > FEBRERO </option>
+                                <option value="3" <% if(mes==3){out.print("selected");} %> > MARZO </option>
+                                <option value="4" <% if(mes==4){out.print("selected");} %> > ABRIL </option>
+                                <option value="5" <% if(mes==5){out.print("selected");} %> > MAYO </option>
+                                <option value="6" <% if(mes==6){out.print("selected");} %> > JUNIO </option>
+                                <option value="7" <% if(mes==7){out.print("selected");} %> > JULIO </option>
+                                <option value="8" <% if(mes==8){out.print("selected");} %> > AGOSTO </option>
+                                <option value="9" <% if(mes==9){out.print("selected");} %> > SETIEMBRE </option>
+                                <option value="10" <% if(mes==10){out.print("selected");} %> > OCTUBRE </option>
+                                <option value="11" <% if(mes==11){out.print("selected");} %> > NOVIEMBRE </option>
+                                <option value="12" <% if(mes==12){out.print("selected");} %> > DICIEMBRE </option>
+                            </select>
+                            <table id="grillaFaltas" style="border-collapse: separate;border-spacing: 2px;text-align: center;vertical-align: central;">
+                                <%
+                                Calendar cal = new GregorianCalendar(fecha1.get(java.util.Calendar.YEAR), mes-1, 1); 
+                                // Get the number of days in that month 
+                                int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH); // 28
+                                
+                                %>
+                                <tr >
+                                    <td>
+                                        
+                                    </td>
+                                    <td colspan="<%= days %>" style='background-color:#ffcc66;padding:0px;'>
+                                            D&iacute;as:
+                                    </td>
+                                </tr>
+                                <tr style='background-color:#ffcc66;padding:0px;'>
+                                    <td>
+                                        Alumnos:
+                                    </td>
+                                    <%
+                                    
+                                    for (int j=1; j<=days;j++){
+                                        out.print("<td style=\"width: 3%\">"+j+"</td>");
+                                    }
+                    out.print("</tr>"); 
+                    i=0;
+                                    HashMap<Integer,LinkedList<Falta>> grilla;
+                                    for(LibretaIndividual l: d.getLibretasIndividuales().values()){
+                                        if ((i%2)==0){
+                                            color=" #ccccff";
+                                        }
+                                        else{
+                                            color=" #ffff99";
+                                        }
+                                        i++;
+                    out.print("<tr style=\"background-color:"+color+";\">"
+                                                + "<td>"
+                                                + l.getAlumno().getPrimerApellido()+ " " + l.getAlumno().getPrimerNombre() 
+                                                +"</td>");
+                                        
+                                        grilla=l.getGrillaFaltas().get(mes);
+                                        if(grilla==null){
+                                            for (int j=1; j<=days;j++){
+                                                out.print("<td>");
+                                                
+                                                out.print("</td>");
+                                            } 
+                                        }
+                                        else{
+                                           for (int j=1; j<=days;j++){
+                                                out.print("<td>");
+                                                if(grilla.get(j)!=null){
+                                                    for(Falta f:grilla.get(j)){
+                                                        out.print("<b title='Fecha: "+f.getFecha()+"&#10;C&oacute;digo: "+f.getCodigoMotivo()+"&#10;Cantidad de horas: "+f.getCanthoras()+"&#10;Observaciones: "+f.getObservaciones()+"'>"+f.getCodigoMotivo()+"</b>");
+                                                    }
+                                                    
+                                                }
+                                                
+                                                out.print("</td>");
+                                            } 
+                                        }
+                                        
+                    out.print("</tr>");
+                                    
+                                   }
+                            
+                                %>
+                            </table>
+                        </div>    
                 </div> 
                      
             </form>

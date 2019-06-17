@@ -5,12 +5,16 @@
  */
 package Servlets.Bedelia;
 
+import Classes.Bedelia.Falta;
 import Classes.Bedelia.Grupo;
+import Classes.Bedelia.LibretaIndividual;
 import Classes.Personal;
 import Classes.Usuario;
 import Manejadores.ManejadorBedelia;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import javax.json.Json;
@@ -42,7 +46,7 @@ public class ObtenerCamposParaLibreta extends HttpServlet {
         HttpSession sesion = request.getSession();
         response.setContentType("UTF-8");
         Usuario u = (Usuario)sesion.getAttribute("usuario");
-        if(u.isAdmin()||u.getPermisosPersonal().getId()==4){
+        if(u.isAdmin()||u.getPermisosPersonal().getId()==4 || u.isProfesor()){
             try (PrintWriter out = response.getWriter()) {
                 /* TODO output your page here. You may use following sample code. */
                 Manejadores.ManejadorBedelia mb= ManejadorBedelia.getInstance();
@@ -83,17 +87,55 @@ public class ObtenerCamposParaLibreta extends HttpServlet {
                    // System.out.print(json.build());
                     out.print(json.build());
                 }
+                else {
+                    if(request.getParameter("grilla")!=null){
+                        int mes= Integer.valueOf(request.getParameter("grilla"));
+                        int idLibreta = Integer.valueOf(request.getParameter("idLibreta"));
+                        JsonObjectBuilder json = Json.createObjectBuilder(); 
+                        Classes.Bedelia.Libreta libreta = mb.getLibreta(idLibreta);
+                        JsonArrayBuilder jab1= Json.createArrayBuilder();
+                        JsonArrayBuilder jab2= Json.createArrayBuilder();
+                        Falta f;
+                        int dia;
+                        System.out.print("LLEGUE SERVLET");
+                        for(LibretaIndividual li:libreta.getLibretasIndividuales().values()){
+                            dia=1;
+                            JsonArrayBuilder jab= Json.createArrayBuilder();
+                            jab.add(Json.createObjectBuilder().add("ci",li.getAlumno().getCi()));
+                            for (HashMap<Integer,LinkedList<Falta>> g:li.getGrillaFaltas().values()){
+                                for(LinkedList<Falta> lg:g.values()){
+                                    while(lg.iterator().hasNext()){
+                                        f=(Falta)(lg.iterator().next());
+                                        jab2.add(Json.createObjectBuilder()
+                                                .add("faltaCodigo", f.getCodigoMotivo())
+                                                .add("fecha", f.getFecha())
+                                                .add("cantHoras", f.getCanthoras())
+                                                .add("observaciones", f.getObservaciones())
+                                        );
+                                    }
+                                    jab.add(Json.createObjectBuilder()
+                                        .add("dia", dia)
+                                        .add("faltasxDia",jab2)
+                                    );
+                                }
+                            }
+                            jab1.add(Json.createObjectBuilder().add("faltas",jab));
+                        }
+                        json.add("alumnos", jab1);
+                        Calendar fecha1 = java.util.Calendar.getInstance();
+                        Calendar cal = new GregorianCalendar(fecha1.get(java.util.Calendar.YEAR), mes-1, 1); 
+                        int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH); // 28
+                        JsonArrayBuilder jab= Json.createArrayBuilder();
+                            jab.add(Json.createObjectBuilder()
+                                .add("cantDias", days)
+                            );
+                        json.add("cantDiasMes", jab);
+                        System.out.print(json.build());
+                       out.print(json.build());
+                    }
+                }
             }
         }
-    }
-    private String reemplazarCaracteresHtml(String input){
-        CharSequence[] origen={"á", "à", "Á", "À","é", "è", "É", "È","í", "ì", "Í", "Ì","ó", "ò", "Ó", "Ò","ú", "ù", "Ú", "Ù","ñ","Ñ","ç","Ç","°","ª"};//,""
-        CharSequence[] destino= {"&aacute;", "&aacute;", "&Aacute;", "&Aacute;","&eacute;", "&eacute;", "&Eacute;", "&Eacute;","&iacute;", "&iacute;", "&Iacute;", "&Iacute;","&oacute;", "&oacute;", "&Oacute;", "&Oacute;","&uacute;", "&uacute;", "&Uacute;", "&Uacute;","&ntilde;","&Ntilde;","&ccedil;","&Ccedil;","&deg;","&ordf;"} ;//
-        int i=0;
-        for(CharSequence o:origen){
-            input=input.replace(o, destino[i++]);
-        }
-        return input;
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

@@ -16,7 +16,9 @@
         <link rel="stylesheet" href="css/tabs.css" type="text/css"/>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <style type="text/css">
-                        
+                        body{
+                            font-family: arial;
+                        }
 			ul, ol {
 				list-style:none;
                                

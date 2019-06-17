@@ -25,7 +25,7 @@ function agregarShow(){
 <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
 <table style="float: right">
     <tr>
-        <td style="width: 55%"><h3 style="float: left; font-family: sans-serif">Grupos</h3></td>
+        <td style="width: 55%"><h3 style="float: left;">Grupos</h3></td>
         <td style="width: 15%"><a onclick="agregarShow();" title="Agregar"><img width="30%" src='images/agregarLista.png' /></a> </td>
         <td style="width: 15%"><a onclick='abrir_dialog(dialog1)' title="Aplicar filtro"><img width="35%" src='images/filtro_1.png' /></a> </td>
         <td style="width: 15%"><img  width="30%" title="Imprimir" src="images/imprimir.png" onclick="listado(dialog2)"/></td>

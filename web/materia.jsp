@@ -91,7 +91,7 @@
     </table>
     <p align='right'><input type="submit"  value="Aceptar" /></p>
 </form>       
-        <h3 align="center" style="font-family: arial">CURSOS ASOCIADOS</h3>
+        <h3 align="center">CURSOS ASOCIADOS</h3>
     <%
             if(d!=null){
                String display="";

@@ -13,6 +13,7 @@ import Classes.Bedelia.Libreta;
 import Classes.Bedelia.LibretaIndividual;
 import Classes.Bedelia.Materia;
 import Classes.Bedelia.Nota;
+import Classes.Bedelia.Notificacion;
 import Classes.Bedelia.Promedio;
 import Classes.Bedelia.Sancion;
 import Classes.Cadete;
@@ -21,6 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -202,10 +204,23 @@ public class ManejadorBedeliaBD {
                 promedios = obtenerPromediosLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
                 notas = obtenerNotasLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
                 faltas = obtenerFaltasLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
-                p.put(rs.getInt("ciAlumno"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciAlumno")), faltas, notas, promedios, sanciones,rs.getDouble("PromedioAnual"),rs.getDouble("NotaFinal"),rs.getBoolean("activo")));
+                HashMap<Integer,HashMap<Integer,LinkedList<Falta>>> grillaFaltas= new HashMap<>();
+                int mesFalta,diaFalta;
+                for(Falta f:faltas.values()){
+                    mesFalta= Integer.valueOf(f.getFecha().split("-")[1]);
+                    diaFalta= Integer.valueOf(f.getFecha().split("-")[2]);
+                    if(grillaFaltas.get(mesFalta)==null){
+                        grillaFaltas.put(mesFalta, new HashMap<>());
+                    }
+                    if(grillaFaltas.get(mesFalta).get(diaFalta)==null){
+                        grillaFaltas.get(mesFalta).put(diaFalta,new LinkedList<>());
+                    }
+                    grillaFaltas.get(mesFalta).get(diaFalta).add(f);
+                }
+                p.put(rs.getInt("ciAlumno"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciAlumno")), faltas, grillaFaltas, notas, promedios, sanciones,rs.getDouble("PromedioAnual"),rs.getDouble("NotaFinal"),rs.getBoolean("activo")));
             }
             
-        } catch (Exception ex) {
+        } catch (SQLException | NumberFormatException ex) {
             System.out.print("obtenerLibretasIndividuales-ManejadorBedeliaBD:"+ex.getMessage());
         }
         return p;
@@ -219,7 +234,7 @@ public class ManejadorBedeliaBD {
             sql="SELECT * FROM sistemasem.sanciones where idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno;
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                p.put(rs.getInt("id"),new Sancion(rs.getInt("id"),rs.getInt("tipo"), rs.getInt("minutosTarde"),rs.getString("causa"), rs.getString("fecha"), rs.getInt("estado")));
+                p.put(rs.getInt("id"),new Sancion(rs.getInt("id"),rs.getInt("tipo"), rs.getInt("minutosTarde"),rs.getString("causa"), rs.getString("fecha")));
             }
         } catch (Exception ex) {
             System.out.print("obtenerSancionesLibretaIndividual-ManejadorBedeliaBD:"+ex.getMessage());
@@ -267,7 +282,7 @@ public class ManejadorBedeliaBD {
             sql="SELECT * FROM sistemasem.faltas where idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno;
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                p.put(rs.getInt("id"),new Falta(rs.getInt("id"),rs.getString("fecha"),rs.getInt("canthoras"), rs.getInt("codigoMotivo"),rs.getString("observaciones"),rs.getInt("estado")));
+                p.put(rs.getInt("id"),new Falta(rs.getInt("id"),rs.getString("fecha"),rs.getInt("canthoras"), rs.getString("codigoMotivo"),rs.getString("observaciones")));
             }
         } catch (Exception ex) {
             System.out.print("obtenerFaltasLibretaIndividual-ManejadorBedeliaBD:"+ex.getMessage());
@@ -409,7 +424,6 @@ public class ManejadorBedeliaBD {
 
     public boolean agregarGrupoCurso(int idCurso, int anio, String nombre) {
         try {
-            System.out.print("agregar");
             String sql= "insert into sistemasEM.`cursos-grupos` (idCursoBedelia,anio,nombre) values(?,?,?)";
             PreparedStatement s= connection.prepareStatement(sql);
             int i=1;
@@ -546,5 +560,100 @@ public class ManejadorBedeliaBD {
             System.out.print("crearLibreta-ManejadorBedeliaBD:"+ex.getMessage());
         }
         return -1;
+    }
+
+    public int agregarFalta(Libreta l, Cadete c, String fecha, String codigoFalta, int cantHoras, String observaciones) {
+        try {
+            String sql= "insert into sistemasEM.faltas (idLibreta,ciAlumno,fecha, codigoMotivo,cantHoras,observaciones) values(?,?,?,?,?,?)";
+            PreparedStatement s= connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            int i=1;
+            s.setInt(i++, l.getId());
+            s.setInt(i++, c.getCi());
+            s.setString(i++, fecha);
+            s.setString(i++, codigoFalta);
+            s.setInt(i++, cantHoras);
+            s.setString(i++, observaciones);
+            int row=s.executeUpdate();
+            if(row>0){
+                ResultSet rs=s.getGeneratedKeys(); //obtengo las ultimas llaves generadas
+                if(rs.next()){ 
+                    return(rs.getInt(1));
+                }
+            }
+        } catch (Exception ex) {
+            System.out.print("agregarFalta-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return -1;
+    }
+
+    int agregarNotificacion(Libreta libreta, Cadete cadete, Falta falta, Sancion sancion) {
+        try {
+            String sql= "insert into sistemasEM.notificaciones (idLibreta,ciCadete,idFalta, idSancion,estado) values(?,?,?,?,?)";
+            PreparedStatement s= connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            int i=1;
+            s.setInt(i++, libreta.getId());
+            s.setInt(i++, cadete.getCi());
+            if(falta!=null){
+                s.setInt(i++, falta.getId());
+            }
+            else{
+                s.setInt(i++, -1);
+            }
+            if(sancion!=null){
+                s.setInt(i++, sancion.getId());
+            }
+            else{
+                s.setInt(i++, -1);
+            }
+            s.setInt(i++, 1);
+            int row=s.executeUpdate();
+            if(row>0){
+                ResultSet rs=s.getGeneratedKeys(); //obtengo las ultimas llaves generadas
+                if(rs.next()){ 
+                    return(rs.getInt(1));
+                }
+            }
+        } catch (Exception ex) {
+            System.out.print("agregarNotificacion-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return -1;
+    }
+
+    LinkedList<Notificacion> obtenerNotificaciones(HashMap<Integer, HashMap<Integer,Libreta>> libretas, int estado) {
+        LinkedList<Notificacion> p= new LinkedList<>();
+        try {
+            Statement s= connection.createStatement();
+            String sql;
+            ManejadorPersonal mp= ManejadorPersonal.getInstance();
+            sql="SELECT * FROM sistemasem.notificaciones where estado="+estado;
+            ResultSet rs=s.executeQuery(sql);
+            Libreta l=null;
+            Falta falta;
+            Sancion sancion;
+            while (rs.next()){
+                for(HashMap<Integer,Libreta> lista:libretas.values()){
+                    if(lista.containsKey(rs.getInt("idLibreta"))){
+                        l= lista.get(rs.getInt("idLibreta"));
+                    }
+                }
+                if(rs.getInt("idFalta")!=-1){
+                    falta=l.getLibretasIndividuales().get(rs.getInt("ciCadete")).getFaltas().get(rs.getInt("idFalta"));
+                }
+                else{
+                    falta=null;
+                }
+                if(rs.getInt("idSancion")!=-1){
+                    sancion=l.getLibretasIndividuales().get(rs.getInt("ciCadete")).getSanciones().get(rs.getInt("idSancion"));
+                }
+                else{
+                    sancion=null;
+                }
+                p.add(new Notificacion(rs.getInt("id"), l, mp.getCadete(rs.getInt("ciCadete")), falta, sancion, estado));
+            }
+            
+        } catch (Exception ex) {
+            System.out.print("obtenerNotificaciones-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return p;
     }
 }

@@ -222,7 +222,7 @@
     
                 <table style="float: right">
                     <tr>
-                        <td style="width: 55%"><h3 style="float: left; font-family: sans-serif">Baja 3er a&ntilde;o y actualizaci&oacute;n de grados</h3></td>
+                        <td style="width: 55%"><h3 style="float: left;">Baja 3er a&ntilde;o y actualizaci&oacute;n de grados</h3></td>
                         <td style="width: 15%"><input type="image" width="30%" title="Actualizar"src="images/upgrade.png" alt="Submit Form" /></td>
 
                     </tr>

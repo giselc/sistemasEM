@@ -6,7 +6,9 @@
 package Classes.Bedelia;
 
 import Classes.Cadete;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  *
@@ -19,11 +21,12 @@ public class LibretaIndividual {
     private double promedioAnual;
     private double notaFinal; //calculado en base al promedioAnual y nota de Examen
     HashMap<Integer, Falta> faltas;
+    HashMap<Integer,HashMap<Integer,LinkedList<Falta>>> grillaFaltas; //mes*dia* listaFaltas del dia
     HashMap<Integer, Nota> notas;
     HashMap<Integer,Promedio> promedios;
     HashMap<Integer,Sancion> sanciones;
 
-    public LibretaIndividual(int idLibreta, Cadete alumno, HashMap<Integer, Falta> faltas, HashMap<Integer, Nota> notas, HashMap<Integer, Promedio> promedios, HashMap<Integer, Sancion> sanciones, double promedioAnual, double notaFinal, boolean activo) {
+    public LibretaIndividual(int idLibreta, Cadete alumno, HashMap<Integer, Falta> faltas, HashMap<Integer,HashMap<Integer,LinkedList<Falta>>> grillaFaltas, HashMap<Integer, Nota> notas, HashMap<Integer, Promedio> promedios, HashMap<Integer, Sancion> sanciones, double promedioAnual, double notaFinal, boolean activo) {
         this.idLibreta = idLibreta;
         this.alumno = alumno;
         this.faltas = faltas;
@@ -33,11 +36,13 @@ public class LibretaIndividual {
         this.promedioAnual = promedioAnual;
         this.notaFinal = notaFinal;
         this.activo= activo;
+        this.grillaFaltas = grillaFaltas;
     }
     public LibretaIndividual(int idLibreta, Cadete alumno) {
         this.idLibreta = idLibreta;
         this.alumno = alumno;
         this.faltas = new HashMap<>();
+        this.grillaFaltas = new HashMap<>();
         this.notas = new HashMap<>();
         this.promedios = new HashMap<>();
         this.sanciones = new HashMap<>();
@@ -125,6 +130,11 @@ public class LibretaIndividual {
     public void setSanciones(HashMap<Integer, Sancion> sanciones) {
         this.sanciones = sanciones;
     }
+
+    public HashMap<Integer,HashMap<Integer,LinkedList<Falta>>> getGrillaFaltas() {
+        return grillaFaltas;
+    }
+
     
     
     

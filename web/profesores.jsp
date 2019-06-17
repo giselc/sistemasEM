@@ -145,7 +145,7 @@
             </div>
             <table style="float: right">
                 <tr>
-                    <td style="width: 55%"><h3 style="float: left; font-family: sans-serif">PROFESORES</h3></td>
+                    <td style="width: 55%"><h3 style="float: left;">PROFESORES</h3></td>
                     <td style="width: 15%"><a href="profesor.jsp" title="Agregar"><img width="30%" src='images/agregarLista.png' /></a> </td>
                     <td style="width: 15%"><img  width="30%" title="Imprimir" src="images/imprimir.png" onclick="listar(4);"/></td>
                 </tr>

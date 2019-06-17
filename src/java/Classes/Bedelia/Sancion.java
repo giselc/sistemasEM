@@ -15,15 +15,13 @@ public class Sancion {
     private int minutosTardes; //si tipo==R
     private String causa;
     private String fecha;
-    private int estado; //1 enviado a bedelia, 0 leido por bedelia
 
-    public Sancion(int id, int tipo, int minutosTardes, String causa, String fecha, int estado) {
+    public Sancion(int id, int tipo, int minutosTardes, String causa, String fecha) {
         this.id = id;
         this.tipo = tipo;
         this.minutosTardes = minutosTardes;
         this.causa = causa;
         this.fecha = fecha;
-        this.estado = estado;
     }
 
     public int getId() {
@@ -65,14 +63,4 @@ public class Sancion {
     public void setFecha(String fecha) {
         this.fecha = fecha;
     }
-
-    public int getEstado() {
-        return estado;
-    }
-
-    public void setEstado(int estado) {
-        this.estado = estado;
-    }
-    
-    
 }

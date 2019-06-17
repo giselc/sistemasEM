@@ -37,7 +37,7 @@ public class Libreta extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         Usuario u = (Usuario)sesion.getAttribute("usuario");
         //.out.print("aca");
-        if(u.isAdmin()||u.getPermisosPersonal().getId()==4){
+        if(u.isAdmin()||u.getPermisosPersonal().getId()==4||u.isProfesor()){
             response.setContentType("text/html;charset=UTF-8");
             String mensaje="";
             String redirect="";
@@ -52,13 +52,17 @@ public class Libreta extends HttpServlet {
                          if(request.getParameter("pasarLista")!=null){
                             //pasarLista
                             Classes.Bedelia.Libreta l = mp.getLibreta(id);
+                            if(u.isProfesor() && u.getCiProfesor()!=l.getProfesor().getCi()){
+                                sesion.setAttribute("Mensaje", "Disculpe, pero no tiene permisos para operar en esta libreta.");
+                                response.sendRedirect("libretas.jsp");
+                            }
                             for(Cadete c: l.getGrupo().getAlumnos().values()){
                                 if(Integer.valueOf(request.getParameter("P-"+c.getCi()))!=1){
                                     if(request.getParameter("OBS-"+c.getCi()).equals("Observaciones")){
-                                        mp.agregarFalta(l,c,request.getParameter("fecha"),request.getParameter("CF-"+c.getCi()),"");
+                                        mp.agregarFalta(l,c,request.getParameter("fecha"),request.getParameter("CF-"+c.getCi()),Integer.valueOf(request.getParameter("CANTHORAS-"+c.getCi())),"");
                                     }
                                     else{
-                                        mp.agregarFalta(l,c,request.getParameter("fecha"),request.getParameter("CF-"+c.getCi()),request.getParameter("OBS-"+c.getCi()));
+                                        mp.agregarFalta(l,c,request.getParameter("fecha"),request.getParameter("CF-"+c.getCi()),Integer.valueOf(request.getParameter("CANTHORAS-"+c.getCi())),request.getParameter("OBS-"+c.getCi()));
                                     }
                                 }
                             } 
@@ -69,6 +73,10 @@ public class Libreta extends HttpServlet {
                          }
                     }
                     else{
+                        if(u.isProfesor()){
+                            sesion.setAttribute("Mensaje", "Disculpe, pero no tiene permisos para realizar esta operación.");
+                            response.sendRedirect("libretas.jsp");
+                        }
                         //agregar
                         String grupoAnioNombre=request.getParameter("grupo");
                         String salon= request.getParameter("salon");
@@ -93,7 +101,7 @@ public class Libreta extends HttpServlet {
             catch(Exception ex){
                 mensaje = "ERROR: " + ex.getMessage();
                 sesion.setAttribute("Mensaje", mensaje);
-                System.out.printf("Servlet-Libreta.java: "+mensaje);
+                System.out.print("Servlet-Libreta.java: "+mensaje);
                 response.sendRedirect("/libretas.jsp");
             }        
         }
