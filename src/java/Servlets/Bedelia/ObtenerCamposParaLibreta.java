@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -96,16 +97,19 @@ public class ObtenerCamposParaLibreta extends HttpServlet {
                         JsonArrayBuilder jab1= Json.createArrayBuilder();
                         JsonArrayBuilder jab2= Json.createArrayBuilder();
                         Falta f;
-                        int dia;
-                        System.out.print("LLEGUE SERVLET");
+                        int dia=1;
+                        Iterator it;
                         for(LibretaIndividual li:libreta.getLibretasIndividuales().values()){
-                            dia=1;
                             JsonArrayBuilder jab= Json.createArrayBuilder();
-                            jab.add(Json.createObjectBuilder().add("ci",li.getAlumno().getCi()));
-                            for (HashMap<Integer,LinkedList<Falta>> g:li.getGrillaFaltas().values()){
-                                for(LinkedList<Falta> lg:g.values()){
-                                    while(lg.iterator().hasNext()){
-                                        f=(Falta)(lg.iterator().next());
+                            jab.add(Json.createObjectBuilder()
+                                    .add("primerApellido",this.reemplazarCaracteresHtml(li.getAlumno().getPrimerApellido()))
+                                    .add("primerNombre",this.reemplazarCaracteresHtml(li.getAlumno().getPrimerNombre())));
+                            if(li.getGrillaFaltas().get(mes)!=null){
+                                for(LinkedList<Falta> lg:li.getGrillaFaltas().get(mes).values()){
+                                    it= lg.iterator();
+                                    while(it.hasNext()){
+                                        f=(Falta)(it.next());
+                                        dia=Integer.valueOf(f.getFecha().split("-")[2]);
                                         jab2.add(Json.createObjectBuilder()
                                                 .add("faltaCodigo", f.getCodigoMotivo())
                                                 .add("fecha", f.getFecha())
@@ -119,7 +123,7 @@ public class ObtenerCamposParaLibreta extends HttpServlet {
                                     );
                                 }
                             }
-                            jab1.add(Json.createObjectBuilder().add("faltas",jab));
+                            jab1.add(Json.createObjectBuilder().add("alumno",jab));
                         }
                         json.add("alumnos", jab1);
                         Calendar fecha1 = java.util.Calendar.getInstance();
@@ -130,12 +134,21 @@ public class ObtenerCamposParaLibreta extends HttpServlet {
                                 .add("cantDias", days)
                             );
                         json.add("cantDiasMes", jab);
-                        System.out.print(json.build());
+                       // System.out.print(json.build());
                        out.print(json.build());
                     }
                 }
             }
         }
+    }
+    private String reemplazarCaracteresHtml(String input){
+        CharSequence[] origen={"á", "à", "Á", "À","é", "è", "É", "È","í", "ì", "Í", "Ì","ó", "ò", "Ó", "Ò","ú", "ù", "Ú", "Ù","ñ","Ñ","ç","Ç","°","ª"};//,""
+        CharSequence[] destino= {"&aacute;", "&aacute;", "&Aacute;", "&Aacute;","&eacute;", "&eacute;", "&Eacute;", "&Eacute;","&iacute;", "&iacute;", "&Iacute;", "&Iacute;","&oacute;", "&oacute;", "&Oacute;", "&Oacute;","&uacute;", "&uacute;", "&Uacute;", "&Uacute;","&ntilde;","&Ntilde;","&ccedil;","&Ccedil;","&deg;","&ordf;"} ;//
+        int i=0;
+        for(CharSequence o:origen){
+            input=input.replace(o, destino[i++]);
+        }
+        return input;
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

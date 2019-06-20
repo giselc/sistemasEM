@@ -188,69 +188,66 @@
             xmlhttp=new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-                        /*
+                        
                         var obj = jQuery.parseJSON( xmlhttp.responseText );
-                        var mat = obj.grupos;
-                        var tabla= document.getElementById("tablaformulario");
-                        var tblBody = tabla.getElementsByTagName("tbody");
-                        if(mat.length>0){
-                           // var textoCelda = "<select name=\"materia\" form=\"formulario\" required=\"required\" id=\"materia\">";
-                            var hilera = document.createElement("tr");
-                            var celda1=document.createElement("td");
-                            celda1.appendChild(document.createTextNode("Grupo:"));
-                            hilera.appendChild(celda1);
-                            var celda = document.createElement("td");    
-                            var sel = document.createElement('select');
-                            sel.id="grupo";
-                            sel.name="grupo";
-                            var option;
-                            option=document.createElement("option");
-                            option.setAttribute("value",-1);
-                            option.setAttribute("label","");
-                            sel.appendChild(option);
-                            sel.setAttribute("onchange","alerta(this.value)")
-                            for (var i=0; i<mat.length;i++) {
-                                    option=document.createElement("option");
-                                    option.setAttribute("value",mat[i].anio+"/"+mat[i].nombre+"/"+mat[i].cantAlumnos);
-                                    option.setAttribute("label",mat[i].anio+"/"+mat[i].nombre);
-                                    sel.appendChild(option);
+                        //alert(xmlhttp.responseText );
+                        var alumnos = obj.alumnos;
+                        
+                        var output="<tr >"
+                                    +"<td>"
+                                        
+                                    +"</td>"
+                                    +"<td colspan='" + obj.cantDiasMes[0].cantDias + "' style='background-color:#ffcc66;padding:0px;'>"
+                                           +"Días"
+                                    +"</td>"
+                                +"</tr>"
+                                +"<tr style='background-color:#ffcc66;padding:0px;'>"
+                                    +"<td>"
+                                        +"Alumnos:"
+                                    +"</td>";
+                                    for (var j=1; j<=obj.cantDiasMes[0].cantDias;j++){
+                                        output+="<td style=\"width: 3%\">"+j+"</td>";
+                                    }
+                                    output+="</tr>";     
+                                    var color="";
+                        for (var i=0; i<alumnos.length;i++) {
+                            if ((i%2)==0){
+                                color=" #ccccff";
                             }
-                            //textoCelda+="</select>";
-                            celda.appendChild(sel);
-                            hilera.appendChild(celda);
-                            tblBody[0].appendChild(hilera);
-                        }
-                            //tabla.appendChild(tblBody[0]);
-                        mat = obj.materias;
-                        if(mat.length>0){
-                           // var textoCelda = "<select name=\"materia\" form=\"formulario\" required=\"required\" id=\"materia\">";
-                                hilera = document.createElement("tr");
-                                celda1=document.createElement("td");
-                                celda1.appendChild(document.createTextNode("Materia:"));
-                                hilera.appendChild(celda1);
-                                celda = document.createElement("td");    
-                                sel = document.createElement('select');
-                                sel.id="materia";
-                                sel.name="materia";
-                                var option;
-                                option=document.createElement("option");
-                                option.setAttribute("value",-1);
-                                option.setAttribute("label","");
-                                sel.appendChild(option);
-                                for (var i=0; i<mat.length;i++) {
-                                    option=document.createElement("option");
-                                    option.setAttribute("value",mat[i].id);
-                                    option.setAttribute("label",mat[i].codigo + " - "+mat[i].nombre);
-                                    sel.appendChild(option);
-                                }
-                                //textoCelda+="</select>";
+                            else{
+                                color=" #ffff99";
+                            }
+                            output+="<tr style=\"background-color:"+color+";\">"
+                                    + "<td>"
+                                    + alumnos[i].alumno[0].primerApellido+ " " + alumnos[i].alumno[0].primerNombre 
+                                    +"</td>";
+                            var actualJ=1;
+                            for(var j=1;j<=obj.cantDiasMes[0].cantDias;j++ ){
+                                if(alumnos[i].alumno[actualJ]!=null){
+                                    if(alumnos[i].alumno[actualJ].dia==j){
+                                        
+                                        output+="<td>";
+                                        for(var k=0;k<alumnos[i].alumno[actualJ].faltasxDia.length;k++){
+                                                var faltasxDia=alumnos[i].alumno[actualJ].faltasxDia[k];
+                                                output+="<b title='Fecha: "+faltasxDia.fecha+"&#10;C&oacute;digo: "+faltasxDia.faltaCodigo+"&#10;Cantidad de horas: "+faltasxDia.cantHoras+"&#10;Observaciones: "+faltasxDia.observaciones+"'>"+faltasxDia.faltaCodigo+"</b>";
 
-                                celda.appendChild(sel);
-                                hilera.appendChild(celda);
-                                tblBody[0].appendChild(hilera);
-                                //tabla.appendChild(tblBody[0]);
-                            
-                        }*/
+                                        }
+                                        output+="</td>";
+                                        actualJ++;
+
+                                    }
+                                    else{
+                                        output+="<td></td>";
+                                    };
+                                }
+                                else{
+                                    output+="<td></td>";
+                                }
+                            }
+                            output+="</tr>"
+                            document.getElementById("grillaFaltas").innerHTML=output;
+                        }
+                        
                     };
                 };
                 xmlhttp.open("POST","ObtenerCamposParaLibreta?grilla="+mes+"&idLibreta="+idLibreta);
@@ -461,6 +458,7 @@ else{
                        
                         java.util.Calendar fecha1 = java.util.Calendar.getInstance();
                         int mes = fecha1.get(java.util.Calendar.MONTH)+1;
+                        
                         String cero="";
                         if(mes<10){
                             cero="0";
