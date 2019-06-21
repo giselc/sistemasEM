@@ -56,6 +56,14 @@ public class ManejadorBedelia {
         return false;
     }
 
+    public LinkedList<Notificacion> getNotificacionesNuevas() {
+        return notificacionesNuevas;
+    }
+
+    public LinkedList<Notificacion> getNotificacionesLeidas() {
+        return notificacionesLeidas;
+    }
+
     public boolean asociarAlumnosGrupo(LinkedList<Cadete> alumnos, Grupo g) {
        //si existen libretas asociadas, crear las libretas individuales para los nuevos alumnos a asociar
        ManejadorBedeliaBD mb= new ManejadorBedeliaBD();

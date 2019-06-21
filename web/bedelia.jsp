@@ -4,10 +4,43 @@
     Author     : Gisel
 --%>
 
+<%@page import="Manejadores.ManejadorBedelia"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+<script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+<script>
+    var intervalo= setInterval('hayNotificacionesNuevas()',5000);
+    
+    function hayNotificacionesNuevas(){
+        xmlhttp=new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                        
+                        var obj = jQuery.parseJSON( xmlhttp.responseText );
+                        var notificaciones = obj.notificaciones;
+                        var imgNotificaciones= document.getElementById("botonNotificaciones");
+                        //alert(notificaciones[0].cantNotificaciones>0);
+                        if(notificaciones[0].cantNotificaciones>0){
+                            if(imgNotificaciones.src!="images/new_notificaciones.png"){
+                                imgNotificaciones.src="images/new_notificaciones.png";}
+                        }
+                        else{
+                            if(imgNotificaciones.src!="images/button_notificaciones.png"){
+                                imgNotificaciones.src="images/button_notificaciones.png";}
+                        }
+                        
+                    };
+                };
+                xmlhttp.open("POST","Notificaciones?hayNotificaciones=1");
+                xmlhttp.send();
+                return false;
+    }
+</script>
 <%@ include file="header.jsp" %>
-<% if(u!=null && (u.isAdmin()|| u.getPermisosPersonal().getId()==4)){%>
+<% if(u!=null && (u.isAdmin()|| u.getPermisosPersonal().getId()==4)){
+    ManejadorBedelia mb= ManejadorBedelia.getInstance();
+%>
 <style type="text/css">
                         
 			.nav2 > li {
@@ -123,7 +156,7 @@
                 </ul>
             </li>
             <li style="width: 30%">
-                <a href="notificaciones.jsp"><p align="center" style="margin:0px"><img  class="boton" title="Notificaciones" src="images/button_notificaciones.png"/></p></a>
+                <a href="notificaciones.jsp"><p align="center" style="margin:0px"><img  id="botonNotificaciones" class="boton" title="Notificaciones" <% if(mb.getNotificacionesNuevas().size()==0){out.print("src=\"images/button_notificaciones.png\"");}else{out.print("src=\"images/new_notificaciones.png\"");} %>/></p></a>
             </li>
     </ul>
     <%
