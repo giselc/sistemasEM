@@ -36,6 +36,8 @@ public class ManejadorBedelia {
         libretas = mb.obtenerLibretas(materias,cursos);
         notificacionesNuevas = mb.obtenerNotificaciones(libretas,1);
         notificacionesLeidas = mb.obtenerNotificaciones(libretas,2);
+        System.out.print(notificacionesNuevas.size());
+        System.out.print(notificacionesLeidas.size());
     }
     
     public static ManejadorBedelia getInstance() {
@@ -146,24 +148,14 @@ public class ManejadorBedelia {
             li.getFaltas().put(id,f);
             int mesFalta= Integer.valueOf(f.getFecha().split("-")[1]);
             int diaFalta = Integer.valueOf(f.getFecha().split("-")[2]);
-            System.out.println(mesFalta);
-            System.out.println(diaFalta);
             if(li.getGrillaFaltas().get(mesFalta)==null){
                 li.getGrillaFaltas().put(mesFalta, new HashMap<>());
             }
-            System.out.println(mesFalta);
-            System.out.println(diaFalta);
             if(li.getGrillaFaltas().get(mesFalta).get(diaFalta)==null){
                 li.getGrillaFaltas().get(mesFalta).put(diaFalta,new LinkedList<>());
             }
-            System.out.println(mesFalta);
-            System.out.println(diaFalta);
             li.getGrillaFaltas().get(mesFalta).get(diaFalta).add(f);
-            System.out.println(mesFalta);
-            System.out.println(diaFalta);
             int j= mb.agregarNotificacion(l,c,f,null);
-            System.out.println(mesFalta);
-            System.out.println(diaFalta);
             if(j!=-1){
                 notificacionesNuevas.add(new Notificacion(j,l,c,f,null,1));
             };

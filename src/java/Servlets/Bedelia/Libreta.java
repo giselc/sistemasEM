@@ -66,8 +66,8 @@ public class Libreta extends HttpServlet {
                                     }
                                 }
                             } 
-                            sesion.setAttribute("Mensaje", "Datos agregados correctamente.");
-                            response.sendRedirect("libreta.jsp?id="+id);
+                            mensaje="Datos agregados correctamente.";
+                            redirect="libreta.jsp?id="+id;
                         }
                         else{
                          }

@@ -169,17 +169,23 @@
             //alert("P-"+boton.value);
             var input= document.getElementById("P-"+boton.value);
             var div = document.getElementById("DIV-"+boton.value);
+            var cf = document.getElementById("CF-"+boton.value);
+            var cantHoras = document.getElementById("CANTHORAS-"+boton.value);
             if(input.value==1){
                 boton.innerText="Ausente";
                 boton.style="color: red";
                 div.style="display:block";
                 input.value=2;
+                cf.required=true;
+                cantHoras.required=true;
             }
             else{
                 boton.innerText="Presente";
                 boton.style="color: green";
                 div.style="display:none";
                 input.value=1;
+                cf.required=false;
+                cantHoras.required=false;
             }
             return false;
         }
@@ -254,6 +260,19 @@
                 xmlhttp.send();
                 return false;
         }
+        function validarFormPasarLista(form){
+            for (var i = 0; i < form.elements.length; i++) { 
+                if(form.elements[i].type=="select-one"){
+                    if(form.elements[i].required && form.elements[i].value=="-1"){
+                        alert("Debe seleccionar código de falta.");
+                        form.elements[i].focus();
+                        return false;
+                    }
+                };
+            }
+            return true;
+        } 
+        
 </script>
 <style>
     table tr td{
@@ -293,7 +312,7 @@ if(d==null){
                     <td>Profesor: </td>
                     <td>
                         <select name="profesor" form="formulario" required="required" id="profesor">
-                            <option value="-1"></option>
+                            <option value="-1" disabled="disabled" selected="selected" ></option>
                             <%
                             Manejadores.ManejadorProfesores mprof = ManejadorProfesores.getInstance();
                             for(Profesor prof: mprof.getProfesores() ){
@@ -447,13 +466,22 @@ else{
         }
         %>
             
-            <form method="post"  name="pasarLista" id="pasarLista" action="Libreta?id=<%=d.getId()%>&pasarLista=1">
+        <form method="post"  name="pasarLista" id="pasarLista" onsubmit="return validarFormPasarLista(this)" action="Libreta?id=<%=d.getId()%>&pasarLista=1">
                 <ul id="tabs">
                     <li><a href="#" title="PasarLista"><b>Pasar Lista</b></a></li>
                     <li><a href="#" title="historiaDeInasistencias"><b>Historial de Inasistencias</b></a></li>
+                    <li><a href="#" title="notas"><b>Notas</b></a></li>
+                    <li><a href="#" title="promedios"><b>Promedios</b></a></li>
+                    <li><a href="#" title="temasTratados"><b>Temas Tratados</b></a></li>
+                    <li><a href="#" title="sanciones"><b>Sanciones</b></a></li>
                 </ul>
                 <div id="content">
                     <div id="PasarLista">
+                        <p align="right">
+                            <button form="pasarLista" style="background-color: #ff6600; border-radius: 15px; color: #ffffff; font-size: large;">&nbsp;FINALIZAR&nbsp;</button>
+                       </p>
+                       <p>
+                        Seleccionar fecha:
                        <input type="date"  <%
                        
                         java.util.Calendar fecha1 = java.util.Calendar.getInstance();
@@ -465,7 +493,7 @@ else{
                         }
                         out.print("value=\""+  fecha1.get(java.util.Calendar.YEAR)+"-"+cero+mes+"-"+fecha1.get(java.util.Calendar.DATE)+"\"");
                        
-                       %> id="fecha" name="fecha">
+                        %> id="fecha" name="fecha"></p>
                         <%
                             out.print("<table style='width: 100%;' id='tablalistado' >"
                                     + "<tr style='background-color:#ffcc66;padding:0px'>"
@@ -518,8 +546,8 @@ else{
                                                 Causa:
                                             </td>
                                             <td>
-                                                <select name="CF-<%=p.getAlumno().getCi()%>" form="pasarLista" >
-                                                    <option value="-1">Seleccionar causa:</option>
+                                                <select name="CF-<%=p.getAlumno().getCi()%>" form="pasarLista" id="CF-<%=p.getAlumno().getCi()%>" >
+                                                    <option value="-1" disabled="disabled" selected hidden>Seleccionar causa:</option>
                                                     <option value="F0">F0 - Sin causa justificada</option>
                                                     <option value="F1">F1 - Guardia</option>
                                                     <option value="F2">F2 - Enfermer&iacute;a</option>
@@ -535,7 +563,7 @@ else{
                                                 Cantidad de horas:
                                             </td>
                                             <td>
-                                                <input  name="CANTHORAS-<%=p.getAlumno().getCi()%>"  type="number" value="0" min="0" step="1"/>
+                                                <input id="CANTHORAS-<%=p.getAlumno().getCi()%>" name="CANTHORAS-<%=p.getAlumno().getCi()%>"  type="number" min="0" step="1"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -561,9 +589,9 @@ else{
                             }
                             out.print("</table>");
                         %> 
-                        <input type="submit" value="ACEPTAR" />
+                        
                      </div>
-                        <div id="historiaDeInasistencias">
+                    <div id="historiaDeInasistencias">
                             <select onchange="cambiarGrilla(this,<%=d.getId()%>);">
                                 <option value="1" <% if(mes==1){out.print("selected");} %> > ENERO </option>
                                 <option value="2" <% if(mes==2){out.print("selected");} %> > FEBRERO </option>
@@ -646,7 +674,28 @@ else{
                             
                                 %>
                             </table>
-                        </div>    
+                        </div>
+                    
+                    <div id="notas">
+                        <h1>
+                            SECCI&Oacute;N EN CONSTRUCCI&Oacute;N
+                        </h1>
+                    </div>
+                    <div id="promedios">
+                        <h1>
+                            SECCI&Oacute;N EN CONSTRUCCI&Oacute;N
+                        </h1>
+                    </div>
+                    <div id="temasTratados">
+                        <h1>
+                            SECCI&Oacute;N EN CONSTRUCCI&Oacute;N
+                        </h1>
+                    </div>
+                    <div id="sanciones">
+                        <h1>
+                            SECCI&Oacute;N EN CONSTRUCCI&Oacute;N
+                        </h1>
+                    </div>
                 </div> 
                      
             </form>
