@@ -198,12 +198,12 @@
                         var obj = jQuery.parseJSON( xmlhttp.responseText );
                         //alert(xmlhttp.responseText );
                         var alumnos = obj.alumnos;
-                        
+                        var colspan=obj.cantDiasMes[0].cantDias + 1;
                         var output="<tr >"
                                     +"<td>"
                                         
                                     +"</td>"
-                                    +"<td colspan='" + obj.cantDiasMes[0].cantDias + "' style='background-color:#ffcc66;padding:0px;'>"
+                                    +"<td colspan='" + colspan + "' style='background-color:#ffcc66;padding:0px;'>"
                                            +"Días"
                                     +"</td>"
                                 +"</tr>"
@@ -214,9 +214,14 @@
                                     for (var j=1; j<=obj.cantDiasMes[0].cantDias;j++){
                                         output+="<td style=\"width: 3%\">"+j+"</td>";
                                     }
+                                     output+="<td>"
+                                        +"TOTAL:"
+                                    +"</td>";
                                     output+="</tr>";     
                                     var color="";
+                                    var total;
                         for (var i=0; i<alumnos.length;i++) {
+                            total=0;
                             if ((i%2)==0){
                                 color=" #ccccff";
                             }
@@ -236,7 +241,7 @@
                                         for(var k=0;k<alumnos[i].alumno[actualJ].faltasxDia.length;k++){
                                                 var faltasxDia=alumnos[i].alumno[actualJ].faltasxDia[k];
                                                 output+="<b title='Fecha: "+faltasxDia.fecha+"&#10;C&oacute;digo: "+faltasxDia.faltaCodigo+"&#10;Cantidad de horas: "+faltasxDia.cantHoras+"&#10;Observaciones: "+faltasxDia.observaciones+"'>"+faltasxDia.faltaCodigo+"</b>";
-
+                                                total+=faltasxDia.cantHoras;
                                         }
                                         output+="</td>";
                                         actualJ++;
@@ -250,7 +255,11 @@
                                     output+="<td></td>";
                                 }
                             }
-                            output+="</tr>"
+                            if(total==0){
+                                total="";
+                            }
+                            output+="<td>"+total+"</td>";
+                            output+="</tr>";
                             document.getElementById("grillaFaltas").innerHTML=output;
                         }
                         
@@ -617,7 +626,7 @@ else{
                                     <td>
                                         
                                     </td>
-                                    <td colspan="<%= days %>" style='background-color:#ffcc66;padding:0px;'>
+                                    <td colspan="<%= days+1 %>" style='background-color:#ffcc66;padding:0px;'>
                                             D&iacute;as:
                                     </td>
                                 </tr>
@@ -630,6 +639,7 @@ else{
                                     for (int j=1; j<=days;j++){
                                         out.print("<td style=\"width: 3%\">"+j+"</td>");
                                     }
+                                    out.print("<td>TOTAL</td>");
                     out.print("</tr>"); 
                     i=0;
                                     HashMap<Integer,LinkedList<Falta>> grilla;
@@ -648,24 +658,27 @@ else{
                                         
                                         grilla=l.getGrillaFaltas().get(mes);
                                         if(grilla==null){
-                                            for (int j=1; j<=days;j++){
+                                            for (int j=1; j<=days+1;j++){
                                                 out.print("<td>");
                                                 
                                                 out.print("</td>");
                                             } 
                                         }
                                         else{
+                                            int total=0;
                                            for (int j=1; j<=days;j++){
                                                 out.print("<td>");
                                                 if(grilla.get(j)!=null){
                                                     for(Falta f:grilla.get(j)){
                                                         out.print("<b title='Fecha: "+f.getFecha()+"&#10;C&oacute;digo: "+f.getCodigoMotivo()+"&#10;Cantidad de horas: "+f.getCanthoras()+"&#10;Observaciones: "+f.getObservaciones()+"'>"+f.getCodigoMotivo()+"</b>");
+                                                        total+=f.getCanthoras();
                                                     }
                                                     
                                                 }
                                                 
                                                 out.print("</td>");
-                                            } 
+                                            }
+                                           out.print("<td>"+total+"</td>");
                                         }
                                         
                     out.print("</tr>");

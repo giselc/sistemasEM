@@ -586,9 +586,9 @@ public class ManejadorBedeliaBD {
         return -1;
     }
 
-    int agregarNotificacion(Libreta libreta, Cadete cadete, Falta falta, Sancion sancion) {
+    int agregarNotificacion(Libreta libreta, Cadete cadete, Falta falta, Sancion sancion,String fecha) {
         try {
-            String sql= "insert into sistemasEM.notificaciones (idLibreta,ciCadete,idFalta, idSancion,estado) values(?,?,?,?,?)";
+            String sql= "insert into sistemasEM.notificaciones (idLibreta,ciCadete,idFalta, idSancion,estado,fecha) values(?,?,?,?,?,?)";
             PreparedStatement s= connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             int i=1;
             s.setInt(i++, libreta.getId());
@@ -606,6 +606,7 @@ public class ManejadorBedeliaBD {
                 s.setInt(i++, -1);
             }
             s.setInt(i++, 1);
+            s.setString(i++, fecha);
             int row=s.executeUpdate();
             if(row>0){
                 ResultSet rs=s.getGeneratedKeys(); //obtengo las ultimas llaves generadas
@@ -625,7 +626,7 @@ public class ManejadorBedeliaBD {
             Statement s= connection.createStatement();
             String sql;
             ManejadorPersonal mp= ManejadorPersonal.getInstance();
-            sql="SELECT * FROM sistemasem.notificaciones where estado="+estado;
+            sql="SELECT * FROM sistemasem.notificaciones where estado="+estado +" order by fecha desc;";
             ResultSet rs=s.executeQuery(sql);
             Libreta l=null;
             Falta falta;
@@ -648,7 +649,7 @@ public class ManejadorBedeliaBD {
                 else{
                     sancion=null;
                 }
-                p.add(new Notificacion(rs.getInt("id"), l, mp.getCadete(rs.getInt("ciCadete")), falta, sancion, estado));
+                p.add(new Notificacion(rs.getInt("id"), l, mp.getCadete(rs.getInt("ciCadete")), falta, sancion, estado,rs.getString("fecha")));
             }
             
         } catch (Exception ex) {

@@ -18,14 +18,24 @@ public class Notificacion {
     private final Falta falta;
     private final Sancion sancion;
     private int estado; //1 nuevo - 2 leido
+    private String fecha;
 
-    public Notificacion(int id, Libreta libreta, Cadete cadete, Falta falta, Sancion sancion, int estado) {
+    public Notificacion(int id, Libreta libreta, Cadete cadete, Falta falta, Sancion sancion, int estado, String fecha) {
         this.id = id;
         this.libreta = libreta;
         this.cadete = cadete;
         this.falta = falta;
         this.sancion = sancion;
         this.estado=estado;
+        this.fecha=fecha;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
     }
 
     public int getId() {

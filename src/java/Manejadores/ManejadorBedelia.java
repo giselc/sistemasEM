@@ -163,9 +163,21 @@ public class ManejadorBedelia {
                 li.getGrillaFaltas().get(mesFalta).put(diaFalta,new LinkedList<>());
             }
             li.getGrillaFaltas().get(mesFalta).get(diaFalta).add(f);
-            int j= mb.agregarNotificacion(l,c,f,null);
+            int j= mb.agregarNotificacion(l,c,f,null,fecha);
             if(j!=-1){
-                notificacionesNuevas.add(new Notificacion(j,l,c,f,null,1));
+                boolean agregue=false;
+                Iterator it = notificacionesNuevas.iterator();
+                int i=0;
+                while(it.hasNext() && !agregue){
+                    String fechaNotificacionActual=((Notificacion)it.next()).getFecha();
+                    if(fechaNotificacionActual.compareTo(fecha)<=0){ 
+                        notificacionesNuevas.add(i,new Notificacion(j,l,c,f,null,1,fecha));
+                        agregue=true;
+                    }
+                    i++;
+                }
+                if(!agregue)
+                    notificacionesNuevas.add(new Notificacion(j,l,c,f,null,1,fecha));
             };
         }
     }
