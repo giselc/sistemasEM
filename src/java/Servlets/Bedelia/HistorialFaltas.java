@@ -5,12 +5,18 @@
  */
 package Servlets.Bedelia;
 
+import Classes.Usuario;
+import Manejadores.ManejadorBedelia;
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -29,21 +35,54 @@ public class HistorialFaltas extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet HistorialFaltas</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet HistorialFaltas at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        HttpSession sesion = request.getSession();
+        request.setCharacterEncoding("UTF-8");
+        Usuario u = (Usuario)sesion.getAttribute("usuario");
+        //.out.print("aca");
+        if(u.isAdmin()||u.getPermisosPersonal().getId()==4||u.isProfesor()){
+            response.setContentType("text/html;charset=UTF-8");
+            String mensaje="";
+            try (PrintWriter out = response.getWriter()) {
+                ManejadorBedelia mp = ManejadorBedelia.getInstance();
+                if(request.getParameter("imprimirFaltas")!=null){
+                    mp.ImprmirFaltasxDia(out, request.getParameter("fecha"));
+                }
+                else{
+                     if(request.getParameter("eliminar")!=null){
+                        int idFalta= Integer.valueOf(request.getParameter("eliminar"));
+                        int idLibreta= Integer.valueOf(request.getParameter("idLibreta"));
+                        int ciAlumno= Integer.valueOf(request.getParameter("ciAlumno"));
+                        int ciProfesor= Integer.valueOf(request.getParameter("ciProfesor"));
+                        int cantHorasFalta=mp.obtenerFalta(idFalta,idLibreta,ciAlumno,ciProfesor).getCanthoras();
+                        JsonObjectBuilder json = Json.createObjectBuilder(); 
+                        JsonArrayBuilder jab= Json.createArrayBuilder();
+                        if(mp.eliminarFalta(idFalta,idLibreta,ciAlumno,ciProfesor)){
+                            jab.add(Json.createObjectBuilder()
+                                .add("mensaje","ok")
+                                    .add("cantHorasFalta",cantHorasFalta)
+                            );
+                            json.add("msj", jab);
+                        }else{
+                            jab.add(Json.createObjectBuilder()
+                                .add("mensaje","ERROR: contacte al administrador.")
+                            );
+                            json.add("msj", jab);
+                        };
+                        out.print(json.build());
+                     }
+                }
+            }
+            catch(Exception ex){
+                mensaje = "ERROR: " + ex.getMessage();
+                sesion.setAttribute("Mensaje", mensaje);
+                System.out.print("Servlet-Libreta.java: "+mensaje);
+                response.sendRedirect("libretas.jsp");
+            }        
+        }
+        else{
+            response.sendRedirect("");
         }
     }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

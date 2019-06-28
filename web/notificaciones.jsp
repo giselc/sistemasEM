@@ -16,7 +16,7 @@
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/jquery-ui.js"></script>
     <script>
-             $(document).ready(function() {
+            $(document).ready(function() {
                      $("#content div").hide();
                      $("#tabs li:first").attr("id","current");
                      $("#content div:first").fadeIn();
@@ -30,145 +30,154 @@
                      $('#' + $(this).attr('title')).fadeIn();
                  });
              });
-             function marcarLeido(leido,id,i){
-                 //json marcar leido
-                var tablaOrigen;var tablaDestino;
-                if(leido){
-                    tablaOrigen= document.getElementById("nuevas");
-                    tablaDestino= document.getElementById("leidas");
-                }
-                else{
-                    tablaDestino = document.getElementById("nuevas");
-                    tablaOrigen= document.getElementById("leidas");
-                }
-                var row;
-                var elimine=false;
-                var ultimo=false;
-                for(var j=1;j<tablaOrigen.rows.length;j++){ 
-                    //alert(tablanueva.rows[j].cells[2].innerHTML==id);
-                    
-                    if(tablaOrigen.rows[j].cells[1].innerHTML==id){
-                        row=tablaOrigen.rows[j];
-                        ultimo=j==(tablaOrigen.rows.length-1);
-                        tablaOrigen.deleteRow(j);
-                        elimine=true;
-                        
-                    };
-                    if (elimine&&!ultimo){
-                        //alert(tablanueva.rows[j].style.backgroundColor);
-                       if(tablaOrigen.rows[j].style.backgroundColor=="rgb(204, 204, 255)"){
-                           tablaOrigen.rows[j].style.backgroundColor="#ffff99";
-                       }
-                       else{
-                           tablaOrigen.rows[j].style.backgroundColor="#ccccff";
-                       };
-                    };
-                }
-                var agregue=false;
-                //alert(tablaDestino.rows.length);
-                for(var j=1;j<tablaDestino.rows.length;j++){ 
-                   //alert(tablanueva.rows[j].cells[2].innerHTML==id);
-                   //alert(row.cells[3].innerHTML);
-                   if(tablaDestino.rows[j].cells[2].innerHTML<=row.cells[2].innerHTML){
-                        var rowNueva=tablaDestino.insertRow(j);
-                        rowNueva.title=row.title;
-                        for(var k=0;k<row.cells.length;k++){
-                            cellNueva=rowNueva.insertCell(k);
-                            if(k<9 || k==10){
-                                cellNueva.innerHTML=row.cells[k].innerHTML;
-                            }
-                            if(k==9){
-                                var src;
-                                if(leido){
-                                    src="nuevo";
-                                }
-                                else{
-                                    src="leido";
-                                };
-                                //alert(leido);
-                                cellNueva.innerHTML="<a onclick='marcarLeido("+!leido+","+id+")'><img src='images/"+src+".png' width='60%' /></a></td>";
-
-                            }
-                            if(k==11){
-                                cellNueva.innerHTML="<a onclick='eliminar("+!leido+","+id+")'><img src='images/eliminar.png' width='60%' /></a></td>";
-
-                            }
-                        }
-                        agregue=true;
-                        break;
-                   };
-                }
-                
-                if(!agregue){
-                    var rowNueva=tablaDestino.insertRow(-1);
-                    rowNueva.title=row.title;
-                    var cellNueva;
-                    for(var k=0;k<row.cells.length;k++){
-                        cellNueva=rowNueva.insertCell(k);
-                        if(k<9 || k==10){
-                            cellNueva.innerHTML=row.cells[k].innerHTML;
-                        }
-                        if(k==9){
-                            var src;
+            function marcarLeido(leido,id){
+                xmlhttp=new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                        var obj = jQuery.parseJSON( xmlhttp.responseText );
+                        var msj = obj.msj;
+                        if(msj[0].mensaje=="ok"){
+                            var tablaOrigen;var tablaDestino;
                             if(leido){
-                                src="nuevo";
+                                tablaOrigen= document.getElementById("nuevas");
+                                tablaDestino= document.getElementById("leidas");
                             }
                             else{
-                                src="leido";
-                            };
-                            //alert(leido);
-                            cellNueva.innerHTML="<a onclick='marcarLeido("+!leido+","+id+")'><img src='images/"+src+".png' width='60%' /></a></td>";
-                           
+                                tablaDestino = document.getElementById("nuevas");
+                                tablaOrigen= document.getElementById("leidas");
+                            }
+                            var row;
+                            var elimine=false;
+                            var ultimo=false;
+                            for(var j=1;j<tablaOrigen.rows.length;j++){ 
+                                if(tablaOrigen.rows[j].cells[1].innerHTML==id){
+                                    row=tablaOrigen.rows[j];
+                                    ultimo=j==(tablaOrigen.rows.length-1);
+                                    tablaOrigen.deleteRow(j);
+                                    elimine=true;
+                                };
+                                if (elimine&&!ultimo){
+                                   if(tablaOrigen.rows[j].style.backgroundColor=="rgb(204, 204, 255)"){
+                                       tablaOrigen.rows[j].style.backgroundColor="#ffff99";
+                                   }
+                                   else{
+                                       tablaOrigen.rows[j].style.backgroundColor="#ccccff";
+                                   };
+                                };
+                            }
+                            var agregue=false;
+                            for(var j=1;j<tablaDestino.rows.length;j++){ 
+                               if(tablaDestino.rows[j].cells[2].innerHTML<=row.cells[2].innerHTML){
+                                    var rowNueva=tablaDestino.insertRow(j);
+                                    rowNueva.title=row.title;
+                                    for(var k=0;k<row.cells.length;k++){
+                                        cellNueva=rowNueva.insertCell(k);
+                                        if(k<9 || k==10){
+                                            cellNueva.innerHTML=row.cells[k].innerHTML;
+                                        }
+                                        if(k==9){
+                                            var src;
+                                            if(leido){
+                                                src="nuevo";
+                                            }
+                                            else{
+                                                src="leido";
+                                            };
+                                            cellNueva.innerHTML="<a onclick='marcarLeido("+!leido+","+id+")'><img src='images/"+src+".png' width='60%' /></a></td>";
+                                        }
+                                        if(k==11){
+                                            cellNueva.innerHTML="<a onclick='eliminar("+!leido+","+id+")'><img src='images/eliminar.png' width='60%' /></a></td>";
+                                        }
+                                    }
+                                    agregue=true;
+                                    break;
+                               };
+                            }
+                            if(!agregue){
+                                var rowNueva=tablaDestino.insertRow(-1);
+                                rowNueva.title=row.title;
+                                var cellNueva;
+                                for(var k=0;k<row.cells.length;k++){
+                                    cellNueva=rowNueva.insertCell(k);
+                                    if(k<9 || k==10){
+                                        cellNueva.innerHTML=row.cells[k].innerHTML;
+                                    }
+                                    if(k==9){
+                                        var src;
+                                        if(leido){
+                                            src="nuevo";
+                                        }
+                                        else{
+                                            src="leido";
+                                        };
+                                        cellNueva.innerHTML="<a onclick='marcarLeido("+!leido+","+id+")'><img src='images/"+src+".png' width='60%' /></a></td>";
+                                    }
+                                    if(k==11){
+                                        cellNueva.innerHTML="<a onclick='eliminar("+!leido+","+id+")'><img src='images/eliminar.png' width='60%' /></a></td>";
+                                    }
+                                }
+                            }
+                            var color;
+                            for(var j=1;j<tablaDestino.rows.length;j++){ 
+                                if ((j%2)==0){
+                                    color="#ffff99";
+                                }
+                                else{
+                                    color="#ccccff";
+                                };
+                                 tablaDestino.rows[j].style.backgroundColor=color;
+                                 tablaDestino.rows[j].align='center';
+                            }
                         }
-                        if(k==11){
-                            cellNueva.innerHTML="<a onclick='eliminar("+!leido+","+id+")'><img src='images/eliminar.png' width='60%' /></a></td>";
-
+                        else{
+                            document.getElementById("mensaje").innerHTML="<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+msj[0].mensaje;
                         }
                     }
-                }
-                var color;
-                for(var j=1;j<tablaDestino.rows.length;j++){ 
-                    if ((j%2)==0){
-                        color="#ffff99";
-                    }
-                    else{
-                        color="#ccccff";
-                    };
-                     tablaDestino.rows[j].style.backgroundColor=color;
-                     tablaDestino.rows[j].align='center';
-                }
+                };
+                xmlhttp.open("POST","Notificaciones?marcarLeido="+leido+"&id="+id);
+                xmlhttp.send();
+                return false;
              }
-             
-             
-             function eliminar(leido,id){
-                 
-                var tablaOrigen;
-                if(leido){
-                    tablaOrigen= document.getElementById("nuevas");
-                }
-                else{
-                    tablaOrigen= document.getElementById("leidas");
-                }
-                //json eliminar
-                var elimine=false;
-                for(var j=0;j<tablaOrigen.rows.length;j++){ 
-                    //alert(tablanueva.rows[j].cells[2].innerHTML==id);
-                    if(tablaOrigen.rows[j].cells[1].innerHTML==id){
-                        tablaOrigen.deleteRow(j);
-                        elimine=true;
-                    };
-                    if (elimine){
-                        //alert(tablanueva.rows[j].style.backgroundColor);
-                       if(tablaOrigen.rows[j].style.backgroundColor=="rgb(204, 204, 255)"){
-                           tablaOrigen.rows[j].style.backgroundColor="#ffff99";
-                       }
-                       else{
-                           tablaOrigen.rows[j].style.backgroundColor="#ccccff";
-                           
-                       };
-                    };
-                }
-                 //alert("eliminar");
+            //////////////////////////////////////
+            function eliminar(leido,id){
+                xmlhttp=new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                        var obj = jQuery.parseJSON( xmlhttp.responseText );
+                        var msj = obj.msj;
+                        if(msj[0].mensaje=="ok"){
+                            var tablaOrigen;
+                            if(leido){
+                                tablaOrigen= document.getElementById("leidas");
+                            }
+                            else{
+                                tablaOrigen= document.getElementById("nuevas");
+                            }
+                            //json eliminar
+                            var elimine=false;
+                            for(var j=0;j<tablaOrigen.rows.length;j++){ 
+                                if(tablaOrigen.rows[j].cells[1].innerHTML==id){
+                                    tablaOrigen.deleteRow(j);
+                                    elimine=true;
+                                };
+                                if (elimine){
+                                   if(tablaOrigen.rows[j].style.backgroundColor=="rgb(204, 204, 255)"){
+                                       tablaOrigen.rows[j].style.backgroundColor="#ffff99";
+                                   }
+                                   else{
+                                       tablaOrigen.rows[j].style.backgroundColor="#ccccff";
+                                   };
+                                };
+                            }
+                        }
+                        else{
+                            document.getElementById("mensaje").innerHTML="<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+msj[0].mensaje;
+                        }
+                    }
+                };
+                xmlhttp.open("POST","Notificaciones?eliminar="+leido+"&id="+id);
+                xmlhttp.send();
+                return false;
              }
     </script>
     
@@ -221,7 +230,7 @@
 
                            out.print("<tr style='background-color:"+color+"' title=\"");
                            if(p.getFalta()!=null){
-                               out.print("TIPO: FALTA&#10;FECHA: "+p.getFalta().getFecha()+"&#10;CANTIDAD DE HORAS: "+p.getFalta().getCanthoras()+"&#10;OBSERVACIONES: "+p.getFalta().getObservaciones());
+                               out.print("TIPO: FALTA&#10;FECHA: "+p.getFecha()+"&#10;CANTIDAD DE HORAS: "+p.getFalta().cantHoras+"&#10;OBSERVACIONES: "+p.getFalta().observaciones);
                            }
                            out.print("\">"
                            +"<td style='width: 5%' align='center'>"+i+"</td>" );
@@ -234,14 +243,18 @@
                            +"<td style='width: 10%' align='center'>"+ p.getLibreta().getProfesor().obtenerNombreCompleto() +"</td>"
                            +"<td style='width: 10%' align='center'>"+ p.getCadete().getGrado().getAbreviacion()+" "+p.getCadete().getPrimerApellido()+" "+p.getCadete().getPrimerNombre() +"</td>");
                            if(p.getFalta()!=null){
-                                out.print("<td style='width: 10%' align='center'>"+ p.getFalta().getCodigoMotivo() +"</td>");
+                                out.print("<td style='width: 10%' align='center'>"+ p.getFalta().codigoMotivo +"</td>");
                            }
                            else{
-                               out.print("<td style='width: 10%' align='center'>"+ p.getSancion().getTipo() +"</td>");
+                               out.print("<td style='width: 10%' align='center'>"+ p.getSancion().tipo +"</td>");
                            }
                             out.print("<td style='width: 5%' align='center'><a onclick='marcarLeido(true,"+p.getId()+")'><img src='images/leido.png' width='60%' /></a></td>"
-                            +"<td style=\"width: 5%\" align='center'><a target='_blank' href='Notificacion?imprimir=1&id="+p.getId()+"'><img  width=\"60%\" title=\"Imprimir\" src=\"images/imprimir.png\" /></a></td>");
-                            out.print("<td style='width: 5%' align='center'><a onclick='eliminar(true,"+p.getId()+")'><img src='images/eliminar.png' width='60%' /></a></td>"
+                            +"<td style=\"width: 5%\" align='center'>");
+                            if(p.getSancion()!=null){
+                                out.print("<a target='_blank' href='Notificacion?imprimir=1&id="+p.getId()+"'><img  width=\"60%\" title=\"Imprimir parte\" src=\"images/imprimir.png\" /></a>");
+                            }
+                            out.print("</td>"
+                                    + "<td style='width: 5%' align='center'><a onclick='eliminar(false,"+p.getId()+")'><img src='images/eliminar.png' width='60%' /></a></td>"
                            +"</tr>");
                         
                     }
@@ -280,7 +293,7 @@
 
                            out.print("<tr style='background-color:"+color+"' title=\"");
                            if(p.getFalta()!=null){
-                               out.print("TIPO: FALTA&#10;FECHA: "+p.getFalta().getFecha()+"&#10;CANTIDAD DE HORAS: "+p.getFalta().getCanthoras()+"&#10;OBSERVACIONES: "+p.getFalta().getObservaciones());
+                               out.print("TIPO: FALTA&#10;FECHA: "+p.getFecha()+"&#10;CANTIDAD DE HORAS: "+p.getFecha()+"&#10;OBSERVACIONES: "+p.getFalta().observaciones);
                            }
                            out.print("\">"
                            +"<td style='width: 5%' align='center'>"+i+"</td>" );
@@ -292,14 +305,22 @@
                            +"<td style='width: 10%' align='center'>"+ p.getLibreta().getProfesor().obtenerNombreCompleto() +"</td>"
                            +"<td style='width: 10%' align='center'>"+ p.getCadete().getGrado().getAbreviacion()+" "+p.getCadete().getPrimerApellido()+" "+p.getCadete().getPrimerNombre() +"</td>");
                            if(p.getFalta()!=null){
-                                out.print("<td style='width: 10%' align='center'>"+ p.getFalta().getCodigoMotivo() +"</td>");
+                                out.print("<td style='width: 10%' align='center'>"+ p.getFalta().codigoMotivo );
+                                if(p.isEliminado()){
+                                    out.print(" - Eliminado") ;
+                                }
+                                out.print("</td>");
                            }
                            else{
-                               out.print("<td style='width: 10%' align='center'>"+ p.getSancion().getTipo() +"</td>");
+                               out.print("<td style='width: 10%' align='center'>"+ p.getSancion().tipo +"</td>");
                            }
-                            out.print("<td style='width: 5%' align='center'><a onclick='marcarLeido(false,"+p.getId()+")'><img src='images/leido.png' width='60%' /></a></td>"
-                            +"<td style=\"width: 5%\" align='center'><a target='_blank' href='Notificacion?imprimir=1&id="+p.getId()+"'><img  width=\"60%\" title=\"Imprimir\" src=\"images/imprimir.png\" /></a></td>");
-                            out.print("<td style='width: 5%' align='center'><a onclick='eliminar(false,"+p.getId()+")'><img src='images/eliminar.png' width='60%' /></a></td>"
+                            out.print("<td style='width: 5%' align='center'><a onclick='marcarLeido(false,"+p.getId()+")'><img src='images/nuevo.png' width='60%' /></a></td>"
+                                    + "<td style=\"width: 5%\" align='center'>");
+                            if(p.getSancion()!=null){
+                                out.print("<a target='_blank' href='Notificacion?imprimir=1&id="+p.getId()+"'><img  width=\"60%\" title=\"Imprimir parte\" src=\"images/imprimir.png\" /></a>");
+                            }
+                             out.print("</td>"
+                                    + "<td style='width: 5%' align='center'><a onclick='eliminar(true,"+p.getId()+")'><img src='images/eliminar.png' width='60%' /></a></td>"
                            +"</tr>");
                         
                     }

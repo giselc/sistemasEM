@@ -8,7 +8,6 @@ package Servlets.Bedelia;
 import Classes.Bedelia.Falta;
 import Classes.Bedelia.Grupo;
 import Classes.Bedelia.LibretaIndividual;
-import Classes.Personal;
 import Classes.Usuario;
 import Manejadores.ManejadorBedelia;
 import java.io.IOException;

@@ -142,7 +142,7 @@ public class ManejadorCodigoBD {
             String sql="Select * from sistemasEM.arma where codigo="+ codigo;
             ResultSet rs=s.executeQuery(sql);
             if (rs.next()){
-                d = new Arma(codigo, rs.getString("descripcion"));
+                d = new Arma(codigo, rs.getString("descripcion"),rs.getString("abreviacion"));
             }
         } catch (Exception ex) {
             Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -156,7 +156,7 @@ public class ManejadorCodigoBD {
             String sql="Select * from sistemasEM.arma order by descripcion asc";
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                al.put(rs.getInt("codigo"),new Arma(rs.getInt("codigo"), rs.getString("descripcion")));
+                al.put(rs.getInt("codigo"),new Arma(rs.getInt("codigo"), rs.getString("descripcion"),rs.getString("abreviacion")));
             }
         } catch (Exception ex) {
             Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);

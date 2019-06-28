@@ -40,7 +40,7 @@ public class VincularMateriasCurso extends HttpServlet {
                     ManejadorBedelia mb= ManejadorBedelia.getInstance();
                     if(mb.asociarMateriasCurso(request.getParameterValues("List[]"),request.getParameter("idCurso"))){
                         sesion.setAttribute("Mensaje", "Materias vinculadas con éxito.");
-                        response.sendRedirect("/curso.jsp?id="+request.getParameter("idCurso"));
+                        response.sendRedirect("curso.jsp?id="+request.getParameter("idCurso"));
                     };
                 }
             }

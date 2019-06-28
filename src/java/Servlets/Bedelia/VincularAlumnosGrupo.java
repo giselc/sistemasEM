@@ -43,19 +43,19 @@ public class VincularAlumnosGrupo extends HttpServlet {
                     if(Integer.valueOf(request.getParameter("desvincular"))!=-1){
                         if(mb.desasociarAlumnoGrupo(Integer.valueOf(request.getParameter("desvincular")),mb.getCurso(Integer.valueOf(request.getParameter("idCurso"))).getGrupo(Integer.valueOf(request.getParameter("anioGrupo")), request.getParameter("nombreGrupo")))){
                             sesion.setAttribute("Mensaje", "Alumno desvinculado con éxito.");
-                            response.sendRedirect("/grupo.jsp?idCurso="+request.getParameter("idCurso")+"&nombreGrupo="+request.getParameter("nombreGrupo")+"&anioGrupo="+request.getParameter("anioGrupo")); 
+                            response.sendRedirect("grupo.jsp?idCurso="+request.getParameter("idCurso")+"&nombreGrupo="+request.getParameter("nombreGrupo")+"&anioGrupo="+request.getParameter("anioGrupo")); 
                         }  
                     }
                     else{
                         if(request.getParameterValues("List[]").length!=0){
                             if(mb.desasociarAlumnosGrupo(request.getParameterValues("List[]"),mb.getCurso(Integer.valueOf(request.getParameter("idCurso"))).getGrupo(Integer.valueOf(request.getParameter("anioGrupo")), request.getParameter("nombreGrupo")))){
                                 sesion.setAttribute("Mensaje", "Alumno desvinculado con éxito.");
-                                response.sendRedirect("/grupo.jsp?idCurso="+request.getParameter("idCurso")+"&nombreGrupo="+request.getParameter("nombreGrupo")+"&anioGrupo="+request.getParameter("anioGrupo")); 
+                                response.sendRedirect("grupo.jsp?idCurso="+request.getParameter("idCurso")+"&nombreGrupo="+request.getParameter("nombreGrupo")+"&anioGrupo="+request.getParameter("anioGrupo")); 
                             }   
                         }
                         else{
                             sesion.setAttribute("Mensaje", "Ningún alumno seleccionado.");
-                            response.sendRedirect("/grupo.jsp?idCurso="+request.getParameter("idCurso")+"&nombreGrupo="+request.getParameter("nombreGrupo")+"&anioGrupo="+request.getParameter("anioGrupo")); 
+                            response.sendRedirect("grupo.jsp?idCurso="+request.getParameter("idCurso")+"&nombreGrupo="+request.getParameter("nombreGrupo")+"&anioGrupo="+request.getParameter("anioGrupo")); 
                         }
                     }
                 }
@@ -72,7 +72,7 @@ public class VincularAlumnosGrupo extends HttpServlet {
                         }
                         if(mb.asociarAlumnosGrupo(cadetes,mb.getCurso(Integer.valueOf(request.getParameter("idCurso"))).getGrupo(Integer.valueOf(request.getParameter("anioGrupo")),request.getParameter("nombreGrupo")))){
                             sesion.setAttribute("Mensaje", "Alumnos vinculados con éxito.");
-                            response.sendRedirect("/grupo.jsp?idCurso="+request.getParameter("idCurso")+"&nombreGrupo="+request.getParameter("nombreGrupo")+"&anioGrupo="+request.getParameter("anioGrupo"));
+                            response.sendRedirect("grupo.jsp?idCurso="+request.getParameter("idCurso")+"&nombreGrupo="+request.getParameter("nombreGrupo")+"&anioGrupo="+request.getParameter("anioGrupo"));
                         };
                     }
                 }

@@ -87,11 +87,11 @@ public class Libreta extends HttpServlet {
                         Classes.Bedelia.Libreta l = mp.crearLibreta(Integer.valueOf(request.getParameter("curso")),anio,nombre,Integer.valueOf(request.getParameter("materia")),Integer.valueOf(request.getParameter("profesor")),salon);
                         if(l!=null){
                             mensaje="Libreta agregada sastisfactoriamente.";
-                            redirect="/libreta.jsp?id="+l.getId();
+                            redirect="libreta.jsp?id="+l.getId();
                         }
                         else{
                             mensaje="ERROR al agregar la libreta.";
-                            redirect="/libretas.jsp";
+                            redirect="libretas.jsp";
                         };
                     }
                     sesion.setAttribute("Mensaje", mensaje);
@@ -102,7 +102,7 @@ public class Libreta extends HttpServlet {
                 mensaje = "ERROR: " + ex.getMessage();
                 sesion.setAttribute("Mensaje", mensaje);
                 System.out.print("Servlet-Libreta.java: "+mensaje);
-                response.sendRedirect("/libretas.jsp");
+                response.sendRedirect("libretas.jsp");
             }        
         }
         else{

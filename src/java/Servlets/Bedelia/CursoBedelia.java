@@ -55,15 +55,15 @@ public class CursoBedelia extends HttpServlet {
                     switch(mp.eliminarCurso(id)){
                         case 0:
                             mensaje="Curso eliminado sastisfactoriamente.";
-                            redirect="/cursos.jsp";
+                            redirect="cursos.jsp";
                             break;
                         case 1:
                             mensaje="ERROR al eliminar el curso. Tiene materias asociadas";
-                            redirect="/cursos.jsp";
+                            redirect="cursos.jsp";
                             break;
                         case 2:
                             mensaje="ERROR al eliminar el curso. Tiene libretas asociadas";
-                            redirect="/cursos.jsp";
+                            redirect="cursos.jsp";
                             break;
                     }
                     sesion.setAttribute("Mensaje", mensaje);
@@ -120,11 +120,11 @@ public class CursoBedelia extends HttpServlet {
                                 //agregar
                                 if(mp.agregarCurso(cb)){
                                     mensaje="Curso agregado sastisfactoriamente.";
-                                    redirect="/cursos.jsp";
+                                    redirect="cursos.jsp";
                                 }
                                 else{
                                     mensaje="ERROR al agregar al curso.";
-                                    redirect="/cursos.jsp";
+                                    redirect="cursos.jsp";
                                 };
                             }
                         }
@@ -137,7 +137,7 @@ public class CursoBedelia extends HttpServlet {
             catch(Exception ex){
                 mensaje = "ERROR: " + ex.getMessage();
                 sesion.setAttribute("Mensaje", mensaje);
-                response.sendRedirect("/cursos.jsp");
+                response.sendRedirect("cursos.jsp");
             }        
         }
         else{

@@ -64,7 +64,7 @@ public class Personal extends HttpServlet {
                     else{
                         mensaje="ERROR al eliminar el Personal.";
                     }
-                    redirect="/personal.jsp?tipo="+tipo;
+                    redirect="personal.jsp?tipo="+tipo;
                     sesion.setAttribute("Mensaje", mensaje);
                     response.sendRedirect(redirect);
                 }
@@ -99,11 +99,11 @@ public class Personal extends HttpServlet {
                             rp.rc=null;
                             if(mp.agregarPersonal(rp,tipo)){
                                 mensaje="Personal agregado sastisfactoriamente.";
-                                redirect="/personal.jsp?tipo="+tipo;
+                                redirect="personal.jsp?tipo="+tipo;
                             }
                             else{
                                 mensaje="ERROR al agregar el personal.";
-                                redirect="/personal.jsp?tipo="+tipo;
+                                redirect="personal.jsp?tipo="+tipo;
                             };
                             sesion.setAttribute("Mensaje", mensaje);
                             response.sendRedirect(redirect);
@@ -113,7 +113,7 @@ public class Personal extends HttpServlet {
             catch(Exception ex){
                 mensaje = "ERROR: " + ex.getMessage();
                 System.out.print(mensaje);
-                response.sendRedirect("/personal.jsp");
+                response.sendRedirect("personal.jsp");
             }
         }
         else{

@@ -37,17 +37,53 @@ public class Notificaciones extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             Manejadores.ManejadorBedelia mb = ManejadorBedelia.getInstance();
+            JsonObjectBuilder json = Json.createObjectBuilder(); 
+            JsonArrayBuilder jab= Json.createArrayBuilder();
             if(request.getParameter("hayNotificaciones")!=null){
-                    JsonObjectBuilder json = Json.createObjectBuilder(); 
-                    JsonArrayBuilder jab= Json.createArrayBuilder();
-                    jab.add(Json.createObjectBuilder()
-                        .add("cantNotificaciones", mb.getNotificacionesNuevas().size())
-                    );
-                    json.add("notificaciones", jab);
-                    
-                   // System.out.print(json.build());
-                    out.print(json.build());
+                jab.add(Json.createObjectBuilder()
+                    .add("cantNotificaciones", mb.getNotificacionesNuevas().size())
+                );
+                json.add("notificaciones", jab);
             }
+            else{
+                if(request.getParameter("marcarLeido")!=null){
+                    //System.out.print(request.getParameter("marcarLeido"));
+                    boolean aLeido=request.getParameter("marcarLeido").equals("true");
+                    int id= Integer.valueOf(request.getParameter("id"));
+                    if(mb.marcarLeidoNotificacion(id,aLeido)){
+                        jab.add(Json.createObjectBuilder()
+                            .add("mensaje","ok")
+                        );
+                        json.add("msj", jab);
+                    }
+                    else{
+                        jab.add(Json.createObjectBuilder()
+                            .add("mensaje","ERROR: contacte al administrador.")
+                        );
+                        json.add("msj", jab);
+                    };
+                }
+                else{
+                    if(request.getParameter("eliminar")!=null){
+                        boolean esLeido=request.getParameter("eliminar").equals("true");
+                        int id= Integer.valueOf(request.getParameter("id"));
+                        if(mb.eliminarNotificacion(id,esLeido)){
+                            jab.add(Json.createObjectBuilder()
+                                .add("mensaje","ok")
+                            );
+                            json.add("msj", jab);
+                        }
+                        else{
+                            jab.add(Json.createObjectBuilder()
+                                .add("mensaje","ERROR: contacte al administrador.")
+                            );
+                            json.add("msj", jab);
+                        };
+                    }
+                }
+            }
+            out.print(json.build());
+
         }
     }
 

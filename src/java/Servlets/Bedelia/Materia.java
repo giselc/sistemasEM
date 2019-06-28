@@ -54,11 +54,11 @@ public class Materia extends HttpServlet {
                     //baja
                     if(mp.eliminarMateria(Integer.valueOf(request.getParameter("elim")))){
                             mensaje="Materia eliminado sastisfactoriamente.";
-                            redirect="/materias.jsp";
+                            redirect="materias.jsp";
                     }
                     else{
                             mensaje="ERROR al eliminar la materia. Puede estar asociada a algún curso";
-                            redirect="/materias.jsp";
+                            redirect="materias.jsp";
                          
                     }
                     sesion.setAttribute("Mensaje", mensaje);
@@ -93,7 +93,7 @@ public class Materia extends HttpServlet {
                         else{
                             mensaje="ERROR al modificar la materia.";
                         }
-                        redirect="/materias.jsp";
+                        redirect="materias.jsp";
                     }
                     else{
                         //agregar
@@ -103,11 +103,11 @@ public class Materia extends HttpServlet {
                         }
                         if(mp.agregarMateria(m,idCurso)){
                             mensaje="Materia agregada sastisfactoriamente.";
-                            redirect="/materias.jsp";
+                            redirect="materias.jsp";
                         }
                         else{
                             mensaje="ERROR al agregar la materia.";
-                            redirect="/materias.jsp";
+                            redirect="materias.jsp";
                         }
                     }
                     sesion.setAttribute("Mensaje", mensaje);
@@ -117,7 +117,7 @@ public class Materia extends HttpServlet {
             catch(Exception ex){
                 mensaje = "ERROR: " + ex.getMessage();
                 sesion.setAttribute("Mensaje", mensaje);
-                response.sendRedirect("/materias.jsp");
+                response.sendRedirect("materias.jsp");
             }        
         }
         else{

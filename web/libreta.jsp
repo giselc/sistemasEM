@@ -281,7 +281,40 @@
             }
             return true;
         } 
-        
+        function eliminar(over,idfalta,codigo,idLibreta,ciAlumno,ciProfesor){
+            if(over){
+                document.getElementById(idfalta).innerHTML="<image src='images/eliminar.png' width='50%' onclick='eliminarFalta("+idfalta+","+idLibreta+","+ciAlumno+","+ciProfesor+")'/>";
+            }
+            else{
+                document.getElementById(idfalta).innerHTML=codigo;
+            }
+        }
+        function eliminarFalta(idFalta,idLibreta,ciAlumno,ciProfesor){
+           xmlhttp=new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                        var obj = jQuery.parseJSON( xmlhttp.responseText );
+                        var msj = obj.msj;
+                        if(msj[0].mensaje=="ok"){
+                            var pFalta=document.getElementById(idFalta);
+                            pFalta.removeChild(pFalta.firstChild);
+                            //alert(msj[0].cantHorasFalta);
+                            var totalFaltas = document.getElementById("TOTAL-"+ciAlumno).innerHTML;
+                            totalFaltas = totalFaltas - msj[0].cantHorasFalta;
+                            if(totalFaltas==0){
+                                totalFaltas="";
+                            }
+                            document.getElementById("TOTAL-"+ciAlumno).innerHTML=totalFaltas;
+                        }
+                        else{
+                            document.getElementById("mensaje").innerHTML="<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+msj[0].mensaje;
+                        }
+                    };
+                };
+                xmlhttp.open("POST","HistorialFaltas?eliminar="+idFalta+"&idLibreta="+idLibreta+"&ciAlumno="+ciAlumno+"&ciProfesor="+ciProfesor);
+                xmlhttp.send();
+                return false; 
+        }
 </script>
 <style>
     table tr td{
@@ -670,7 +703,7 @@ else{
                                                 out.print("<td>");
                                                 if(grilla.get(j)!=null){
                                                     for(Falta f:grilla.get(j)){
-                                                        out.print("<b title='Fecha: "+f.getFecha()+"&#10;C&oacute;digo: "+f.getCodigoMotivo()+"&#10;Cantidad de horas: "+f.getCanthoras()+"&#10;Observaciones: "+f.getObservaciones()+"'>"+f.getCodigoMotivo()+"</b>");
+                                                        out.print("<b title='Fecha: "+f.getFecha()+"&#10;C&oacute;digo: "+f.getCodigoMotivo()+"&#10;Cantidad de horas: "+f.getCanthoras()+"&#10;Observaciones: "+f.getObservaciones()+"'    ><p id='"+f.getId()+"' onMouseleave=\"eliminar(false,"+f.getId()+",'"+f.getCodigoMotivo()+"','"+d.getId()+"','"+l.getAlumno().getCi()+"','"+d.getProfesor().getCi()+"');\" onMouseEnter=\"eliminar(true,"+f.getId()+",'"+f.getCodigoMotivo()+"','"+d.getId()+"','"+l.getAlumno().getCi()+"','"+d.getProfesor().getCi()+"');\">"+f.getCodigoMotivo()+"</p></b>");
                                                         total+=f.getCanthoras();
                                                     }
                                                     
@@ -678,7 +711,12 @@ else{
                                                 
                                                 out.print("</td>");
                                             }
-                                           out.print("<td>"+total+"</td>");
+                                           if(total!=0){
+                                           out.print("<td id=TOTAL-"+l.getAlumno().getCi()+">"+total+"</td>");
+                                           }
+                                           else{
+                                               out.print("<td id=TOTAL-"+l.getAlumno().getCi()+"></td>");
+                                           }
                                         }
                                         
                     out.print("</tr>");

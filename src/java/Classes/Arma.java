@@ -10,9 +10,14 @@ package Classes;
  * @author Gisel
  */
 public class Arma extends Tipo{
-
-    public Arma(int id, String descripcion) {
+    private final String abreviacion;
+    public Arma(int id, String descripcion, String abreviacion) {
         super(id, descripcion);
+        this.abreviacion=abreviacion;
+    }
+
+    public String getAbreviacion() {
+        return abreviacion;
     }
     
 }

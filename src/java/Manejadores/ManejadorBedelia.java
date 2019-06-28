@@ -12,8 +12,11 @@ import Classes.Bedelia.Libreta;
 import Classes.Bedelia.LibretaIndividual;
 import Classes.Bedelia.Materia;
 import Classes.Bedelia.Notificacion;
+import Classes.Bedelia.RecordFalta;
+import Classes.Bedelia.RecordSancion;
 import Classes.Cadete;
-import java.util.ArrayList;
+import java.io.PrintWriter;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -163,7 +166,12 @@ public class ManejadorBedelia {
                 li.getGrillaFaltas().get(mesFalta).put(diaFalta,new LinkedList<>());
             }
             li.getGrillaFaltas().get(mesFalta).get(diaFalta).add(f);
-            int j= mb.agregarNotificacion(l,c,f,null,fecha);
+            RecordFalta rf= new RecordFalta();
+            rf.idFalta=f.getId();
+            rf.cantHoras=f.getCanthoras();
+            rf.codigoMotivo=f.getCodigoMotivo();
+            rf.observaciones=f.getObservaciones();
+            int j= mb.agregarNotificacion(l,c,rf,null,fecha,false);
             if(j!=-1){
                 boolean agregue=false;
                 Iterator it = notificacionesNuevas.iterator();
@@ -171,15 +179,131 @@ public class ManejadorBedelia {
                 while(it.hasNext() && !agregue){
                     String fechaNotificacionActual=((Notificacion)it.next()).getFecha();
                     if(fechaNotificacionActual.compareTo(fecha)<=0){ 
-                        notificacionesNuevas.add(i,new Notificacion(j,l,c,f,null,1,fecha));
+                        notificacionesNuevas.add(i,new Notificacion(j,l,c,rf,null,1,fecha,false));
                         agregue=true;
                     }
                     i++;
                 }
                 if(!agregue)
-                    notificacionesNuevas.add(new Notificacion(j,l,c,f,null,1,fecha));
+                    notificacionesNuevas.add(new Notificacion(j,l,c,rf,null,1,fecha,false));
             };
         }
+    }
+
+    public boolean marcarLeidoNotificacion(int id, boolean aLeido) {
+        ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
+        if(mb. marcarLeidoNotificacion(id,aLeido)){
+            Iterator it;
+                Iterator it1;
+            if(aLeido){//es nuevo pasa a Leido
+                it=notificacionesNuevas.iterator();
+                it1=notificacionesLeidas.iterator();
+            }
+            else{
+                it=notificacionesLeidas.iterator();
+                it1=notificacionesNuevas.iterator();
+            }
+            Notificacion notActual;
+            boolean encontre = false;
+            while(it.hasNext() && !encontre){
+                notActual=(Notificacion)it.next();
+                if(notActual.getId()==id){
+                    encontre=true;
+                    //agrego a la lista destino por orden de fecha;
+                    int i=0;
+                    boolean agregue=false;
+                    while(it1.hasNext()&&!agregue){
+                        if(notActual.getFecha().compareTo(((Notificacion)it1.next()).getFecha())>=0){
+                            if(aLeido){
+                                notificacionesLeidas.add(i,notActual);
+                            }
+                            else{
+                                notificacionesNuevas.add(i,notActual);  
+                            };
+                            agregue=true;
+                        }
+                        i++;
+                    }
+                    if(!agregue){
+                        if(aLeido){
+                            notificacionesLeidas.addLast(notActual);
+                        }
+                        else{
+                            notificacionesNuevas.addLast(notActual);  
+                        };
+                    }
+                    //elimino de la lista origen
+                    it.remove();
+                }
+            }
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public boolean eliminarNotificacion(int id, boolean esLeido) {
+        ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
+        if(mb.eliminarNotificacion(id)){
+            Iterator it;
+            if(esLeido){
+                it=notificacionesLeidas.iterator();
+            }
+            else{
+                it=notificacionesNuevas.iterator();
+            }
+            Notificacion notActual;
+            boolean encontre = false;
+            while(it.hasNext() && !encontre){
+                notActual=(Notificacion)it.next();
+                if(notActual.getId()==id){
+                    encontre=true;
+                    //elimino de la lista origen
+                    it.remove();
+                }
+            }
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public boolean eliminarFalta(int idFalta, int idLibreta, int ciAlumno, int ciProfesor) {
+        ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
+        if(mb. eliminarFalta(idFalta)){
+            LibretaIndividual li=libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno);
+            String fechaFalta= li.getFaltas().get(idFalta).getFecha();
+            int mesFalta= Integer.valueOf(fechaFalta.split("-")[1]);
+            int diaFalta= Integer.valueOf(fechaFalta.split("-")[2]);
+            Iterator it=li.getGrillaFaltas().get(mesFalta).get(diaFalta).iterator();
+            Falta faltaActual;
+            while(it.hasNext()){
+                faltaActual=(Falta)it.next();
+                if(faltaActual.getId()==idFalta){
+                    RecordFalta rf= new RecordFalta();
+                    rf.idFalta=faltaActual.getId();
+                    rf.cantHoras=faltaActual.getCanthoras();
+                    rf.codigoMotivo=faltaActual.getCodigoMotivo();
+                    rf.observaciones=faltaActual.getObservaciones();
+                    Libreta l=libretas.get(ciProfesor).get(idLibreta);
+                    Cadete c=ManejadorPersonal.getInstance().getCadete(ciAlumno);
+                    int id= mb.agregarNotificacion(l, c, rf, null, fechaFalta,true);
+                    if(id!=-1){
+                        notificacionesNuevas.add(new Notificacion(id, libretas.get(ciProfesor).get(idLibreta),c,rf, null,1, fechaFalta, true));
+                    }
+                    it.remove();
+                    li.getFaltas().remove(idFalta);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public Falta obtenerFalta(int idFalta, int idLibreta, int ciAlumno, int ciProfesor) {
+        return libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno).getFaltas().get(idFalta);
     }
 
     private static class ManejadorBedeliaHolder {
@@ -396,4 +520,249 @@ public class ManejadorBedelia {
         }
         return null;
     }
+    public void ImprmirFaltasxDia(PrintWriter out,String fecha){
+        HashMap<Integer,HashMap<Integer,HashMap<Integer,LinkedList<Falta>>>> faltasxMateriaxAlumnoxGrado = new HashMap<>();
+        HashMap<Integer, HashMap<Integer, LinkedList<Falta>>> faltasxMateriaxAlumno;
+        HashMap<Integer,HashMap<Integer,Materia>> materiasEncontradas= new HashMap<>();
+        for(HashMap<Integer,Libreta> hl:libretas.values()){
+            for(Libreta l:hl.values()){
+                for(LibretaIndividual li:l.getLibretasIndividuales().values()){
+                    for(Falta f:li.getFaltas().values()){
+                        if(f.getFecha().equals(fecha)){
+                            if(!faltasxMateriaxAlumnoxGrado.containsKey(li.getAlumno().getGrado().getId())){
+                                faltasxMateriaxAlumnoxGrado.put(li.getAlumno().getGrado().getId(),new HashMap<>());
+                            }
+                            faltasxMateriaxAlumno = faltasxMateriaxAlumnoxGrado.get(li.getAlumno().getGrado().getId());
+                            if(!faltasxMateriaxAlumno.containsKey(li.getAlumno().getCi())){
+                                faltasxMateriaxAlumno.put(li.getAlumno().getCi(), new HashMap<>());
+                            }
+                            if(!faltasxMateriaxAlumno.get(li.getAlumno().getCi()).containsKey(l.getMateria().getId())){
+                                faltasxMateriaxAlumno.get(li.getAlumno().getCi()).put(l.getMateria().getId(), new LinkedList<>());
+                            }
+                            faltasxMateriaxAlumno.get(li.getAlumno().getCi()).get(l.getMateria().getId()).add(f);
+                            if(!materiasEncontradas.containsKey(li.getAlumno().getGrado().getId())){
+                                materiasEncontradas.put(li.getAlumno().getGrado().getId(),new HashMap<>());
+                            }
+                            materiasEncontradas.get(li.getAlumno().getGrado().getId()).put(l.getMateria().getId(),l.getMateria());                                
+
+                        }
+                        else{
+                            if(f.getFecha().compareTo(fecha)>0){
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Calendar ahoraCal = java.util.Calendar.getInstance();
+        int anio= ahoraCal.get(Calendar.YEAR);
+        int mes=ahoraCal.get(Calendar.MONTH);
+        int dia=ahoraCal.get(Calendar.DATE);
+        out.print("<style>"
+                + ".contenido {"
+                +   "border: 1px solid #000;"
+                +   "border-spacing: 0px;"
+                +   "text-align: center;"
+                +   "font-family: arial;"
+                + "}"
+                + ".contenido tr, .contenido tr td{"
+                +       "border: 1px solid #000;\n" +
+                        "border-collapse: collapse;"
+                +       "padding: 0px;"
+                + "}"
+                + "</style>");
+    out.print("<table style=\"width: 100%; margin:auto; font-family: arial;\">");
+    out.print("     <tr>\n" +
+        "                <td colspan=\"3\">\n" +
+        "                    <p align=\"left\">ESCUELA MILITAR</p>\n" +
+        "                </td>\n" +
+        "                <td colspan=\"3\">\n" +
+        "                     <p align=\"right\">JEFATURA DE ESTUDIOS</p>\n" +
+        "                </td>\n" +
+        "            </tr>\n");
+    out.print("     <tr>\n" +
+        "                <td colspan=\"3\">\n" +
+        "                </td>\n" +
+        "                <td colspan=\"3\">\n" +
+        "                     <p align=\"right\">TOLEDO, "+dia+" DE ");
+    switch(mes){
+        case 0: out.print("ENERO");break;
+        case 1: out.print("FEBRERO");break;
+        case 2: out.print("MARZO");break;
+        case 3: out.print("ABRIL");break;
+        case 4: out.print("MAYO");break;
+        case 5: out.print("JUNIO");break;
+        case 6: out.print("JULIO");break;
+        case 7: out.print("AGOSTO");break;
+        case 8: out.print("SETIEMBRE");break;
+        case 9: out.print("OCTUBRE");break;
+        case 10: out.print("NOVIEMBRE");break;
+        case 11: out.print("DICIEMBRE");break;
+                                
+    }
+    out.print(" DE "+anio+"</p>\n" +
+        "                </td>\n" +
+        "            </tr>\n");
+out.print("          <tr>\n" +
+        "                <td colspan=\"6\" style=\"text-align: center;\">\n");
+            out.print("       <h3>FALTAS A CLASE</h3>\n"+
+        "                </td>\n" +
+        "            </tr>\n"
+        + "</table>");        
+       
+        ManejadorCodigos mc= ManejadorCodigos.getInstance();
+        ManejadorPersonal mp = ManejadorPersonal.getInstance();
+       for(Integer gradoID:faltasxMateriaxAlumnoxGrado.keySet()){
+           out.print("<h4 style='font-family:arial;'>");
+           switch(gradoID){
+                case 22: out.print("<u>ASPIRANTES</u>");break;
+                case 21: out.print("<u>CADETES DE 1ER. A&Ntilde;O</u>");break;
+                case 20: out.print("<u>CADETES DE 2DO. A&Ntilde;O</u>");break;
+                case 19: out.print("<u>CADETES DE 3ER. A&Ntilde;O</u>");break;
+                case 18: out.print("<u>CABOS HONORARIOS</u>");break;
+                case 17: out.print("<u>SARGENTOS HONORARIOS</u>");break;
+                case 16: out.print("<u>SARGENTOS 1ROs. HONORARIOS</u>");break;
+           }
+            out.print( "</h4>"
+                    + "<table width='100%' class=\"contenido\" >"
+                   + "        <tr>"
+                   + "          <td><b> NOMBRE</b> </td>");
+           for(Materia materia:materiasEncontradas.get(gradoID).values()){
+                    out.print("  <td><b>");
+                    out.print(materia.getNombre());
+                    out.print("  </b></td>");
+           }
+           out.print("           <td><b>FECHA</b></td>"
+                   + "<td><b>ANOTACIONES</b></td>"
+                   + "      </tr>");
+           Cadete c;
+           for(Integer ciAlumno: faltasxMateriaxAlumnoxGrado.get(gradoID).keySet()){
+               c=mp.getCadete(ciAlumno);
+               out.print("<tr>"
+                       + "    <td>"+c.getPrimerNombre()+" "+c.getPrimerApellido());
+               if(c.getArma()!=null){
+                   //Apoyo
+                   out.print("("+c.getArma().getAbreviacion()+")");
+               }
+                   
+               out.print(       "</td>");
+               for(Integer materiaID:materiasEncontradas.get(gradoID).keySet()){
+                   out.print("  <td>");
+                   boolean primero=true;
+                   for(Falta f: faltasxMateriaxAlumnoxGrado.get(gradoID).get(ciAlumno).get(materiaID)){
+                       if(primero){
+                        out.print(f.getCanthoras()+"("+f.getCodigoMotivo()+")");
+                        primero=false;
+                       }else{
+                        out.print(" - "+f.getCanthoras()+"("+f.getCodigoMotivo()+")");   
+                       }
+                   }
+                   out.print("  </td>");
+               }
+               out.print("      <td>"+fecha+"</td>"
+                       + "<td></td>");
+               out.print("  </tr>");
+           }
+           out.print( "</table>");
+           
+       }     
+            
+           out.print( "<table class='contenido' style='font-family:arial;margin-top: 30px;' align='center'>"
+                   +    "<tr>"
+                   + "      <td>"
+                   + "C&Oacute;DIGO:"
+                   + "      </td>"
+                   + "      <td>"
+                   + "DESCRIPCI&Oacute;N:"
+                   + "      </td>"
+                   +   "</tr>"
+                   +    "<tr>"
+                   + "      <td>"
+                   + "F1:"
+                   + "      </td>"
+                   + "      <td>"
+                   + "Guardia"
+                   + "      </td>"
+                   +   "</tr>"
+                   +    "<tr>"
+                    + "      <td>"
+                   + "F2:"
+                   + "      </td>"
+                   + "      <td>"
+                   + "Enfermer&iacute;a"
+                   + "      </td>"
+                   +   "</tr>"
+                   +   "<tr>"
+                    + "      <td>"
+                   + "F3:"
+                   + "      </td>"
+                   + "      <td>"
+                   + "Comisi&oacute;n"
+                   + "      </td>"
+                   +   "</tr>"
+                   +   "<tr>"
+                    + "      <td>"
+                   + "F4:"
+                   + "      </td>"
+                   + "      <td>"
+                   + "Internado en H.C.FF.AA."
+                   + "      </td>"
+                   +   "</tr>"
+                   +   "<tr>"
+                    + "      <td>"
+                   + "F5:"
+                   + "      </td>"
+                   + "      <td>"
+                   + "Eximido"
+                   + "      </td>"
+                   +   "</tr>"
+                   +   "<tr>"
+                    + "      <td>"
+                   + "F6:"
+                   + "      </td>"
+                   + "      <td>"
+                   + "Consejero Acad&eacute;mico"
+                   + "      </td>"
+                   +   "</tr>"
+                   + "</table>");
+           
+           out.print("<table style='font-family:arial;margin-top: 30px;' align='right'>"
+                   + "<tr>"
+                   + "<td>"
+                   + "</td>"
+                   + "<td>"
+                   + "<input type='text' style=\"text-align:left;border: 0;\"/>"
+                   + "</td>"
+                   + "</tr>"
+                   + "<tr>"
+                        + "<td style='text-align:right;'>"
+                        + "<image src='images/selloJE.png' width='50%'/>"
+                        + "</td>"
+                        + "<td>"
+                         + "<table>"
+                          + "    <tr>"
+                                   + "<td style='text-align:left;'>"
+                                   +"El Jefe de Estudios de la Escuela Militar"
+                                   + "</td>"
+                        + "      </tr>"
+                        + "      <tr>"
+                                   + "<td style='text-align:left;'>"
+                                   + "<input type='text' style=\"text-align:left;border: 0;\"/>"
+                                   + "</td>"
+                        + "      </tr>"
+                        + "      <tr>"
+                                   + "<td style='text-align:center;'>"
+                                   + "<input type='text' style=\"text-align:center; border: 0; border-top:solid 1px #000;\"/>"
+                                   + "</td>"
+                        + "      </tr>"
+                         + "</table>"
+                        + "</td>"
+                   + "</tr>"
+                   + "</table>");     
+            
+            
+    }
+        
+    
 }

@@ -56,11 +56,11 @@ public class Profesores extends HttpServlet {
                     //baja
                     if( mp.eliminarProfesor(ci)){
                         mensaje="Profesor eliminado sastisfactoriamente.";
-                        redirect="/profesores.jsp";
+                        redirect="profesores.jsp";
                     }
                     else{
                         mensaje="ERROR al eliminar el cadete.";
-                        redirect="/profesores.jsp";
+                        redirect="profesores.jsp";
                     };
                     sesion.setAttribute("Mensaje", mensaje);
                     response.sendRedirect(redirect);
@@ -120,17 +120,17 @@ public class Profesores extends HttpServlet {
                             else{
                                 mensaje="ERROR al modificar el cadete.";
                             };
-                            redirect="/profesor.jsp?id="+request.getParameter("id");
+                            redirect="profesor.jsp?id="+request.getParameter("id");
                         }
                         else{
                             //agregar
                             if(mp.agregarProfesor(rp)){
                                 mensaje="Profesor agregado sastisfactoriamente.";
-                                redirect="/profesor.jsp?id="+request.getParameter("ci");
+                                redirect="profesor.jsp?id="+request.getParameter("ci");
                             }
                             else{
                                 mensaje="ERROR al agregar al profesor.";
-                                redirect="/profesores.jsp";
+                                redirect="profesores.jsp";
                             };
                         }
                         sesion.setAttribute("Mensaje", mensaje);
@@ -141,7 +141,7 @@ public class Profesores extends HttpServlet {
             catch(Exception ex){
                 mensaje = "ERROR: " + ex.getMessage();
                 sesion.setAttribute("Mensaje", mensaje);
-                response.sendRedirect("/profesores.jsp");
+                response.sendRedirect("profesores.jsp");
             }
         
             }

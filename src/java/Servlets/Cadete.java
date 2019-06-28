@@ -63,11 +63,11 @@ public class Cadete extends HttpServlet {
 
                     if( mp.bajaCadete(ci, causa)){
                         mensaje="Cadete eliminado sastisfactoriamente.";
-                        redirect="/cadetes.jsp";
+                        redirect="cadetes.jsp";
                     }
                     else{
                         mensaje="ERROR al eliminar el cadete.";
-                        redirect="/cadetes.jsp";
+                        redirect="cadetes.jsp";
                     };
                     sesion.setAttribute("Mensaje", mensaje);
                     response.sendRedirect(redirect);
@@ -109,11 +109,11 @@ public class Cadete extends HttpServlet {
                         if(request.getParameter("crearDesdeHistorial")!=null){
                             if( mp.crearCadeteHistorial(ci)){
                                 mensaje="Cadete agregado sastisfactoriamente.";
-                                redirect="/cadete.jsp?id="+ci;
+                                redirect="cadete.jsp?id="+ci;
                             }
                             else{
                                 mensaje="ERROR al agregar el cadete del historial. Contacte al administrador";
-                                redirect="/cadetes.jsp";
+                                redirect="cadetes.jsp";
                             };
                             sesion.setAttribute("Mensaje", mensaje);
                             response.sendRedirect(redirect);
@@ -196,17 +196,17 @@ public class Cadete extends HttpServlet {
                                 else{
                                     mensaje="ERROR al modificar el cadete.";
                                 };
-                                redirect="/cadete.jsp?id="+request.getParameter("id");
+                                redirect="cadete.jsp?id="+request.getParameter("id");
                             }
                             else{
                                 //agregar
                                 if(mp.agregarCadete(rp, foto)){
                                     mensaje="Cadete agregado sastisfactoriamente.";
-                                    redirect="/cadete.jsp?id="+request.getParameter("ci");
+                                    redirect="cadete.jsp?id="+request.getParameter("ci");
                                 }
                                 else{
                                     mensaje="ERROR al agregar al cadete.";
-                                    redirect="/cadetes.jsp";
+                                    redirect="cadetes.jsp";
                                 };
                             }
                             sesion.setAttribute("Mensaje", mensaje);
@@ -218,7 +218,7 @@ public class Cadete extends HttpServlet {
             catch(Exception ex){
                 mensaje = "ERROR: " + ex.getMessage();
                 System.out.print(mensaje);
-                response.sendRedirect("/cadetes.jsp");
+                response.sendRedirect("cadetes.jsp");
             }
         
         }

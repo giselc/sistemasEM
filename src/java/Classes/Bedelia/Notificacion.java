@@ -15,12 +15,13 @@ public class Notificacion {
     private final int id;
     private final Libreta libreta;
     private final Cadete cadete;
-    private final Falta falta;
-    private final Sancion sancion;
+    private final RecordFalta falta;
+    private final RecordSancion sancion;
     private int estado; //1 nuevo - 2 leido
     private String fecha;
+    private boolean eliminado;
 
-    public Notificacion(int id, Libreta libreta, Cadete cadete, Falta falta, Sancion sancion, int estado, String fecha) {
+    public Notificacion(int id, Libreta libreta, Cadete cadete, RecordFalta falta, RecordSancion sancion, int estado, String fecha,boolean eliminado) {
         this.id = id;
         this.libreta = libreta;
         this.cadete = cadete;
@@ -28,6 +29,11 @@ public class Notificacion {
         this.sancion = sancion;
         this.estado=estado;
         this.fecha=fecha;
+        this.eliminado=eliminado;
+    }
+
+    public boolean isEliminado() {
+        return eliminado;
     }
 
     public String getFecha() {
@@ -46,11 +52,11 @@ public class Notificacion {
         return libreta;
     }
 
-    public Falta getFalta() {
+    public RecordFalta getFalta() {
         return falta;
     }
 
-    public Sancion getSancion() {
+    public RecordSancion getSancion() {
         return sancion;
     }
 

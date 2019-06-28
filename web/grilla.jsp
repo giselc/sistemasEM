@@ -59,7 +59,7 @@ out.print("<tr style=\"background-color:"+color+";\">"
                     out.print("<td>");
                     if(grilla.get(j)!=null){
                         for(Falta f:grilla.get(j)){
-                            out.print("<b title='Fecha: "+f.getFecha()+"&#10;C&oacute;digo: "+f.getCodigoMotivo()+"&#10;Cantidad de horas: "+f.getCanthoras()+"&#10;Observaciones: "+f.getObservaciones()+"'>"+f.getCodigoMotivo()+"</b>");
+                            out.print("<b title='Fecha: "+f.getFecha()+"&#10;C&oacute;digo: "+f.getCodigoMotivo()+"&#10;Cantidad de horas: "+f.getCanthoras()+"&#10;Observaciones: "+f.getObservaciones()+"'>"+f.getCodigoMotivo()+"<image src='grilla.jsp' width='10%' id='"+ f.getId() +"' style='display:block;'/> </b>");
                         }
 
                     }
