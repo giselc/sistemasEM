@@ -37,7 +37,7 @@ public class Listar extends HttpServlet {
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
         int tipoPersonal=Integer.valueOf(request.getParameter("tipoPersonal"));
-        if(u.isAdmin()||u.getPermisosPersonal().getId()!=tipoPersonal){
+        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()!=tipoPersonal) || u.isProfesor()){
             try (PrintWriter out = response.getWriter()) {
                 /* TODO output your page here. You may use following sample code. */
                 String[] lista= request.getParameterValues("List[]");

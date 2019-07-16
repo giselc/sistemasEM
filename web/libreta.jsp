@@ -4,6 +4,7 @@
     Author     : Gisel
 --%>
 
+<%@page import="Classes.Bedelia.TemaTratado"%>
 <%@page import="java.util.GregorianCalendar"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="java.util.ArrayList"%>
@@ -240,7 +241,7 @@
                                         output+="<td>";
                                         for(var k=0;k<alumnos[i].alumno[actualJ].faltasxDia.length;k++){
                                                 var faltasxDia=alumnos[i].alumno[actualJ].faltasxDia[k];
-                                                output+="<b title='Fecha: "+faltasxDia.fecha+"&#10;C&oacute;digo: "+faltasxDia.faltaCodigo+"&#10;Cantidad de horas: "+faltasxDia.cantHoras+"&#10;Observaciones: "+faltasxDia.observaciones+"'>"+faltasxDia.faltaCodigo+"</b>";
+                                                output+="<b title='Fecha: "+faltasxDia.fecha+"&#10;C&oacute;digo: "+faltasxDia.faltaCodigo+"&#10;Cantidad de horas: "+faltasxDia.cantHoras+"&#10;Observaciones: "+faltasxDia.observaciones+"'    ><p id='"+faltasxDia.id+"' onMouseleave=\"eliminar(false,"+faltasxDia.id+",'"+faltasxDia.faltaCodigo+"','"+faltasxDia.idLibreta+"','"+faltasxDia.ciAlumno+"','"+faltasxDia.ciProfesor+"');\" onMouseEnter=\"eliminar(true,"+faltasxDia.id+",'"+faltasxDia.faltaCodigo+"','"+faltasxDia.idLibreta+"','"+faltasxDia.ciAlumno+"','"+faltasxDia.ciProfesor+"');\">"+faltasxDia.faltaCodigo+"</p></b>";
                                                 total+=faltasxDia.cantHoras;
                                         }
                                         output+="</td>";
@@ -315,6 +316,102 @@
                 xmlhttp.send();
                 return false; 
         }
+        function agregarTemaTratado(form,idLibreta){
+            var fecha=form.elements[0].value;
+            var texto = form.elements[1].value;
+            xmlhttp=new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                    var obj = jQuery.parseJSON( xmlhttp.responseText );
+                    var msj = obj.msj;
+                    var cellNueva;
+                    if(msj[0].mensaje=="ok"){
+                        var tablaTemasTratados= document.getElementById("tablaTemasTratados");
+                        var agregue= false;
+                        for(var j=1;j<tablaTemasTratados.rows.length;j++){ 
+                           if(tablaTemasTratados.rows[j].cells[1].innerHTML<=fecha){
+                                var rowNueva=tablaTemasTratados.insertRow(j);
+                                rowNueva.id=msj[0].id;
+                                rowNueva.style="text-align:center;";
+                                var cellNueva=rowNueva.insertCell(0);
+                                cellNueva.innerHtml="";
+                                cellNueva=rowNueva.insertCell(1);
+                                cellNueva.innerText=fecha;
+                                cellNueva=rowNueva.insertCell(2);
+                                cellNueva.innerText=texto;
+                                cellNueva=rowNueva.insertCell(3);
+                                cellNueva.innerHTML="<a onclick=eliminarTemaTratado("+msj[0].id+","+ idLibreta +")><img src='images/eliminar.png' width='15%' /></a>";
+                                agregue=true;
+                                break;
+                            };
+                        };
+                        if(!agregue){
+                            var rowNueva=tablaTemasTratados.insertRow(tablaTemasTratados.rows.length);
+                            rowNueva.id=msj[0].id;
+                            rowNueva.style="text-align:center;";
+                            var cellNueva=rowNueva.insertCell(0);
+                            cellNueva.innerHtml="";
+                            cellNueva=rowNueva.insertCell(1);
+                            cellNueva.innerText=fecha;
+                            cellNueva=rowNueva.insertCell(2);
+                            cellNueva.innerText=texto;
+                            cellNueva=rowNueva.insertCell(3);
+                            cellNueva.innerHTML="<a onclick=eliminarTemaTratado("+msj[0].id+","+ idLibreta +")><img src='images/eliminar.png' width='15%' /></a>";
+                        };
+                        var color;
+                        for(var j=1;j<tablaTemasTratados.rows.length;j++){ 
+                            if ((j%2)==0){
+                                    color="#ffff99";
+                            }
+                            else{
+                                    color="#ccccff";
+                            };
+                            tablaTemasTratados.rows[j].style.backgroundColor=color;
+                            tablaTemasTratados.rows[j].cells[0].innerText=j;
+                        };
+                        form.reset();
+                    }
+                    else{
+                        document.getElementById("mensaje").innerHTML="<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+msj[0].mensaje;
+                    }
+                }
+            };
+            xmlhttp.open("POST","Libreta?id="+idLibreta+"&agregartematratado=1&fecha="+fecha+"&texto="+texto);
+            xmlhttp.send();
+            return false;
+        }
+        function eliminarTemaTratado(idTema, idLibreta){
+            xmlhttp=new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                        var obj = jQuery.parseJSON( xmlhttp.responseText );
+                        var msj = obj.msj;
+                        if(msj[0].mensaje=="ok"){
+                            document.getElementById(idTema).remove();
+                            var color;
+                            var tablaTemasTratados= document.getElementById("tablaTemasTratados");
+                            for(var j=1;j<tablaTemasTratados.rows.length;j++){ 
+                                if ((j%2)==0){
+                                    color="#ffff99";
+                                }
+                                else{
+                                    color="#ccccff";
+                                };
+                                 tablaTemasTratados.rows[j].style.backgroundColor=color;
+                                 tablaTemasTratados.rows[j].cells[0].innerText=j;
+                            }
+                        }
+                        else{
+                            document.getElementById("mensaje").innerHTML="<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+msj[0].mensaje;
+                        }
+                    }
+                };
+                xmlhttp.open("POST","Libreta?elimTemaTratado=1&id="+idLibreta+"&idTema="+idTema);
+                xmlhttp.send();
+                return false;
+        }
+            
+        
 </script>
 <style>
     table tr td{
@@ -346,7 +443,7 @@
 <div id="enviando"  style="position: fixed; top:0; left:0; width:100%; height: 100%;background: url('images/loading-verde.gif') center center no-repeat; background-size: 20%; display: none"></div>
 <%
 if(d==null){
-    if(u.isAdmin() || u.getPermisosPersonal().getId()==4){
+    if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
 %>
         <form method="post"  name="formulario" id="formulario"  onsubmit="return verificarFormulario();" action="Libreta?id=<%if (d!=null){out.print(d.getId());}else{out.print("-1");}%>">
             <table  width='70%' align='center' style="text-align: left;" id="tablaformulario">
@@ -400,8 +497,8 @@ if(d==null){
     }
 }
 else{
-    if(u.isAdmin()||u.getPermisosPersonal().getId()==4||(u.isProfesor()&& u.getCiProfesor()==d.getProfesor().getCi())){
-        if(u.isAdmin()||u.getPermisosPersonal().getId()==4){
+    if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4) ||(u.isProfesor()&& u.getCiProfesor()==d.getProfesor().getCi())){
+        if(u.isAdmin()||(u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
             %>
             <form method="post"  name="formulario1" id="formulario1" action="Libreta?id=<%=d.getId()%>">
             <table  width='70%' align='center' style="text-align: left;" >
@@ -508,17 +605,18 @@ else{
         }
         %>
             
-        <form method="post"  name="pasarLista" id="pasarLista" onsubmit="return validarFormPasarLista(this)" action="Libreta?id=<%=d.getId()%>&pasarLista=1">
                 <ul id="tabs">
                     <li><a href="#" title="PasarLista"><b>Pasar Lista</b></a></li>
                     <li><a href="#" title="historiaDeInasistencias"><b>Historial de Inasistencias</b></a></li>
+                    <li><a href="#" title="temasTratados"><b>Temas Tratados</b></a></li>
                     <li><a href="#" title="notas"><b>Notas</b></a></li>
                     <li><a href="#" title="promedios"><b>Promedios</b></a></li>
-                    <li><a href="#" title="temasTratados"><b>Temas Tratados</b></a></li>
                     <li><a href="#" title="sanciones"><b>Sanciones</b></a></li>
                 </ul>
                 <div id="content">
                     <div id="PasarLista">
+                    <form method="post"  name="pasarLista" id="pasarLista" onsubmit="return validarFormPasarLista(this)" action="Libreta?id=<%=d.getId()%>&pasarLista=1">
+
                         <p align="right">
                             <button form="pasarLista" style="background-color: #ff6600; border-radius: 15px; color: #ffffff; font-size: large;">&nbsp;FINALIZAR&nbsp;</button>
                        </p>
@@ -631,7 +729,8 @@ else{
                             }
                             out.print("</table>");
                         %> 
-                        
+                </form>
+      
                      </div>
                     <div id="historiaDeInasistencias">
                             <select onchange="cambiarGrilla(this,<%=d.getId()%>);">
@@ -725,8 +824,62 @@ else{
                             
                                 %>
                             </table>
+
                         </div>
-                    
+                    <div id="temasTratados">
+                        <form method="post"  name="formTemasTratados" id="formTemasTratados"  onsubmit="return agregarTemaTratado(this,<%= d.getId() %>)" action="" >
+                            <table>
+                                <tr>
+                                    <td>Seleccione la fecha:</td>
+                                    <td><input type="date"  <%
+                        
+                            out.print("value=\""+  fecha1.get(java.util.Calendar.YEAR)+"-"+cero+mes+"-"+fecha1.get(java.util.Calendar.DATE)+"\"");
+                       
+                        %> id="fecha" name="fecha"></td>
+                                </tr>
+                                <tr>
+                                    <td>Temas:</td>
+                                    <td>
+                                        <textarea cols="50" rows="5" name="texto" id="texto"  form="formTemasTratados"></textarea>
+                                    </td>
+                                </tr>    
+                                <tr>
+                                    <td>
+                                        
+                                    </td>
+                                    <td><input type="submit" value="Agregar"/>  </td>
+                                </tr>  
+                            </table>
+                        </form>
+                        <%
+                                    
+                out.print("<table style='width: 100%;' id='tablaTemasTratados'>"
+                        + "<tr style='background-color:#ffcc66'>"
+                            +"<td style='width: 5%' align='center'></td>"
+                            +"<td style='width: 10%' align='center'>Fecha</td>"
+                            +"<td style='width: 10%' align='center'>Texto</td>");
+                out.print(  "<td style='width: 5%' align='center'>Elim</td>"  ); 
+                out.print("</tr>" );
+                i=0;
+                for (  TemaTratado t : d.getTemasTratados()){
+                    if ((i%2)==0){
+                        color=" #ccccff";
+                    }
+                    else{
+                        color=" #ffff99";
+                    }
+                    i++;
+
+                   out.print("<tr style='background-color:"+color+"' id='"+t.getId()+"'>"
+                   +"<td style='width: 5%' align='center'>"+i+"</td>"
+                   +"<td style='width: 10%' align='center'>"+t.getFecha()+"</td>"
+                   +"<td style='width: 10%' align='center'>"+t.getTexto()+"</td>");
+                    out.print("<td style='width: 5%' align='center' ><a onclick=eliminarTemaTratado("+t.getId()+","+d.getId()+")><img src='images/eliminar.png' width='15%' /></a></td>"
+                   +"</tr>");
+                }
+                out.print("</table>");
+            %> 
+                    </div>
                     <div id="notas">
                         <h1>
                             SECCI&Oacute;N EN CONSTRUCCI&Oacute;N
@@ -737,11 +890,7 @@ else{
                             SECCI&Oacute;N EN CONSTRUCCI&Oacute;N
                         </h1>
                     </div>
-                    <div id="temasTratados">
-                        <h1>
-                            SECCI&Oacute;N EN CONSTRUCCI&Oacute;N
-                        </h1>
-                    </div>
+                    
                     <div id="sanciones">
                         <h1>
                             SECCI&Oacute;N EN CONSTRUCCI&Oacute;N
@@ -749,7 +898,6 @@ else{
                     </div>
                 </div> 
                      
-            </form>
         <%
     }
     else{

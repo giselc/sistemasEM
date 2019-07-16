@@ -35,7 +35,7 @@ public class CursoBedelia extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         Usuario u = (Usuario)sesion.getAttribute("usuario");
         //.out.print("aca");
-        if(u.isAdmin()||u.getPermisosPersonal().getId()==4){
+        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
             response.setContentType("text/html;charset=UTF-8");
             String mensaje="";
             String redirect="";

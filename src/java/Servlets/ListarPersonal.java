@@ -42,7 +42,7 @@ public class ListarPersonal extends HttpServlet {
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
         int tipo = Integer.valueOf(request.getParameter("tipo"));
-        if(u.isAdmin()||u.getPermisosPersonal().getId()!=tipo){
+        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()!=tipo)){
             try (PrintWriter out = response.getWriter()) {
                 /* TODO output your page here. You may use following sample code. */
                 ManejadorPersonal mp = ManejadorPersonal.getInstance();

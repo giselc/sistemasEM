@@ -24,7 +24,7 @@
     }
 </script>
 <% 
-    if(u.isAdmin() || u.getPermisosPersonal().getId()==1){
+    if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==1)){
 %>
 <% 
         int ci = Integer.valueOf(request.getParameter("id"));

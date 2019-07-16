@@ -9,7 +9,7 @@
 <%@page import="Manejadores.ManejadorBedelia"%>
 <%@ include file="header.jsp" %>   
 <% 
-    if(u!=null && (u.isAdmin() || u.getPermisosPersonal().getId()==4 || u.isProfesor())){
+    if(u!=null && (u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4) || u.isProfesor())){
 %>
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/jquery-ui.js"></script>
@@ -135,12 +135,21 @@
                 <form method="post" target="_blank"  id="formProfesoresListar" name="formProfesoresListar" action='Listar?tipoPersonal=4'>
                 </form>
             </div>
-            <table style="float: right">
+            <table style="float: right; width: 100%">
                 <tr>
+                    
+                    <%
+                        if(u.isAdmin()||(u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
+                    %>
                     <td style="width: 55%"><h3 style="float: left;">LIBRETAS</h3></td>
                     <td style="width: 15%"><a href="libreta.jsp" title="Agregar"><img width="40%" src='images/agregarLista.png' /></a> </td>
                     <td style="width: 15%"><a href="generarlibretas.jsp" title="Generar libretas por curso"><img width="40%" src='images/agregarlibretas.png' /></a> </td>
                     <td style="width: 15%"><img  width="40%" title="Imprimir" src="images/imprimir.png" onclick="listar(4);"/></td>
+                    <% } 
+                        else{
+            out.print("<td ><h3 style=\"float: left;\">LIBRETAS</h3></td>");
+                        }
+                    %>        
                 </tr>
                 <tr>
                     <td colspan="8">
@@ -164,11 +173,13 @@
                             +"<td style='width: 10%' align='center'>Grupo</td>"
                             +"<td style='width: 10%' align='center'>Profesor</td>");
                 out.print(  "<td style='width: 5%' align='center'>Ver</td>");
-                out.print(  "<td style='width: 5%' align='center'>Elim</td>"   
-                +"</tr>" );
+                if(!u.isProfesor()){
+                out.print(  "<td style='width: 5%' align='center'>Elim</td>"  ); 
+                        }
+                out.print("</tr>" );
                 int i=0;
                 String color;
-                if(u.isAdmin()||u.getPermisosPersonal().getId()==4){
+                if(u.isAdmin()||(u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
                     for (  HashMap<Integer,Libreta> p : mp.getLibretas().values()){
                         for (  Libreta l : p.values()){
                             if ((i%2)==0){
@@ -210,8 +221,7 @@
                            +"<td style='width: 10%' align='center'>"+l.getGrupo().getCusoBedelia().getNombre()+"</td>"
                            +"<td style='width: 10%' align='center'>"+l.getGrupo().getAnio()+" - "+l.getGrupo().getNombre()+"</td>"
                            +"<td style='width: 10%' align='center'>"+ l.getProfesor().obtenerNombreCompleto() +"</td>");
-                            out.print("<td style='width: 5%' align='center'><a href='libreta.jsp?id="+l.getId()+"'><img src='images/ver.png' width='60%' /></a></td>");
-                            out.print("<td style='width: 5%' align='center'><a href='Libreta?elim=1&id="+l.getId()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
+                            out.print("<td style='width: 5%' align='center'><a href='libreta.jsp?id="+l.getId()+"'><img src='images/ver.png' width='60%' /></a></td>"
                            +"</tr>");
                         }
                     }

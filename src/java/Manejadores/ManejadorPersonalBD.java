@@ -388,7 +388,7 @@ public class ManejadorPersonalBD {
             Usuario u = mc.getUsuario(usuario);
             String sql = "";
             String filtro = getFiltroSQL(rf);
-            if(u.isAdmin() || u.getPermisosPersonal().getId()==1){
+            if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==1)){
                 sql="SELECT * FROM sistemasem.personal left-join sistemasem.grado on personal.idgrado = grado.codigo where tipoPersonal = "+tp.getId()+ " order by grado.codigo asc";
             }
             else{

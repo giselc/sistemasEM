@@ -16,7 +16,7 @@
 <!DOCTYPE html>
 <%@ include file="header.jsp" %>
 <% 
-    if(u.isAdmin() || u.getPermisosPersonal().getId()==1){
+    if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==1)){
 %>
 
 <script type="text/javascript">

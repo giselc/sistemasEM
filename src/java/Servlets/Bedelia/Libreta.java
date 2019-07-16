@@ -10,6 +10,9 @@ import Classes.Usuario;
 import Manejadores.ManejadorBedelia;
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +40,7 @@ public class Libreta extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         Usuario u = (Usuario)sesion.getAttribute("usuario");
         //.out.print("aca");
-        if(u.isAdmin()||u.getPermisosPersonal().getId()==4||u.isProfesor()){
+        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)||u.isProfesor()){
             response.setContentType("text/html;charset=UTF-8");
             String mensaje="";
             String redirect="";
@@ -68,8 +71,50 @@ public class Libreta extends HttpServlet {
                             } 
                             mensaje="Datos agregados correctamente.";
                             redirect="libreta.jsp?id="+id;
+                            sesion.setAttribute("Mensaje", mensaje);
+                            response.sendRedirect(redirect);
                         }
                         else{
+                            JsonObjectBuilder json = Json.createObjectBuilder(); 
+                            JsonArrayBuilder jab= Json.createArrayBuilder();
+                            System.out.print("Leguee");
+                            if(request.getParameter("agregartematratado")!=null){
+                                 Classes.Bedelia.Libreta l = mp.getLibreta(id);
+                                 int idTema=l.agregarTemaTratado(request.getParameter("fecha"),request.getParameter("texto"));
+                                 if(idTema>0){
+                                    System.out.print("idTema");
+                                    jab.add(Json.createObjectBuilder()
+                                        .add("mensaje","ok")
+                                        .add("id",idTema)
+                                    );
+                                    json.add("msj", jab);
+                                 }
+                                 else{
+                                    jab.add(Json.createObjectBuilder()
+                                        .add("mensaje","ERROR al agregar los datos. Contacte al administrador.")
+                                    );
+                                    json.add("msj", jab);
+                                 }
+                                 out.print(json.build());
+                             }
+                             else{
+                                if(request.getParameter("elimTemaTratado")!=null){
+                                    Classes.Bedelia.Libreta l = mp.getLibreta(id);
+                                    if(l.elimTemaTratado(Integer.valueOf(request.getParameter("idTema")))){
+                                       jab.add(Json.createObjectBuilder()
+                                            .add("mensaje","ok")
+                                        );
+                                        json.add("msj", jab);
+                                    }
+                                    else{
+                                        jab.add(Json.createObjectBuilder()
+                                            .add("mensaje","ERROR: contacte al administrador.")
+                                        );
+                                        json.add("msj", jab);
+                                    }
+                                    out.print(json.build());
+                                } 
+                             }
                          }
                     }
                     else{
@@ -93,9 +138,9 @@ public class Libreta extends HttpServlet {
                             mensaje="ERROR al agregar la libreta.";
                             redirect="libretas.jsp";
                         };
+                        sesion.setAttribute("Mensaje", mensaje);
+                        response.sendRedirect(redirect);
                     }
-                    sesion.setAttribute("Mensaje", mensaje);
-                    response.sendRedirect(redirect);
                 }
             }
             catch(Exception ex){

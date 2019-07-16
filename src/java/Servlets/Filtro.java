@@ -42,7 +42,7 @@ public class Filtro extends HttpServlet {
         Usuario u = (Usuario)sesion.getAttribute("usuario");
         int tipoPersonal= Integer.valueOf(request.getParameter("tipoPersonal"));
         if(tipoPersonal==1){
-            if(u.isAdmin()||u.getPermisosPersonal().getId()==1){
+            if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==1)){
                 try (PrintWriter out = response.getWriter()) {
                     /* TODO output your page here. You may use following sample code. */
                     ManejadorPersonal mp = ManejadorPersonal.getInstance(); 
@@ -91,7 +91,7 @@ public class Filtro extends HttpServlet {
             }
         }
         else{
-            if(u.isAdmin()||u.getPermisosPersonal().getId()==tipoPersonal){
+            if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==tipoPersonal)){
                 try (PrintWriter out = response.getWriter()) {
                     /* TODO output your page here. You may use following sample code. */
                     ManejadorPersonal mp = ManejadorPersonal.getInstance(); 

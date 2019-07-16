@@ -11,7 +11,7 @@
 <!DOCTYPE html>
 <%@ include file="header.jsp" %>   
 <% 
-    if(u!=null && (u.isAdmin() || u.getPermisosPersonal().getId()==4 || u.isProfesor())){
+    if(u!=null && (u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4))){
 %>
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/jquery-ui.js"></script>
@@ -218,7 +218,7 @@
                 +"</tr>" );
                 int i=0;
                 String color;
-                if(u.isAdmin()||u.getPermisosPersonal().getId()==4){
+                if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
                     for (  Notificacion p : mp.getNotificacionesNuevas()){
                             if ((i%2)==0){
                                 color=" #ccccff";
@@ -229,7 +229,7 @@
                             i++;
 
                            out.print("<tr style='background-color:"+color+"' title=\"");
-                           if(p.getFalta()!=null){
+                           if(p.getFalta()!=null && p.getFalta().idFalta!=-1){
                                out.print("TIPO: FALTA&#10;FECHA: "+p.getFecha()+"&#10;CANTIDAD DE HORAS: "+p.getFalta().cantHoras+"&#10;OBSERVACIONES: "+p.getFalta().observaciones);
                            }
                            out.print("\">"
@@ -242,15 +242,19 @@
                            +"<td style='width: 10%' align='center'>"+p.getLibreta().getGrupo().getAnio()+" - "+p.getLibreta().getGrupo().getNombre()+"</td>"
                            +"<td style='width: 10%' align='center'>"+ p.getLibreta().getProfesor().obtenerNombreCompleto() +"</td>"
                            +"<td style='width: 10%' align='center'>"+ p.getCadete().getGrado().getAbreviacion()+" "+p.getCadete().getPrimerApellido()+" "+p.getCadete().getPrimerNombre() +"</td>");
-                           if(p.getFalta()!=null){
-                                out.print("<td style='width: 10%' align='center'>"+ p.getFalta().codigoMotivo +"</td>");
+                           if(p.getFalta()!=null && p.getFalta().idFalta!=-1){
+                                out.print("<td style='width: 10%' align='center'>"+ p.getFalta().codigoMotivo);
+                                if(p.isEliminado()){
+                                    out.print(" - Eliminado") ;
+                                }
+                                out.print("</td>");
                            }
                            else{
                                out.print("<td style='width: 10%' align='center'>"+ p.getSancion().tipo +"</td>");
                            }
                             out.print("<td style='width: 5%' align='center'><a onclick='marcarLeido(true,"+p.getId()+")'><img src='images/leido.png' width='60%' /></a></td>"
                             +"<td style=\"width: 5%\" align='center'>");
-                            if(p.getSancion()!=null){
+                            if(p.getSancion()!=null && p.getSancion().idSancion!=-1){
                                 out.print("<a target='_blank' href='Notificacion?imprimir=1&id="+p.getId()+"'><img  width=\"60%\" title=\"Imprimir parte\" src=\"images/imprimir.png\" /></a>");
                             }
                             out.print("</td>"
@@ -281,7 +285,7 @@
                 out.print(  "<td style='width: 5%' align='center'>Elim</td>"   
                 +"</tr>" );
                 i=0;
-                if(u.isAdmin()||u.getPermisosPersonal().getId()==4){
+                if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
                     for (  Notificacion p : mp.getNotificacionesLeidas()){
                             if ((i%2)==0){
                                 color=" #ccccff";
@@ -292,7 +296,7 @@
                             i++;
 
                            out.print("<tr style='background-color:"+color+"' title=\"");
-                           if(p.getFalta()!=null){
+                           if(p.getFalta()!=null && p.getFalta().idFalta!=-1){
                                out.print("TIPO: FALTA&#10;FECHA: "+p.getFecha()+"&#10;CANTIDAD DE HORAS: "+p.getFecha()+"&#10;OBSERVACIONES: "+p.getFalta().observaciones);
                            }
                            out.print("\">"
@@ -304,7 +308,7 @@
                            +"<td style='width: 10%' align='center'>"+p.getLibreta().getGrupo().getAnio()+" - "+p.getLibreta().getGrupo().getNombre()+"</td>"
                            +"<td style='width: 10%' align='center'>"+ p.getLibreta().getProfesor().obtenerNombreCompleto() +"</td>"
                            +"<td style='width: 10%' align='center'>"+ p.getCadete().getGrado().getAbreviacion()+" "+p.getCadete().getPrimerApellido()+" "+p.getCadete().getPrimerNombre() +"</td>");
-                           if(p.getFalta()!=null){
+                           if(p.getFalta()!=null && p.getFalta().idFalta!=-1){
                                 out.print("<td style='width: 10%' align='center'>"+ p.getFalta().codigoMotivo );
                                 if(p.isEliminado()){
                                     out.print(" - Eliminado") ;
@@ -316,7 +320,7 @@
                            }
                             out.print("<td style='width: 5%' align='center'><a onclick='marcarLeido(false,"+p.getId()+")'><img src='images/nuevo.png' width='60%' /></a></td>"
                                     + "<td style=\"width: 5%\" align='center'>");
-                            if(p.getSancion()!=null){
+                            if(p.getSancion()!=null && p.getSancion().idSancion!=-1){
                                 out.print("<a target='_blank' href='Notificacion?imprimir=1&id="+p.getId()+"'><img  width=\"60%\" title=\"Imprimir parte\" src=\"images/imprimir.png\" /></a>");
                             }
                              out.print("</td>"

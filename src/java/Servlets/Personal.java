@@ -42,7 +42,7 @@ public class Personal extends HttpServlet {
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
         int tipo= Integer.valueOf(request.getParameter("tipo"));
-        if(u.isAdmin()||u.getPermisosPersonal().getId()==tipo){
+        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==tipo)){
             response.setContentType("text/html;charset=UTF-8");
             String mensaje="";
             String redirect="";

@@ -43,7 +43,7 @@ public class Cadete extends HttpServlet {
             throws ServletException, IOException {
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
-        if(u.isAdmin()||u.getPermisosPersonal().getId()==1){
+        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==1)){
             response.setContentType("text/html;charset=UTF-8");
             String mensaje="";
             String redirect="";

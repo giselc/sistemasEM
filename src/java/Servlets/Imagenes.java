@@ -39,7 +39,7 @@ public class Imagenes extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             HttpSession sesion = request.getSession();
             Usuario u = (Usuario)sesion.getAttribute("usuario");
-            if(u.isAdmin()||u.getPermisosPersonal().getId()!=1){
+            if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()!=1) || u.isProfesor()){
                 String path="";
                 ManejadorPersonal mp = ManejadorPersonal.getInstance();
                 if(request.getParameter("foto")!=null){
@@ -50,37 +50,39 @@ public class Imagenes extends HttpServlet {
                     }
                 }
                 else{
-                    int ci = Integer.valueOf(request.getParameter("ci"));
-                    String ext = request.getParameter("ext");
-                    int idDoc = Integer.valueOf(request.getParameter("idDoc"));
-                    switch (ext) {
-                        case ".doc":
-                            response.setContentType("application/msword");
-                            break;
-                        case ".docx":
-                            response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-                            break;
-                        case ".xls":
-                            response.setContentType("application/vnd.ms-excel");
-                            break;
-                        case ".xlsx":
-                            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-                            break;
-                        case ".ppt":
-                            response.setContentType("application/vnd.ms-powerpoint");
-                            break;
-                        case ".pptx":
-                            response.setContentType("application/vnd.openxmlformats-officedocument.presentationml.presentation");
-                            break;
-                        case ".pdf":
-                            response.setContentType("application/pdf");
-                            break;
-                        default:
-                            response.setContentType("image/"+ext.substring(1));
-                            break;
+                    if(!u.isProfesor()){
+                        int ci = Integer.valueOf(request.getParameter("ci"));
+                        String ext = request.getParameter("ext");
+                        int idDoc = Integer.valueOf(request.getParameter("idDoc"));
+                        switch (ext) {
+                            case ".doc":
+                                response.setContentType("application/msword");
+                                break;
+                            case ".docx":
+                                response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                                break;
+                            case ".xls":
+                                response.setContentType("application/vnd.ms-excel");
+                                break;
+                            case ".xlsx":
+                                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                                break;
+                            case ".ppt":
+                                response.setContentType("application/vnd.ms-powerpoint");
+                                break;
+                            case ".pptx":
+                                response.setContentType("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+                                break;
+                            case ".pdf":
+                                response.setContentType("application/pdf");
+                                break;
+                            default:
+                                response.setContentType("image/"+ext.substring(1));
+                                break;
+                        }
+                        System.out.print(response.getContentType());
+                        path= "c:/SEM-Documentos/"+ci+"-"+idDoc+ext;
                     }
-                    System.out.print(response.getContentType());
-                    path= "c:/SEM-Documentos/"+ci+"-"+idDoc+ext;
                 }
                 File f=new File(path);
                 int   size=(int) f.length();

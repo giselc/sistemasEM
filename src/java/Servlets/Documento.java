@@ -40,7 +40,7 @@ public class Documento extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
-        if(u.isAdmin()||u.getPermisosPersonal().getId()==1){
+        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==1)){
             try (PrintWriter out = response.getWriter()) {
                 /* TODO output your page here. You may use following sample code. */
                 ManejadorPersonal mp = ManejadorPersonal.getInstance();

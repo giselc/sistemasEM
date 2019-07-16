@@ -18,6 +18,7 @@ import Classes.Bedelia.Promedio;
 import Classes.Bedelia.RecordFalta;
 import Classes.Bedelia.RecordSancion;
 import Classes.Bedelia.Sancion;
+import Classes.Bedelia.TemaTratado;
 import Classes.Cadete;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -180,7 +181,8 @@ public class ManejadorBedeliaBD {
                     p.put(ciProfesor, new HashMap<>());
                 }
                 HashMap<Integer,LibretaIndividual> libretasIndividuales = obtenerLibretasIndividuales(rs.getInt("id"));
-                p.get(rs.getInt("ciProfesor")).put(rs.getInt("id"), new Libreta(rs.getInt("id"),materias.get(rs.getInt("idMateria")),cursos.get(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombreGrupo")),mp.getProfesor(ciProfesor),rs.getString("salon"),libretasIndividuales));
+                LinkedList<TemaTratado> temasTratados = obtenerTemasTratados(rs.getInt("id"));
+                p.get(rs.getInt("ciProfesor")).put(rs.getInt("id"), new Libreta(rs.getInt("id"),materias.get(rs.getInt("idMateria")),cursos.get(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombreGrupo")),mp.getProfesor(ciProfesor),rs.getString("salon"),libretasIndividuales,temasTratados));
             }
             
         } catch (Exception ex) {
@@ -188,7 +190,7 @@ public class ManejadorBedeliaBD {
         }
         return p;
     }
-
+    
     private HashMap<Integer, LibretaIndividual> obtenerLibretasIndividuales(int idLibreta) {
         HashMap<Integer, LibretaIndividual> p= new HashMap<>();
         try {
@@ -227,7 +229,22 @@ public class ManejadorBedeliaBD {
         }
         return p;
     }
-
+    private LinkedList<TemaTratado> obtenerTemasTratados(int idLibreta) {
+        LinkedList<TemaTratado> l= new LinkedList<>();
+        try {
+            Statement s= connection.createStatement();
+            String sql;
+            sql="SELECT * FROM sistemasem.temasTratados where idLibreta="+idLibreta+" order by fecha desc;";
+            ResultSet rs=s.executeQuery(sql);
+            while (rs.next()){
+                l.add(new TemaTratado(rs.getInt("id"), rs.getString("fecha"), rs.getString("texto")));
+            }
+            
+        } catch (SQLException | NumberFormatException ex) {
+            System.out.print("obtenerTemasTratados-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return l;
+    }
     private HashMap<Integer, Sancion> obtenerSancionesLibretaIndividual(int idLibretaIndividual, int ciAlumno) {
         HashMap<Integer, Sancion> p= new HashMap<>();
         try {
@@ -724,4 +741,39 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
+
+    public int agregarTemaTratado(String fecha, String texto,int idLibreta) {
+        try {
+            String sql= "insert into sistemasEM.temasTratados (fecha,texto,idLibreta) values(?,?,?)";
+            PreparedStatement s= connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            int i=1;
+            s.setString(i++, fecha);
+            s.setString(i++, texto);
+            s.setInt(i++,idLibreta);
+            int row=s.executeUpdate();
+            if(row>0){
+                ResultSet rs=s.getGeneratedKeys(); //obtengo las ultimas llaves generadas
+                if(rs.next()){ 
+                    return(rs.getInt(1));
+                }
+            }
+        } catch (Exception ex) {
+            System.out.print("agregarTemaTratado-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return -1;
+    }
+
+    public boolean elimTemaTratado(Integer idTema) {
+        Statement s;
+        try {
+            s = connection.createStatement();
+            String sql="DELETE FROM sistemasem.temasTratados where id="+idTema;
+            return(s.executeUpdate(sql)>0);
+        } catch (SQLException ex) {
+            System.out.print("elimTemaTratado-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return false;
+    }
+
+   
 }

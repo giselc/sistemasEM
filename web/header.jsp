@@ -113,7 +113,7 @@
                                                             </li>
                                                         <%
                                                             }
-                                                            if (u.isAdmin()|| u.getPermisosPersonal().getId()==1){
+                                                            if (u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==1)){
                                                         %>
                                                             <li><a href="bajasYActualizacionGrados.jsp">Baja 3er a&ntilde;o y actualizaci&oacute;n de grados </a></li>
                                                         <%

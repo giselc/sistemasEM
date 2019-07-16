@@ -10,7 +10,7 @@
 <!DOCTYPE html>
 <%@ include file="header.jsp" %>
 <% 
-    if(u.isAdmin() || u.getPermisosPersonal().getId()==1){
+    if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==1)){
 %>
 <script src="js/jquery-1.9.1.min.js"></script>
 <script src="js/jquery-ui.js"></script>

@@ -34,7 +34,7 @@
         }
 </script>
 <% 
-    if(u.isAdmin() || u.getPermisosPersonal().getId()==4){
+    if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
 %>
 <% 
     Materia d=null;    

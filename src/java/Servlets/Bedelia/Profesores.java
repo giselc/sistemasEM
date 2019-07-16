@@ -38,7 +38,7 @@ public class Profesores extends HttpServlet {
             throws ServletException, IOException {
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
-        if(u.isAdmin()||u.getPermisosPersonal().getId()==4){
+        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
             response.setContentType("text/html;charset=UTF-8");
             String mensaje;
             String redirect;

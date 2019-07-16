@@ -46,7 +46,7 @@ public class ObtenerCamposParaLibreta extends HttpServlet {
         HttpSession sesion = request.getSession();
         response.setContentType("UTF-8");
         Usuario u = (Usuario)sesion.getAttribute("usuario");
-        if(u.isAdmin()||u.getPermisosPersonal().getId()==4 || u.isProfesor()){
+        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4) || u.isProfesor()){
             try (PrintWriter out = response.getWriter()) {
                 /* TODO output your page here. You may use following sample code. */
                 Manejadores.ManejadorBedelia mb= ManejadorBedelia.getInstance();
@@ -110,10 +110,14 @@ public class ObtenerCamposParaLibreta extends HttpServlet {
                                         f=(Falta)(it.next());
                                         dia=Integer.valueOf(f.getFecha().split("-")[2]);
                                         jab2.add(Json.createObjectBuilder()
+                                                .add("id", f.getId())
                                                 .add("faltaCodigo", f.getCodigoMotivo())
                                                 .add("fecha", f.getFecha())
                                                 .add("cantHoras", f.getCanthoras())
                                                 .add("observaciones", f.getObservaciones())
+                                                .add("idLibreta", idLibreta)
+                                                .add("ciAlumno", li.getAlumno().getCi())
+                                                .add("ciProfesor", libreta.getProfesor().getCi())
                                         );
                                     }
                                     jab.add(Json.createObjectBuilder()

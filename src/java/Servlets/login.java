@@ -70,10 +70,17 @@ public class login extends HttpServlet {
                                     response.sendRedirect("habilitacion.jsp");
                                 }
                                 else{
-                                    sesion.setAttribute("usuarioID", null);
-                                    sesion.setAttribute("usuario", null);
-                                    sesion.setAttribute("login", "sinpermisos");
-                                    response.sendRedirect("");
+                                    
+                                    if(u.isProfesor()){
+                                        sesion.setAttribute("inicio", "libretas.jsp");
+                                        response.sendRedirect("libretas.jsp");
+                                    }
+                                    else{
+                                        sesion.setAttribute("usuarioID", null);
+                                        sesion.setAttribute("usuario", null);
+                                        sesion.setAttribute("login", "sinpermisos");
+                                        response.sendRedirect("");
+                                    }
                                 }
                             }
                         }
