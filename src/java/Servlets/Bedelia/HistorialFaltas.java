@@ -49,26 +49,45 @@ public class HistorialFaltas extends HttpServlet {
                 }
                 else{
                      if(request.getParameter("eliminar")!=null){
-                        int idFalta= Integer.valueOf(request.getParameter("eliminar"));
+                        int id= Integer.valueOf(request.getParameter("eliminar"));
                         int idLibreta= Integer.valueOf(request.getParameter("idLibreta"));
                         int ciAlumno= Integer.valueOf(request.getParameter("ciAlumno"));
                         int ciProfesor= Integer.valueOf(request.getParameter("ciProfesor"));
-                        int cantHorasFalta=mp.obtenerFalta(idFalta,idLibreta,ciAlumno,ciProfesor).getCanthoras();
-                        JsonObjectBuilder json = Json.createObjectBuilder(); 
-                        JsonArrayBuilder jab= Json.createArrayBuilder();
-                        if(mp.eliminarFalta(idFalta,idLibreta,ciAlumno,ciProfesor)){
-                            jab.add(Json.createObjectBuilder()
-                                .add("mensaje","ok")
-                                    .add("cantHorasFalta",cantHorasFalta)
-                            );
-                            json.add("msj", jab);
-                        }else{
-                            jab.add(Json.createObjectBuilder()
-                                .add("mensaje","ERROR: contacte al administrador.")
-                            );
-                            json.add("msj", jab);
-                        };
-                        out.print(json.build());
+                        if(request.getParameter("sancion")!=null){
+                            JsonObjectBuilder json = Json.createObjectBuilder(); 
+                            JsonArrayBuilder jab= Json.createArrayBuilder();
+                            if(mp.eliminarSancion(id,idLibreta,ciAlumno,ciProfesor)){
+                                jab.add(Json.createObjectBuilder()
+                                    .add("mensaje","ok")
+                                );
+                                json.add("msj", jab);
+                            }else{
+                                jab.add(Json.createObjectBuilder()
+                                    .add("mensaje","ERROR: contacte al administrador.")
+                                );
+                                json.add("msj", jab);
+                            };
+                            out.print(json.build());
+                        }
+                        else{
+                            
+                            int cantHorasFalta=mp.obtenerFalta(id,idLibreta,ciAlumno,ciProfesor).getCanthoras();
+                            JsonObjectBuilder json = Json.createObjectBuilder(); 
+                            JsonArrayBuilder jab= Json.createArrayBuilder();
+                            if(mp.eliminarFalta(id,idLibreta,ciAlumno,ciProfesor)){
+                                jab.add(Json.createObjectBuilder()
+                                    .add("mensaje","ok")
+                                        .add("cantHorasFalta",cantHorasFalta)
+                                );
+                                json.add("msj", jab);
+                            }else{
+                                jab.add(Json.createObjectBuilder()
+                                    .add("mensaje","ERROR: contacte al administrador.")
+                                );
+                                json.add("msj", jab);
+                            };
+                            out.print(json.build());
+                        }
                      }
                 }
             }

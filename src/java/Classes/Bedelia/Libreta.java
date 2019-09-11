@@ -22,8 +22,9 @@ public class Libreta {
     private String salon;
     private HashMap<Integer,LibretaIndividual> libretasIndividuales;
     private LinkedList<TemaTratado> temasTratados;
+    private HashMap<Integer,Boolean> mesesCerrados; 
 
-    public Libreta(int id,Materia materia, Grupo grupo, Profesor profesor, String salon, HashMap<Integer, LibretaIndividual> libretasIndividuales, LinkedList<TemaTratado> temasTratados) {
+    public Libreta(int id,Materia materia, Grupo grupo, Profesor profesor, String salon, HashMap<Integer, LibretaIndividual> libretasIndividuales, LinkedList<TemaTratado> temasTratados,HashMap<Integer,Boolean> mesesCerrados) {
         this.id=id;
         this.materia = materia;
         this.grupo = grupo;
@@ -31,6 +32,11 @@ public class Libreta {
         this.salon = salon;
         this.libretasIndividuales = libretasIndividuales;
         this.temasTratados = temasTratados;
+        this.mesesCerrados=mesesCerrados;
+    }
+
+    public HashMap<Integer, Boolean> getMesesCerrados() {
+        return mesesCerrados;
     }
 
     public LinkedList<TemaTratado> getTemasTratados() {

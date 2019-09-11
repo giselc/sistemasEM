@@ -4,6 +4,8 @@
     Author     : Gisel
 --%>
 
+<%@page import="Classes.Bedelia.Nota"%>
+<%@page import="Classes.FaltaSancion"%>
 <%@page import="Classes.Bedelia.TemaTratado"%>
 <%@page import="java.util.GregorianCalendar"%>
 <%@page import="java.util.Calendar"%>
@@ -221,6 +223,8 @@
                                     output+="</tr>";     
                                     var color="";
                                     var total;
+                                    var tipo="";
+                                    var tipo1="";
                         for (var i=0; i<alumnos.length;i++) {
                             total=0;
                             if ((i%2)==0){
@@ -239,10 +243,22 @@
                                     if(alumnos[i].alumno[actualJ].dia==j){
                                         
                                         output+="<td>";
-                                        for(var k=0;k<alumnos[i].alumno[actualJ].faltasxDia.length;k++){
-                                                var faltasxDia=alumnos[i].alumno[actualJ].faltasxDia[k];
-                                                output+="<b title='Fecha: "+faltasxDia.fecha+"&#10;C&oacute;digo: "+faltasxDia.faltaCodigo+"&#10;Cantidad de horas: "+faltasxDia.cantHoras+"&#10;Observaciones: "+faltasxDia.observaciones+"'    ><p id='"+faltasxDia.id+"' onMouseleave=\"eliminar(false,"+faltasxDia.id+",'"+faltasxDia.faltaCodigo+"','"+faltasxDia.idLibreta+"','"+faltasxDia.ciAlumno+"','"+faltasxDia.ciProfesor+"');\" onMouseEnter=\"eliminar(true,"+faltasxDia.id+",'"+faltasxDia.faltaCodigo+"','"+faltasxDia.idLibreta+"','"+faltasxDia.ciAlumno+"','"+faltasxDia.ciProfesor+"');\">"+faltasxDia.faltaCodigo+"</p></b>";
-                                                total+=faltasxDia.cantHoras;
+                                        for(var k=0;k<alumnos[i].alumno[actualJ].faltasSancionesxDia.length;k++){
+                                                var faltasSancionesxDia=alumnos[i].alumno[actualJ].faltasSancionesxDia[k];
+                                                if(faltasSancionesxDia.esFalta){
+                                                    output+="<b title='Fecha: "+faltasSancionesxDia.fecha+"&#10;C&oacute;digo: "+faltasSancionesxDia.codigo+"&#10;Cantidad de horas: "+faltasSancionesxDia.cantHoras+"&#10;Observaciones: "+faltasSancionesxDia.observaciones+"'    ><p id='"+faltasSancionesxDia.id+"' onMouseleave=\"eliminar(false,false,"+faltasSancionesxDia.id+",'"+faltasSancionesxDia.codigo+"','"+faltasSancionesxDia.idLibreta+"','"+faltasSancionesxDia.ciAlumno+"','"+faltasSancionesxDia.ciProfesor+"');\" onMouseEnter=\"eliminar(false,true,"+faltasSancionesxDia.id+",'"+faltasSancionesxDia.codigo+"','"+faltasSancionesxDia.idLibreta+"','"+faltasSancionesxDia.ciAlumno+"','"+faltasSancionesxDia.ciProfesor+"');\">"+faltasSancionesxDia.codigo+"</p></b>";
+                                                    total+=faltasSancionesxDia.cantHoras;
+                                                }
+                                                else{
+                                                    tipo="M";
+                                                    tipo1="M";
+                                                    if(faltasSancionesxDia.codigo=="R"){
+                                                        tipo="R";
+                                                        tipo1="R&#10;Minutos tardes: "+faltasSancionesxDia.minutosTardes;
+                                                    }
+                                                    output+="<b title='Fecha: "+faltasSancionesxDia.fecha+"&#10;C&oacute;digo: "+tipo1+"&#10;Causa: "+faltasSancionesxDia.observaciones+"'    ><p id='"+faltasSancionesxDia.id+"' onMouseleave=\"eliminarSancion(false,"+faltasSancionesxDia.id+",'"+faltasSancionesxDia.codigo+"','"+faltasSancionesxDia.idLibreta+"','"+faltasSancionesxDia.ciAlumno+"','"+faltasSancionesxDia.ciProfesor+"');\" onMouseEnter=\"eliminarSancion(true,"+faltasSancionesxDia.id+",'"+faltasSancionesxDia.codigo+"','"+faltasSancionesxDia.idLibreta+"','"+faltasSancionesxDia.ciAlumno+"','"+faltasSancionesxDia.ciProfesor+"');\">"+faltasSancionesxDia.codigo+"</p></b>";
+                                                }
+                                                
                                         }
                                         output+="</td>";
                                         actualJ++;
@@ -259,7 +275,7 @@
                             if(total==0){
                                 total="";
                             }
-                            output+="<td>"+total+"</td>";
+                            output+="<td id=TOTAL-"+alumnos[i].alumno[0].ci+">"+total+"</td>";
                             output+="</tr>";
                             document.getElementById("grillaFaltas").innerHTML=output;
                         }
@@ -282,13 +298,57 @@
             }
             return true;
         } 
-        function eliminar(over,idfalta,codigo,idLibreta,ciAlumno,ciProfesor){
+        function validarFormSancionar(form){
+            for (var i = 0; i < form.elements.length; i++) { 
+                if(form.elements[i].type=="select-one"){
+                    if(form.elements[i].required && form.elements[i].value=="-1"){
+                        alert("Debe seleccionar tipo de sanción.");
+                        form.elements[i].focus();
+                        return false;
+                    }
+                };
+            }
+            return true;
+        }
+        function eliminar(esFalta,over,id,codigo,idLibreta,ciAlumno,ciProfesor){
             if(over){
-                document.getElementById(idfalta).innerHTML="<image src='images/eliminar.png' width='50%' onclick='eliminarFalta("+idfalta+","+idLibreta+","+ciAlumno+","+ciProfesor+")'/>";
+                if(esFalta){
+                    document.getElementById(id).innerHTML="<image src='images/eliminar.png' width='50%' onclick='eliminarFalta("+id+","+idLibreta+","+ciAlumno+","+ciProfesor+")'/>";
+                }
+                else{
+                    document.getElementById(id).innerHTML="<image src='images/eliminar.png' width='50%' onclick='eliminarSancion("+id+","+idLibreta+","+ciAlumno+","+ciProfesor+")'/>";
+                }
             }
             else{
-                document.getElementById(idfalta).innerHTML=codigo;
+                document.getElementById(id).innerHTML=codigo;
             }
+        }
+        function eliminarNota(over,id,nota,idLibreta,ciAlumno,ciProfesor){
+            if(over){
+                document.getElementById("NOTA-"+id).innerHTML="<image src='images/eliminar.png' width='50%' onclick='eliminarNotaServidor("+id+","+idLibreta+","+ciAlumno+","+ciProfesor+")'/>";
+            }
+            else{
+                document.getElementById(id).innerHTML=nota;
+            }
+        }
+        function eliminarNotaServidor(idNota,idLibreta,ciAlumno,ciProfesor){
+           xmlhttp=new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                        var obj = jQuery.parseJSON( xmlhttp.responseText );
+                        var msj = obj.msj;
+                        if(msj[0].mensaje=="ok"){
+                            var pNota=document.getElementById("NOTA-"+idNota);
+                            pNota.removeChild(pNota.firstChild);
+                        }
+                        else{
+                            document.getElementById("mensaje").innerHTML="<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+msj[0].mensaje;
+                        }
+                    };
+                };
+                xmlhttp.open("POST","Notas?eliminar="+idNota+"&idLibreta="+idLibreta+"&ciAlumno="+ciAlumno+"&ciProfesor="+ciProfesor);
+                xmlhttp.send();
+                return false; 
         }
         function eliminarFalta(idFalta,idLibreta,ciAlumno,ciProfesor){
            xmlhttp=new XMLHttpRequest();
@@ -313,6 +373,26 @@
                     };
                 };
                 xmlhttp.open("POST","HistorialFaltas?eliminar="+idFalta+"&idLibreta="+idLibreta+"&ciAlumno="+ciAlumno+"&ciProfesor="+ciProfesor);
+                xmlhttp.send();
+                return false; 
+        }
+        function eliminarSancion(idSancion,idLibreta,ciAlumno,ciProfesor){
+           xmlhttp=new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                        var obj = jQuery.parseJSON( xmlhttp.responseText );
+                        var msj = obj.msj;
+                        if(msj[0].mensaje=="ok"){
+                            var pSancion=document.getElementById(idSancion);
+                            pFalta.removeChild(pSancion.firstChild);
+                            //alert(msj[0].cantHorasFalta);
+                        }
+                        else{
+                            document.getElementById("mensaje").innerHTML="<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+msj[0].mensaje;
+                        }
+                    };
+                };
+                xmlhttp.open("POST","HistorialFalta?eliminar="+idSancion+"&idLibreta="+idLibreta+"&sancion=1&ciAlumno="+ciAlumno+"&ciProfesor="+ciProfesor);
                 xmlhttp.send();
                 return false; 
         }
@@ -410,8 +490,111 @@
                 xmlhttp.send();
                 return false;
         }
+        function cambiarEstadoASancionar(boton){
+            var input= document.getElementById("S-"+boton.value);
+            var div = document.getElementById("DIVS-"+boton.value);
+            var cf = document.getElementById("CS-"+boton.value);
+            var causa = document.getElementById("CAUSA-"+boton.value);
+            var MINTARDES = document.getElementById("MINTARDES-"+boton.value);
+            if(input.value==1){
+                boton.style="color: red";
+                div.style="display:block";
+                input.value=2;
+                cf.required=true;
+                MINTARDES.required=true;
+                causa.required=true;
+            }
+            else{
+                boton.style="color: green";
+                div.style="display:none";
+                input.value=1;
+                cf.required=false;
+                MINTARDES.required=false;
+                causa.required=false;
+            }
+            return false;
+        }
+        function verificarSancionR(select){
+            var mintardestr = document.getElementById("MINTARDESTR-"+select.id.substr(3,select.id.length));
+            if(select.value=="R"){
+                mintardestr.style="";
+            }
+            else{
+                mintardestr.style="display:none";
+            }
+        }    
+        function agregarNota(ci,tr){
+            document.getElementById("formAgregarNota").reset();
+            var trform= document.getElementById("trFotoNombre");
+            trform.deleteCell(0);
+            trform.deleteCell(0);
+            trform.insertCell(0);
+            trform.cells[0].innerHTML=tr.cells[0].innerHTML;
+            trform.insertCell(1);
+            trform.cells[1].innerHTML=tr.cells[1].innerHTML;
+            document.getElementById("ciAgregarNota").value=ci;
+            var tablaAgregarNota= document.getElementById("tablaAgregarNota");
+            tablaAgregarNota.style="display:block";
+            document.getElementById("valorAgregarNota").focus();
             
-        
+        }
+        function agregarNotaServidor(form){
+            var valor="";
+            var ci="";
+            var tipo="";
+            var mes = "";
+            var obs="";
+            for (var i=0;i<form.elements.length;i++)
+            {
+                if(form.elements[i].type!="submit" && (form.elements[i].type!="radio" || (form.elements[i].type=="radio" && form.elements[i].checked) )){
+                    variables+= form.elements[i].name+"="+form.elements[i].value;
+                    if(form.elements[i].name=="valorAgregarNota" && form.elements[i].value==""){
+                        alert("ERROR: Debe ingresar un valor a la nota.");
+                        return false;
+                    }
+                    else{
+                        if(form.elements[i].name=="valorAgregarNota"){
+                            valor = form.elements[i].value;
+                        }
+                        if(form.elements[i].name=="ciAgregarNota"){
+                            ci= form.elements[i].value;
+                        }
+                        if(form.elements[i].name=="tipoAgregarNota"){
+                            tipo= form.elements[i].value;
+                        }
+                        if(form.elements[i].name=="mesAgregarNota"){
+                            mes= form.elements[i].value;
+                        }
+                        if(form.elements[i].name=="obsAgregarNota"){
+                            obs= form.elements[i].value;
+                        }
+                    }
+                }
+            }  
+            xmlhttp=new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                    var obj = jQuery.parseJSON( xmlhttp.responseText );
+                    var msj = obj.msj;
+                    if(msj[0].mensaje=="ok"){
+                        var auxTipo="O";
+                        if(tipo==1){
+                            auxTipo="E";
+                        }
+                        var trAgregar=document.getElementById(ci+"-"+auxTipo+"-"mes);
+                        trAgregar.innerHTML = trAgregar.innerHTML + "<b title='Fecha alta: "+msj[0].fecha+"&#10;Mes correspondiente: 3&#10;Nota: "+valor+"&#10;Observaciones: "+observaciones+"'><p id='NOTA-"+msj[0].id+"' onMouseleave=\"eliminarNota(false,"+msj[0].id+",'"+valor+"','"+msj[0].idLibreta+"','"+ci+"','"+msj[0].ciProfesor+"');\" onMouseEnter=\"eliminar(true,"+msj[0].id+",'"+valor+"','"+msj[0].idLibreta+"','"+ci+"','"+msj[0].ciProfesor+"');\">"+valor+"</p></b>"
+                        //alert(msj[0].cantHorasFalta);
+                    }
+                    else{
+                        document.getElementById("mensaje").innerHTML="<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+msj[0].mensaje;
+                    }
+                };
+            };
+            xmlhttp.open("POST","AgregarNota?ci="+ci+"&tipo="+tipo+"&mes="+mes+"&valor="+valor+"&obs="+obs);
+            xmlhttp.send();
+            return false; 
+            
+        }
 </script>
 <style>
     table tr td{
@@ -527,11 +710,6 @@ else{
                         <input name="salon" value="<%= d.getSalon() %>" type="text" />
                     </td>
                 </tr>
-            </table>
-            <p align='right'><input type="submit"  value="Modificar" /></p>
-            </form>
-            
-            <table  width='70%' align='center' style="text-align: left;">
                 <tr>
                     <td>
                         Curso:
@@ -557,6 +735,10 @@ else{
                     </td>
                 </tr>
             </table>
+            <p align='right'><input type="submit"  value="Modificar" /></p>
+            </form>
+            
+            
         <%
         }
         else{
@@ -607,11 +789,12 @@ else{
             
                 <ul id="tabs">
                     <li><a href="#" title="PasarLista"><b>Pasar Lista</b></a></li>
-                    <li><a href="#" title="historiaDeInasistencias"><b>Historial de Inasistencias</b></a></li>
+                    <li><a href="#" title="sanciones"><b>Sancionar</b></a></li>
+                    <li><a href="#" title="historiaDeInasistencias"><b>Historial FALTAS/SANCIONES</b></a></li>
                     <li><a href="#" title="temasTratados"><b>Temas Tratados</b></a></li>
                     <li><a href="#" title="notas"><b>Notas</b></a></li>
                     <li><a href="#" title="promedios"><b>Promedios</b></a></li>
-                    <li><a href="#" title="sanciones"><b>Sanciones</b></a></li>
+                    
                 </ul>
                 <div id="content">
                     <div id="PasarLista">
@@ -626,12 +809,15 @@ else{
                        
                         java.util.Calendar fecha1 = java.util.Calendar.getInstance();
                         int mes = fecha1.get(java.util.Calendar.MONTH)+1;
-                        
-                        String cero="";
+                        int dia = fecha1.get(java.util.Calendar.DATE);
+                        String cero="",cerod="";
                         if(mes<10){
                             cero="0";
                         }
-                        out.print("value=\""+  fecha1.get(java.util.Calendar.YEAR)+"-"+cero+mes+"-"+fecha1.get(java.util.Calendar.DATE)+"\"");
+                        if(dia<10){
+                            cerod="0";
+                        }
+                        out.print("value=\""+  fecha1.get(java.util.Calendar.YEAR)+"-"+cero+mes+"-"+cerod+dia+"\"");
                        
                         %> id="fecha" name="fecha"></p>
                         <%
@@ -662,13 +848,13 @@ else{
 
                                 if(p.getAlumno().getFoto()!=""){
                                 %>
-                                <a href="Listar?List[]=<%=p.getAlumno().getCi()%>&fichas=1&tipoPersonal=1" target="_blank">   <p align="center"><label for="uploadImage" ><img src="<%=request.getContextPath()%>/Imagenes?foto=<%=p.getAlumno().getCi() %>" id="uploadPreview" style="width: 25%" onclick=""/></label></p></a>
+                                <a href="Listar?List[]=<%=p.getAlumno().getCi()%>&fichas=1&tipoPersonal=1" target="_blank">   <p align="center"><label for="uploadImage" ><img src="<%=request.getContextPath()%>/Imagenes?foto=<%=p.getAlumno().getCi() %>" id="uploadPreview" style="width: 50px; height: 65px;" onclick=""/></label></p></a>
                                 <%
                                 }
                                 else{
                                 %>
 
-                                <a href="Listar?List[]=<%=p.getAlumno().getCi()%>&fichas=1&tipoPersonal=1" target="_blank"> <p align="center"><label for="uploadImage" ><img src="images/silueta.jpg" id="uploadPreview" style="width: 25%" onclick=""/></label></p></a>
+                                <a href="Listar?List[]=<%=p.getAlumno().getCi()%>&fichas=1&tipoPersonal=1" target="_blank"> <p align="center"><label for="uploadImage" ><img src="images/silueta.jpg" id="uploadPreview" style="width: 50px; height: 65px;" onclick=""/></label></p></a>
                                 <%
                                 }
                                 out.print("</td>"
@@ -711,7 +897,7 @@ else{
                                                 Obs.:
                                             </td>
                                             <td>
-                                                <input  name="OBS-<%=p.getAlumno().getCi()%>"  type="text" value="Observaciones" style="color:#999999" onClick="if(this.value=='Observaciones'){this.value='';this.color=black;}" onblur="if(this.value==''){this.value='Observaciones';this.color=grey;}"/>
+                                                <input  name="OBS-<%=p.getAlumno().getCi()%>"  type="text" value="Observaciones" style="color:#999999" onClick="if(this.value=='Observaciones'){this.value='';this.style.color='#000000';}" onblur="if(this.value==''){this.value='Observaciones';this.style.color='#999999';}"/>
                                             </td>
                                         </tr>
                                     </table>
@@ -732,6 +918,111 @@ else{
                 </form>
       
                      </div>
+                    <div id="sanciones">
+                    <form method="post"  name="sancionar" id="sancionar" onsubmit="return validarFormSancionar(this)" action="Libreta?id=<%=d.getId()%>&sancionar=1">
+
+                        <p align="right">
+                            <button form="sancionar" style="background-color: #ff6600; border-radius: 15px; color: #ffffff; font-size: large;">&nbsp;FINALIZAR&nbsp;</button>
+                       </p>
+                       <p>
+                        Seleccionar fecha:
+                       <input type="date"  <%
+                       
+                       out.print("value=\""+  fecha1.get(java.util.Calendar.YEAR)+"-"+cero+mes+"-"+cerod+dia+"\"");
+                       
+                        %> id="fecha" name="fecha"></p>
+                        <%
+                            out.print("<table style='width: 100%;' id='tablalistado' >"
+                                    + "<tr style='background-color:#ffcc66;padding:0px'>"
+                                        +"<td style='width: 5%' align='center'></td>"
+                                        +"<td style='width: 10%' align='center'>Foto</td>"
+                                        +"<td style='width: 10%' align='center'>Grado</td>"
+                                        +"<td style='width: 10%' align='center'>Primer Apellido</td>"
+                                        +"<td style='width: 10%' align='center'>Primer Nombre</td>"
+                                    +"<td style='width: 5%' align='center'></td>"
+                            +"</tr>");
+                            i=0;
+                            for (  LibretaIndividual p : d.getLibretasIndividuales().values()){
+                                    if ((i%2)==0){
+                                        color=" #ccccff";
+                                    }
+                                    else{
+                                        color=" #ffff99";
+                                    }
+                                    i++;
+
+                                   out.print("<tr style='background-color:"+color+";'>"
+                                   +"<td style='width: 5%' align='center'>"+i+"</td>"
+
+                                   +"<td style='width: 10%' align='center'>");
+
+                                if(p.getAlumno().getFoto()!=""){
+                                %>
+                                <a href="Listar?List[]=<%=p.getAlumno().getCi()%>&fichas=1&tipoPersonal=1" target="_blank">   <p align="center"><label for="uploadImage" ><img src="<%=request.getContextPath()%>/Imagenes?foto=<%=p.getAlumno().getCi() %>" id="uploadPreview" style="width: 50px; height: 65px;" onclick=""/></label></p></a>
+                                <%
+                                }
+                                else{
+                                %>
+
+                                <a href="Listar?List[]=<%=p.getAlumno().getCi()%>&fichas=1&tipoPersonal=1" target="_blank"> <p align="center"><label for="uploadImage" ><img src="images/silueta.jpg" id="uploadPreview" style="width: 50px; height: 65px;" onclick=""/></label></p></a>
+                                <%
+                                }
+                                out.print("</td>"
+                                   +"<td style='width: 10%' align='center'>"+p.getAlumno().getGrado().getAbreviacion()+"</td>"
+                                   +"<td style='width: 10%' align='center'>"+p.getAlumno().getPrimerApellido()+"</td>"
+                                   +"<td style='width: 10%' align='center'>"+ p.getAlumno().getPrimerNombre() +"</td>"
+                                    +"<td style='width: 5%' align='center'>");
+                                if(p.isActivo()){
+                                out.print("<button width=100% value=\""+p.getAlumno().getCi()+"\" onclick=\"return cambiarEstadoASancionar(this);\" style=\"color: green\">Sancionar</button><input name=\"S-"+p.getAlumno().getCi()+"\" id=\"S-"+p.getAlumno().getCi()+"\" type=\"number\" value=\"1\" hidden=\"hidden\"/>");
+                                %>
+                                <div style="display:none" id="DIVS-<%= p.getAlumno().getCi() %>">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                TIPO:
+                                            </td>
+                                            <td>
+                                                <select name="CS-<%=p.getAlumno().getCi()%>" form="sancionar" id="CS-<%=p.getAlumno().getCi()%>"  onchange="verificarSancionR(this);">
+                                                    <option value="-1" disabled="disabled" selected hidden>Seleccionar tipo de sanci&oacute;n:</option>
+                                                    <option value="M">M - Amonestaci&oacute;n</option>
+                                                    <option value="R">R - Llegada Tarde</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr style="display:none" id="MINTARDESTR-<%=p.getAlumno().getCi()%>" width="100%" >
+                                            <td>
+                                                Minutos tardes:
+                                            </td>
+                                            <td>
+                                                <input id="MINTARDES-<%=p.getAlumno().getCi()%>" name="MINTARDES-<%=p.getAlumno().getCi()%>"  value="0" type="number" min="0" step="1"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Causa:
+                                            </td>
+                                            <td>
+                                                <input  id="CAUSA-<%=p.getAlumno().getCi()%>" name="CAUSA-<%=p.getAlumno().getCi()%>"  type="text" value="CAUSA" style="color:#999999" onClick="if(this.value=='CAUSA'){this.value='';this.style.color=#000000;}" onblur="if(this.value==''){this.value='CAUSA';this.style.color=#999999;}"/>
+                                            </td>
+                                        </tr>
+                                        
+                                    </table>
+                                </div>
+                                    <%
+                                }
+                                else{
+                                    %>
+                                    <h3>ALUMNO INACTIVO</h3>
+                                    <%
+                                }
+                                    //out.print("<td style='width: 5%' align='center'><a href='libretaIndividual.jsp?idLibreta="+d.getId()+"&ciAlumno="+p.getAlumno().getCi()+"'><img src='images/ver.png' width='60%' /></a></td>"
+                                out.print("</td><tr>");
+
+                            }
+                            out.print("</table>");
+                        %> 
+                    </form>
+                    </div>
                     <div id="historiaDeInasistencias">
                             <select onchange="cambiarGrilla(this,<%=d.getId()%>);">
                                 <option value="1" <% if(mes==1){out.print("selected");} %> > ENERO </option>
@@ -774,7 +1065,7 @@ else{
                                     out.print("<td>TOTAL</td>");
                     out.print("</tr>"); 
                     i=0;
-                                    HashMap<Integer,LinkedList<Falta>> grilla;
+                                    HashMap<Integer,LinkedList<FaltaSancion>> grilla;
                                     for(LibretaIndividual l: d.getLibretasIndividuales().values()){
                                         if ((i%2)==0){
                                             color=" #ccccff";
@@ -788,7 +1079,7 @@ else{
                                                 + l.getAlumno().getPrimerApellido()+ " " + l.getAlumno().getPrimerNombre() 
                                                 +"</td>");
                                         
-                                        grilla=l.getGrillaFaltas().get(mes);
+                                        grilla=l.getGrillaFaltasSanciones().get(mes);
                                         if(grilla==null){
                                             for (int j=1; j<=days+1;j++){
                                                 out.print("<td>");
@@ -801,9 +1092,20 @@ else{
                                            for (int j=1; j<=days;j++){
                                                 out.print("<td>");
                                                 if(grilla.get(j)!=null){
-                                                    for(Falta f:grilla.get(j)){
-                                                        out.print("<b title='Fecha: "+f.getFecha()+"&#10;C&oacute;digo: "+f.getCodigoMotivo()+"&#10;Cantidad de horas: "+f.getCanthoras()+"&#10;Observaciones: "+f.getObservaciones()+"'    ><p id='"+f.getId()+"' onMouseleave=\"eliminar(false,"+f.getId()+",'"+f.getCodigoMotivo()+"','"+d.getId()+"','"+l.getAlumno().getCi()+"','"+d.getProfesor().getCi()+"');\" onMouseEnter=\"eliminar(true,"+f.getId()+",'"+f.getCodigoMotivo()+"','"+d.getId()+"','"+l.getAlumno().getCi()+"','"+d.getProfesor().getCi()+"');\">"+f.getCodigoMotivo()+"</p></b>");
-                                                        total+=f.getCanthoras();
+                                                    for(FaltaSancion f:grilla.get(j)){
+                                                        if(f.getFalta()!=null){
+                                                            out.print("<b title='Fecha: "+f.getFalta().getFecha()+"&#10;C&oacute;digo: "+f.getFalta().getCodigoMotivo()+"&#10;Cantidad de horas: "+f.getFalta().getCanthoras()+"&#10;Observaciones: "+f.getFalta().getObservaciones()+"'    ><p id='"+f.getFalta().getId()+"' onMouseleave=\"eliminar(true,false,"+f.getFalta().getId()+",'"+f.getFalta().getCodigoMotivo()+"','"+d.getId()+"','"+l.getAlumno().getCi()+"','"+d.getProfesor().getCi()+"');\" onMouseEnter=\"eliminar(true,true,"+f.getFalta().getId()+",'"+f.getFalta().getCodigoMotivo()+"','"+d.getId()+"','"+l.getAlumno().getCi()+"','"+d.getProfesor().getCi()+"');\">"+f.getFalta().getCodigoMotivo()+"</p></b>");
+                                                            total+=f.getFalta().getCanthoras();
+                                                        }
+                                                        else{
+                                                            String tipo="M";
+                                                            String tipo1="M";
+                                                            if(f.getSancion().getTipo()==2){
+                                                                tipo="R&#10;Minutos tardes: "+f.getSancion().getMinutosTardes();
+                                                                tipo1="R"; 
+                                                            }
+                                                            out.print("<b title='Fecha: "+f.getSancion().getFecha()+"&#10;C&oacute;digo: "+tipo+"&#10;Causa "+f.getSancion().getCausa()+"'    ><p id='"+f.getSancion().getId()+"' onMouseleave=\"eliminar(false,false,"+f.getSancion().getId()+",'"+tipo1+"','"+d.getId()+"','"+l.getAlumno().getCi()+"','"+d.getProfesor().getCi()+"');\" onMouseEnter=\"eliminar(false,true,"+f.getSancion().getId()+",'"+tipo1+"','"+d.getId()+"','"+l.getAlumno().getCi()+"','"+d.getProfesor().getCi()+"');\">"+tipo1+"</p></b>");
+                                                        }
                                                     }
                                                     
                                                 }
@@ -826,14 +1128,14 @@ else{
                             </table>
 
                         </div>
-                    <div id="temasTratados">
+                            <div id="temasTratados">
                         <form method="post"  name="formTemasTratados" id="formTemasTratados"  onsubmit="return agregarTemaTratado(this,<%= d.getId() %>)" action="" >
                             <table>
                                 <tr>
                                     <td>Seleccione la fecha:</td>
                                     <td><input type="date"  <%
                         
-                            out.print("value=\""+  fecha1.get(java.util.Calendar.YEAR)+"-"+cero+mes+"-"+fecha1.get(java.util.Calendar.DATE)+"\"");
+                            out.print("value=\""+  fecha1.get(java.util.Calendar.YEAR)+"-"+cero+mes+"-"+cerod+dia+"\"");
                        
                         %> id="fecha" name="fecha"></td>
                                 </tr>
@@ -881,9 +1183,181 @@ else{
             %> 
                     </div>
                     <div id="notas">
-                        <h1>
-                            SECCI&Oacute;N EN CONSTRUCCI&Oacute;N
-                        </h1>
+                        <form id='formAgregarNota' method="post" action="AgregarNota" onsubmit="return agregarNotaServidor(this);"/>
+                        <table id='tablaAgregarNota' style="display:none">
+                            <tr style="display:none">
+                                <td>
+                                   CI: 
+                                </td>
+                                <td>
+                                    <input type="number" id='ciAgregarNota' name='ciAgregarNota'/>
+                                </td>
+                            </tr>
+                            <tr id="trFotoNombre">
+                                <td>
+                                </td>
+                                <td>
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    TIPO:
+                                </td>
+                                <td>
+                                    <input type="radio" name="tipoAgregarNota" checked="checked" value="2">Oral<br>
+                                    <input type="radio" name="tipoAgregarNota" value="1">Escrito<br>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    MES:
+                                </td>
+                                <td>
+                                    <select form="formAgregarNota" name='mesAgregarNota'/>
+                                    <%
+                                    if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1)){
+                                        if(!d.getMesesCerrados().containsKey(3)){
+                                        %>
+                                        <option value="3" <% if(mes==3){out.print("selected");} %>>MARZO</option>
+                                        <%
+                                        }
+                                        if(!d.getMesesCerrados().containsKey(4)){
+                                        %>
+                                        <option value="4" <% if(mes==4){out.print("selected");} %>>ABRIL</option>
+                                        <%
+                                        }
+                                        if(!d.getMesesCerrados().containsKey(5)){
+                                        %>
+                                        <option value="5" <% if(mes==5){out.print("selected");} %>>MAYO</option>
+                                        <%
+                                        }
+                                        if(!d.getMesesCerrados().containsKey(6)){
+                                        %>
+                                        <option value="6" <% if(mes==6){out.print("selected");} %>>JUNIO</option>
+                                        <%
+                                        }
+                                    }
+                                    if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==2)){
+                                        if(!d.getMesesCerrados().containsKey(7)){
+                                        %>
+                                        <option value="7" <% if(mes==7){out.print("selected");} %>>JULIO</option>
+                                        <%
+                                        }
+                                        if(!d.getMesesCerrados().containsKey(8)){
+                                        %>
+                                        <option value="8" <% if(mes==8){out.print("selected");} %>>AGOSTO</option>
+                                        <%
+                                        }
+                                        if(!d.getMesesCerrados().containsKey(9)){
+                                        %>
+                                        <option value="9" <% if(mes==9){out.print("selected");} %>>SETIEMBRE</option>
+                                        <%
+                                        }
+                                        if(!d.getMesesCerrados().containsKey(10)){
+                                        %>
+                                        <option value="10" <% if(mes==10){out.print("selected");} %>>OCTUBRE</option>
+                                        <%
+                                        }
+                                    }
+                                    %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                   VALOR:
+                                </td>
+                                <td>
+                                    <input id='valorAgregarNota' type="number" name="valorAgregarNota"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                   OBS.:
+                                </td>
+                                <td>
+                                    <input id='obsAgregarNota' type="text" name="obsAgregarNota"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="text-align: right">
+                                    <input type="submit" value='Guardar'/>
+                                </td>    
+                            </tr>
+                        </table> 
+                        </form>
+                        <table id="grillaNotas" style=" border-collapse: separate;border-spacing: 2px;text-align: center;vertical-align: central;">
+                                
+                                <tr style='background-color:#ffcc66;padding:0px;'>
+                                    <td></td>
+                                    <td>Alumnos:</td>
+                                    <% if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1)){ %>
+                                    <td colspan="3" style="min-width: 150px">MARZO</td>
+                                    <td colspan="3" style="min-width: 150px">ABRIL</td>
+                                    <td colspan="3" style="min-width: 150px">MAYO</td>
+                                    <td colspan="3" style="min-width: 150px">JUNIO</td>
+                                    <%
+                                    }
+                                    if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==2)){
+                                    %>
+                                    <td colspan="3" style="min-width: 150px">JULIO</td>
+                                    <td colspan="3" style="min-width: 150px">AGOSTO</td>
+                                    <td colspan="3" style="min-width: 150px">SETIEMBRE</td>
+                                    <td colspan="3" style="min-width: 150px">OCTUBRE</td>
+                                    <%}%>
+                                </tr>
+                                <tr style='background-color:#ffcc66;padding:0px;'>
+                                    <td></td>
+                                    <td></td>
+                                    <% if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1)){ %>
+                                    
+                                    <td>O</td><td>E</td><td>P</td>
+                                    <td>O</td><td>E</td><td>P</td>
+                                    <td>O</td><td>E</td><td>P</td>
+                                    <td>O</td><td>E</td><td>P</td>
+                                    <%}
+                                    if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==2)){
+                                    %>
+                                    
+                                    <td>O</td><td>E</td><td>P</td>
+                                    <td>O</td><td>E</td><td>P</td>
+                                    <td>O</td><td>E</td><td>P</td>
+                                    <td>O</td><td>E</td><td>P</td>
+                                    <%}%>
+                                </tr>
+                                    
+                                    <%
+                                    i=0;
+                                    for(LibretaIndividual l: d.getLibretasIndividuales().values()){
+                                        if ((i%2)==0){
+                                            color=" #ccccff";
+                                        }
+                                        else{
+                                            color=" #ffff99";
+                                        }
+                                        i++;
+                    out.print("<tr style=\"background-color:"+color+"; cursor: crosshair \" onclick='agregarNota("+l.getAlumno().getCi()+",this)' title='Para agregar una nota a "+ l.getAlumno().getPrimerApellido()+ " " + l.getAlumno().getPrimerNombre() +" hacer click'>" );
+                        out.print("<td>");
+                            if(l.getAlumno().getFoto()!=""){
+                                %>
+                                <a href="Listar?List[]=<%=l.getAlumno().getCi()%>&fichas=1&tipoPersonal=1" target="_blank">   <p align="center"><label for="uploadImage" ><img src="<%=request.getContextPath()%>/Imagenes?foto=<%=l.getAlumno().getCi() %>" id="uploadPreview" style="width: 50px; height: 65px;" onclick=""/></label></p></a>
+                                <%
+                                }
+                                else{
+                                %>
+
+                                <a href="Listar?List[]=<%=l.getAlumno().getCi()%>&fichas=1&tipoPersonal=1" target="_blank"> <p align="center"><label for="uploadImage" ><img src="images/silueta.jpg" id="uploadPreview" style="width: 50px; height: 65px;" onclick=""/></label></p></a>
+                                <%
+                                }
+                            out.print("</td>");
+                            out.print( "<td>"
+                                + l.getAlumno().getPrimerApellido()+ " " + l.getAlumno().getPrimerNombre() 
+                            +"</td>");
+                            l.imprimirGrillaNotas(out);
+                                   }
+                            
+                                %>
+                            </table>
                     </div>
                     <div id="promedios">
                         <h1>
@@ -891,11 +1365,7 @@ else{
                         </h1>
                     </div>
                     
-                    <div id="sanciones">
-                        <h1>
-                            SECCI&Oacute;N EN CONSTRUCCI&Oacute;N
-                        </h1>
-                    </div>
+                    
                 </div> 
                      
         <%

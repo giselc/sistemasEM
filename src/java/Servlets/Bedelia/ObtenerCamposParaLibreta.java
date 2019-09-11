@@ -8,6 +8,7 @@ package Servlets.Bedelia;
 import Classes.Bedelia.Falta;
 import Classes.Bedelia.Grupo;
 import Classes.Bedelia.LibretaIndividual;
+import Classes.FaltaSancion;
 import Classes.Usuario;
 import Manejadores.ManejadorBedelia;
 import java.io.IOException;
@@ -95,26 +96,52 @@ public class ObtenerCamposParaLibreta extends HttpServlet {
                         Classes.Bedelia.Libreta libreta = mb.getLibreta(idLibreta);
                         JsonArrayBuilder jab1= Json.createArrayBuilder();
                         JsonArrayBuilder jab2= Json.createArrayBuilder();
-                        Falta f;
+                        FaltaSancion f;
                         int dia=1;
                         Iterator it;
                         for(LibretaIndividual li:libreta.getLibretasIndividuales().values()){
                             JsonArrayBuilder jab= Json.createArrayBuilder();
                             jab.add(Json.createObjectBuilder()
                                     .add("primerApellido",this.reemplazarCaracteresHtml(li.getAlumno().getPrimerApellido()))
-                                    .add("primerNombre",this.reemplazarCaracteresHtml(li.getAlumno().getPrimerNombre())));
-                            if(li.getGrillaFaltas().get(mes)!=null){
-                                for(LinkedList<Falta> lg:li.getGrillaFaltas().get(mes).values()){
+                                    .add("primerNombre",this.reemplazarCaracteresHtml(li.getAlumno().getPrimerNombre()))
+                                    .add("ci",li.getAlumno().getCi()));
+                            String fecha="";
+                            int id=-1;
+                            String codigo="";
+                            int canthoras=0;
+                            int minutosTardes=0;
+                            String observaciones;
+                            if(li.getGrillaFaltasSanciones().get(mes)!=null){
+                                for(LinkedList<FaltaSancion> lg:li.getGrillaFaltasSanciones().get(mes).values()){
                                     it= lg.iterator();
                                     while(it.hasNext()){
-                                        f=(Falta)(it.next());
-                                        dia=Integer.valueOf(f.getFecha().split("-")[2]);
+                                        f=(FaltaSancion)(it.next());
+                                        if(f.getFalta()!=null){
+                                            fecha=f.getFalta().getFecha();
+                                            id= f.getFalta().getId();
+                                            codigo = f.getFalta().getCodigoMotivo();
+                                            canthoras=f.getFalta().getCanthoras();
+                                            observaciones=f.getFalta().getObservaciones();
+                                        }
+                                        else{
+                                            fecha=f.getSancion().getFecha();
+                                            id= f.getSancion().getId();
+                                            codigo="R";
+                                            if(f.getSancion().getTipo()==1){
+                                                codigo="M";
+                                            }
+                                            minutosTardes=f.getSancion().getMinutosTardes();
+                                            observaciones=f.getSancion().getCausa();
+                                        }
+                                        dia=Integer.valueOf(fecha.split("-")[2]);
                                         jab2.add(Json.createObjectBuilder()
-                                                .add("id", f.getId())
-                                                .add("faltaCodigo", f.getCodigoMotivo())
-                                                .add("fecha", f.getFecha())
-                                                .add("cantHoras", f.getCanthoras())
-                                                .add("observaciones", f.getObservaciones())
+                                                .add("esFalta",(f.getFalta()!=null))
+                                                .add("id", id)
+                                                .add("codigo", codigo)
+                                                .add("fecha", fecha)
+                                                .add("cantHoras", canthoras)
+                                                .add("minutosTardes", minutosTardes)
+                                                .add("observaciones", observaciones)
                                                 .add("idLibreta", idLibreta)
                                                 .add("ciAlumno", li.getAlumno().getCi())
                                                 .add("ciProfesor", libreta.getProfesor().getCi())
@@ -122,7 +149,7 @@ public class ObtenerCamposParaLibreta extends HttpServlet {
                                     }
                                     jab.add(Json.createObjectBuilder()
                                         .add("dia", dia)
-                                        .add("faltasxDia",jab2)
+                                        .add("faltasSancionesxDia",jab2)
                                     );
                                 }
                             }

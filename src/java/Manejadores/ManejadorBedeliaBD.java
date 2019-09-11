@@ -20,16 +20,14 @@ import Classes.Bedelia.RecordSancion;
 import Classes.Bedelia.Sancion;
 import Classes.Bedelia.TemaTratado;
 import Classes.Cadete;
+import Classes.FaltaSancion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -182,7 +180,7 @@ public class ManejadorBedeliaBD {
                 }
                 HashMap<Integer,LibretaIndividual> libretasIndividuales = obtenerLibretasIndividuales(rs.getInt("id"));
                 LinkedList<TemaTratado> temasTratados = obtenerTemasTratados(rs.getInt("id"));
-                p.get(rs.getInt("ciProfesor")).put(rs.getInt("id"), new Libreta(rs.getInt("id"),materias.get(rs.getInt("idMateria")),cursos.get(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombreGrupo")),mp.getProfesor(ciProfesor),rs.getString("salon"),libretasIndividuales,temasTratados));
+                p.get(rs.getInt("ciProfesor")).put(rs.getInt("id"), new Libreta(rs.getInt("id"),materias.get(rs.getInt("idMateria")),cursos.get(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombreGrupo")),mp.getProfesor(ciProfesor),rs.getString("salon"),libretasIndividuales,temasTratados,obtenerMesesCerrados(rs.getInt("id"))));
             }
             
         } catch (Exception ex) {
@@ -200,28 +198,41 @@ public class ManejadorBedeliaBD {
             ResultSet rs=s.executeQuery(sql);
             HashMap<Integer,Sancion> sanciones;
             HashMap<Integer,Promedio> promedios;
-            HashMap<Integer, Nota> notas;
+            HashMap<Integer, LinkedList<Nota>> notasOrales;
+            HashMap<Integer, LinkedList<Nota>> notasEscritos;
             HashMap<Integer, Falta> faltas;
             ManejadorPersonal mp = ManejadorPersonal.getInstance();
             while (rs.next()){
                 sanciones= obtenerSancionesLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
                 promedios = obtenerPromediosLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
-                notas = obtenerNotasLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
+                notasOrales = obtenerNotasLibretaIndividual(2,rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
+                notasEscritos = obtenerNotasLibretaIndividual(1,rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
                 faltas = obtenerFaltasLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
-                HashMap<Integer,HashMap<Integer,LinkedList<Falta>>> grillaFaltas= new HashMap<>();
-                int mesFalta,diaFalta;
+                HashMap<Integer,HashMap<Integer,LinkedList<FaltaSancion>>> grillaFaltasSancion= new HashMap<>();
+                int mes,dia;
                 for(Falta f:faltas.values()){
-                    mesFalta= Integer.valueOf(f.getFecha().split("-")[1]);
-                    diaFalta= Integer.valueOf(f.getFecha().split("-")[2]);
-                    if(grillaFaltas.get(mesFalta)==null){
-                        grillaFaltas.put(mesFalta, new HashMap<>());
+                    mes= Integer.valueOf(f.getFecha().split("-")[1]);
+                    dia= Integer.valueOf(f.getFecha().split("-")[2]);
+                    if(grillaFaltasSancion.get(mes)==null){
+                        grillaFaltasSancion.put(mes, new HashMap<>());
                     }
-                    if(grillaFaltas.get(mesFalta).get(diaFalta)==null){
-                        grillaFaltas.get(mesFalta).put(diaFalta,new LinkedList<>());
+                    if(grillaFaltasSancion.get(mes).get(dia)==null){
+                        grillaFaltasSancion.get(mes).put(dia,new LinkedList<>());
                     }
-                    grillaFaltas.get(mesFalta).get(diaFalta).add(f);
+                    grillaFaltasSancion.get(mes).get(dia).add(new FaltaSancion(f,null));
                 }
-                p.put(rs.getInt("ciAlumno"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciAlumno")), faltas, grillaFaltas, notas, promedios, sanciones,rs.getDouble("PromedioAnual"),rs.getDouble("NotaFinal"),rs.getBoolean("activo")));
+                for(Sancion sancion:sanciones.values()){
+                    mes= Integer.valueOf(sancion.getFecha().split("-")[1]);
+                    dia= Integer.valueOf(sancion.getFecha().split("-")[2]);
+                    if(grillaFaltasSancion.get(mes)==null){
+                        grillaFaltasSancion.put(mes, new HashMap<>());
+                    }
+                    if(grillaFaltasSancion.get(mes).get(dia)==null){
+                        grillaFaltasSancion.get(mes).put(dia,new LinkedList<>());
+                    }
+                    grillaFaltasSancion.get(mes).get(dia).add(new FaltaSancion(null,sancion));
+                }
+                p.put(rs.getInt("ciAlumno"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciAlumno")), faltas, grillaFaltasSancion, notasOrales,notasEscritos, promedios, sanciones,rs.getDouble("PromedioAnual"),rs.getDouble("NotaFinal"),rs.getBoolean("activo"),rs.getDouble("promedioPrimeraReunion"),rs.getDouble("promedioSegundaReunion")));
             }
             
         } catch (SQLException | NumberFormatException ex) {
@@ -260,7 +271,21 @@ public class ManejadorBedeliaBD {
         }
         return p;
     }
-
+    private HashMap<Integer, Boolean> obtenerMesesCerrados(int idLibreta) {
+        HashMap<Integer, Boolean> p= new HashMap<>();
+        try {
+            Statement s= connection.createStatement();
+            String sql;
+            sql="SELECT * FROM sistemasem.mesesCerrados where  idLibreta="+idLibreta;
+            ResultSet rs=s.executeQuery(sql);
+            while (rs.next()){
+                p.put(rs.getInt("mes"),true);
+            }
+        } catch (Exception ex) {
+            System.out.print("obtenerMesesCerrados-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return p;
+    }
     private HashMap<Integer, Promedio> obtenerPromediosLibretaIndividual(int idLibretaIndividual, int ciAlumno) {
         HashMap<Integer, Promedio> p= new HashMap<>();
         try {
@@ -269,7 +294,7 @@ public class ManejadorBedeliaBD {
             sql="SELECT * FROM sistemasem.promedios where  idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno;
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                p.put(rs.getInt("id"),new Promedio(rs.getInt("id"),rs.getInt("tipoPromedio"), rs.getDouble("nota"),rs.getInt("mes")));
+                p.put(rs.getInt("id"),new Promedio(rs.getInt("id"),rs.getInt("tipoPromedio"), rs.getDouble("nota"),rs.getInt("mes"),rs.getString("juicio")));
             }
         } catch (Exception ex) {
             System.out.print("obtenerPromediosLibretaIndividual-ManejadorBedeliaBD:"+ex.getMessage());
@@ -277,15 +302,20 @@ public class ManejadorBedeliaBD {
         return p;
     }
 
-    private HashMap<Integer, Nota> obtenerNotasLibretaIndividual(int idLibretaIndividual, int ciAlumno) {
-        HashMap<Integer, Nota> p= new HashMap<>();
+    private HashMap<Integer, LinkedList<Nota>> obtenerNotasLibretaIndividual(int tipo,int idLibretaIndividual, int ciAlumno) {
+        HashMap<Integer, LinkedList<Nota>> p= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql;
-            sql="SELECT * FROM sistemasem.notas where idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno;
+            sql="SELECT * FROM sistemasem.notas where idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno +" and tipo="+tipo;
             ResultSet rs=s.executeQuery(sql);
+            int mesNota;
             while (rs.next()){
-                p.put(rs.getInt("id"),new Nota(rs.getInt("id"),rs.getString("fecha"),rs.getInt("tipo"), rs.getString("observacion"),rs.getDouble("nota")));
+                mesNota= Integer.valueOf(rs.getString("fecha").split("-")[1]);
+                if(!p.containsKey(mesNota)){
+                    p.put(mesNota,new LinkedList<>());
+                }
+                p.get(mesNota).add(new Nota(rs.getInt("id"),rs.getString("fecha"),rs.getInt("tipo"), rs.getString("observacion"),rs.getDouble("nota")));
             }
         } catch (Exception ex) {
             System.out.print("obtenerNotasLibretaIndividual-ManejadorBedeliaBD:"+ex.getMessage());
@@ -771,6 +801,42 @@ public class ManejadorBedeliaBD {
             return(s.executeUpdate(sql)>0);
         } catch (SQLException ex) {
             System.out.print("elimTemaTratado-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return false;
+    }
+
+    public int agregarSancion(Libreta l, Cadete c, String fecha, int codigoSancion, Integer minutosTardes, String causa) {
+        try {
+            String sql= "insert into sistemasEM.sanciones (idLibreta,ciAlumno,fecha, tipo,minutosTarde,causa) values(?,?,?,?,?,?)";
+            PreparedStatement s= connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            int i=1;
+            s.setInt(i++, l.getId());
+            s.setInt(i++, c.getCi());
+            s.setString(i++, fecha);
+            s.setInt(i++,codigoSancion );
+            s.setInt(i++, minutosTardes);
+            s.setString(i++, causa);
+            int row=s.executeUpdate();
+            if(row>0){
+                ResultSet rs=s.getGeneratedKeys(); //obtengo las ultimas llaves generadas
+                if(rs.next()){ 
+                    return(rs.getInt(1));
+                }
+            }
+        } catch (Exception ex) {
+            System.out.print("agregarSancion-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return -1;
+    }
+
+    public boolean eliminarSancion(int id) {
+        Statement s;
+        try {
+            s = connection.createStatement();
+            String sql="DELETE FROM sistemasem.sanciones where id="+id;
+            return(s.executeUpdate(sql)>0);
+        } catch (SQLException ex) {
+            System.out.print("eliminarSancion-ManejadorBedeliaBD:"+ex.getMessage());
         }
         return false;
     }

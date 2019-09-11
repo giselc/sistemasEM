@@ -232,6 +232,13 @@
                            if(p.getFalta()!=null && p.getFalta().idFalta!=-1){
                                out.print("TIPO: FALTA&#10;FECHA: "+p.getFecha()+"&#10;CANTIDAD DE HORAS: "+p.getFalta().cantHoras+"&#10;OBSERVACIONES: "+p.getFalta().observaciones);
                            }
+                           else{
+                               String minutos=""; 
+                               if(p.getSancion().tipo==2){
+                                   minutos="&#10;MINUTOS TARDES: "+p.getSancion().minutosTardes; 
+                               }
+                               out.print("TIPO: SANCION&#10;FECHA: "+p.getFecha()+minutos+"&#10;CAUSA: "+p.getSancion().causa);
+                           }
                            out.print("\">"
                            +"<td style='width: 5%' align='center'>"+i+"</td>" );
                            out.print("<td style='width: 10%' align='center'>"+p.getId()+"</td>");
@@ -250,7 +257,15 @@
                                 out.print("</td>");
                            }
                            else{
-                               out.print("<td style='width: 10%' align='center'>"+ p.getSancion().tipo +"</td>");
+                               String codigo="R";
+                               if(p.getSancion().tipo==1){
+                                   codigo="M";
+                               }
+                               out.print("<td style='width: 10%' align='center'>"+codigo);
+                                if(p.isEliminado()){
+                                    out.print(" - Eliminado") ;
+                                }
+                                out.print("</td>");
                            }
                             out.print("<td style='width: 5%' align='center'><a onclick='marcarLeido(true,"+p.getId()+")'><img src='images/leido.png' width='60%' /></a></td>"
                             +"<td style=\"width: 5%\" align='center'>");
@@ -299,6 +314,13 @@
                            if(p.getFalta()!=null && p.getFalta().idFalta!=-1){
                                out.print("TIPO: FALTA&#10;FECHA: "+p.getFecha()+"&#10;CANTIDAD DE HORAS: "+p.getFecha()+"&#10;OBSERVACIONES: "+p.getFalta().observaciones);
                            }
+                           else{
+                               String minutos=""; 
+                               if(p.getSancion().tipo==2){
+                                   minutos="&#10;MINUTOS TARDES: "+p.getSancion().minutosTardes; 
+                               }
+                               out.print("TIPO: SANCION&#10;FECHA: "+p.getFecha()+minutos+"&#10;CAUSA: "+p.getSancion().causa);
+                           }
                            out.print("\">"
                            +"<td style='width: 5%' align='center'>"+i+"</td>" );
                           out.print("<td style='width: 10%' align='center'>"+p.getId()+"</td>");
@@ -316,7 +338,15 @@
                                 out.print("</td>");
                            }
                            else{
-                               out.print("<td style='width: 10%' align='center'>"+ p.getSancion().tipo +"</td>");
+                               String codigo="R";
+                               if(p.getSancion().tipo==1){
+                                   codigo="M";
+                               }
+                               out.print("<td style='width: 10%' align='center'>"+codigo);
+                                if(p.isEliminado()){
+                                    out.print(" - Eliminado") ;
+                                }
+                                out.print("</td>");
                            }
                             out.print("<td style='width: 5%' align='center'><a onclick='marcarLeido(false,"+p.getId()+")'><img src='images/nuevo.png' width='60%' /></a></td>"
                                     + "<td style=\"width: 5%\" align='center'>");

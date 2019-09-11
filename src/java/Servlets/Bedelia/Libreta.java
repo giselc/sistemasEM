@@ -74,6 +74,27 @@ public class Libreta extends HttpServlet {
                             sesion.setAttribute("Mensaje", mensaje);
                             response.sendRedirect(redirect);
                         }
+                        if(request.getParameter("sancionar")!=null){
+                            Classes.Bedelia.Libreta l = mp.getLibreta(id);
+                            if(u.isProfesor() && u.getCiProfesor()!=l.getProfesor().getCi()){
+                                sesion.setAttribute("Mensaje", "Disculpe, pero no tiene permisos para operar en esta libreta.");
+                                response.sendRedirect("libretas.jsp");
+                            }
+                            for(Cadete c: l.getGrupo().getAlumnos().values()){
+                                if(Integer.valueOf(request.getParameter("S-"+c.getCi()))!=1){
+                                    if(request.getParameter("CAUSA-"+c.getCi()).equals("CAUSA")){
+                                        mp.agregarSancion(l,c,request.getParameter("fecha"),request.getParameter("CS-"+c.getCi()),Integer.valueOf(request.getParameter("MINTARDES-"+c.getCi())),"");
+                                    }
+                                    else{
+                                        mp.agregarSancion(l,c,request.getParameter("fecha"),request.getParameter("CS-"+c.getCi()),Integer.valueOf(request.getParameter("MINTARDES-"+c.getCi())),request.getParameter("CAUSA-"+c.getCi()));
+                                    }
+                                }
+                            } 
+                            mensaje="Datos agregados correctamente.";
+                            redirect="libreta.jsp?id="+id;
+                            sesion.setAttribute("Mensaje", mensaje);
+                            response.sendRedirect(redirect);
+                        }
                         else{
                             JsonObjectBuilder json = Json.createObjectBuilder(); 
                             JsonArrayBuilder jab= Json.createArrayBuilder();

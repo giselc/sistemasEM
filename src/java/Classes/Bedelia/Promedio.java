@@ -14,12 +14,22 @@ public class Promedio {
     private int tipoPromedio; //1-mensual, 2-semestral, 3-anual
     private double nota;
     private int mes;
+    private String juicio;
 
-    public Promedio(int id, int tipoPromedio, double nota, int mes) {
+    public Promedio(int id, int tipoPromedio, double nota, int mes, String juicio) {
         this.id = id;
         this.tipoPromedio = tipoPromedio;
         this.nota = nota;
         this.mes = mes;
+        this.juicio= juicio;
+    }
+
+    public String getJuicio() {
+        return juicio;
+    }
+
+    public void setJuicio(String juicio) {
+        this.juicio = juicio;
     }
 
     public int getId() {
