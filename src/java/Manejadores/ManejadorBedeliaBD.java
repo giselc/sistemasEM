@@ -315,7 +315,7 @@ public class ManejadorBedeliaBD {
                 if(!p.containsKey(mesNota)){
                     p.put(mesNota,new LinkedList<>());
                 }
-                p.get(mesNota).add(new Nota(rs.getInt("id"),rs.getString("fecha"),rs.getInt("tipo"), rs.getString("observacion"),rs.getDouble("nota")));
+                p.get(mesNota).add(new Nota(rs.getInt("id"),rs.getString("fecha"),rs.getInt("tipo"), rs.getString("observaciones"),rs.getDouble("valor")));
             }
         } catch (Exception ex) {
             System.out.print("obtenerNotasLibretaIndividual-ManejadorBedeliaBD:"+ex.getMessage());
@@ -839,6 +839,31 @@ public class ManejadorBedeliaBD {
             System.out.print("eliminarSancion-ManejadorBedeliaBD:"+ex.getMessage());
         }
         return false;
+    }
+
+    public int agregarNota(int ciAlumno, int ciProfesor, int idLibreta, int tipo, int mes, double valor, String obs, String fecha) {
+        try {
+            String sql= "insert into sistemasEM.notas (idLibreta,ciAlumno,fecha, tipo,mes,valor,observaciones) values(?,?,?,?,?,?,?)";
+            PreparedStatement s= connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            int i=1;
+            s.setInt(i++,idLibreta);
+            s.setInt(i++, ciAlumno);
+            s.setString(i++, fecha);
+            s.setInt(i++,tipo );
+            s.setInt(i++, mes);
+            s.setDouble(i++, valor);
+            s.setString(i++, obs);
+            int row=s.executeUpdate();
+            if(row>0){
+                ResultSet rs=s.getGeneratedKeys(); //obtengo las ultimas llaves generadas
+                if(rs.next()){ 
+                    return(rs.getInt(1));
+                }
+            }
+        } catch (Exception ex) {
+            System.out.print("agregarNota-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return -1;
     }
 
    

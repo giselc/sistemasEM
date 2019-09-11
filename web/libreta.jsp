@@ -538,7 +538,7 @@
             document.getElementById("valorAgregarNota").focus();
             
         }
-        function agregarNotaServidor(form){
+        function agregarNotaServidor(form,idLibreta,ciProfesor){
             var valor="";
             var ci="";
             var tipo="";
@@ -547,7 +547,6 @@
             for (var i=0;i<form.elements.length;i++)
             {
                 if(form.elements[i].type!="submit" && (form.elements[i].type!="radio" || (form.elements[i].type=="radio" && form.elements[i].checked) )){
-                    variables+= form.elements[i].name+"="+form.elements[i].value;
                     if(form.elements[i].name=="valorAgregarNota" && form.elements[i].value==""){
                         alert("ERROR: Debe ingresar un valor a la nota.");
                         return false;
@@ -581,19 +580,24 @@
                         if(tipo==1){
                             auxTipo="E";
                         }
-                        var trAgregar=document.getElementById(ci+"-"+auxTipo+"-"mes);
-                        trAgregar.innerHTML = trAgregar.innerHTML + "<b title='Fecha alta: "+msj[0].fecha+"&#10;Mes correspondiente: 3&#10;Nota: "+valor+"&#10;Observaciones: "+observaciones+"'><p id='NOTA-"+msj[0].id+"' onMouseleave=\"eliminarNota(false,"+msj[0].id+",'"+valor+"','"+msj[0].idLibreta+"','"+ci+"','"+msj[0].ciProfesor+"');\" onMouseEnter=\"eliminar(true,"+msj[0].id+",'"+valor+"','"+msj[0].idLibreta+"','"+ci+"','"+msj[0].ciProfesor+"');\">"+valor+"</p></b>"
-                        //alert(msj[0].cantHorasFalta);
+                        var trAgregar=document.getElementById(ci+"-"+auxTipo+"-"+mes);
+                        valorAux=valor;
+                        if(valor%10==0 && !valor.includes('.')){
+                            valorAux+=".0";
+                        }
+                        trAgregar.innerHTML += "<b title='Fecha alta: "+msj[0].fecha+"&#10;Mes correspondiente:"+mes+"&#10;Nota: "+valorAux+"&#10;Observaciones: "+obs+"'><p id='NOTA-"+msj[0].id+"' onMouseleave=\"eliminarNota(false,"+msj[0].id+",'"+valorAux+"','"+idLibreta+"','"+ci+"','"+ciProfesor+"');\" onMouseEnter=\"eliminar(true,"+msj[0].id+",'"+valor+"','"+idLibreta+"','"+ci+"','"+ciProfesor+"');\">"+valorAux+"</p></b>";
                     }
                     else{
                         document.getElementById("mensaje").innerHTML="<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+msj[0].mensaje;
                     }
                 };
             };
-            xmlhttp.open("POST","AgregarNota?ci="+ci+"&tipo="+tipo+"&mes="+mes+"&valor="+valor+"&obs="+obs);
+            xmlhttp.open("POST","Notas?ciAlumno="+ci+"&tipo="+tipo+"&mes="+mes+"&valor="+valor+"&obs="+obs+"&idLibreta="+idLibreta+"&ciProfesor="+ciProfesor);
             xmlhttp.send();
+            form.reset();
+            var tablaAgregarNota= document.getElementById("tablaAgregarNota");
+            tablaAgregarNota.style="display:none";
             return false; 
-            
         }
 </script>
 <style>
@@ -629,7 +633,7 @@ if(d==null){
     if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
 %>
         <form method="post"  name="formulario" id="formulario"  onsubmit="return verificarFormulario();" action="Libreta?id=<%if (d!=null){out.print(d.getId());}else{out.print("-1");}%>">
-            <table  width='70%' align='center' style="text-align: left;" id="tablaformulario">
+            <table  width='50%' align='center' style="text-align: left;" id="tablaformulario">
                  <tr>
                     <td>Profesor: </td>
                     <td>
@@ -683,8 +687,8 @@ else{
     if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4) ||(u.isProfesor()&& u.getCiProfesor()==d.getProfesor().getCi())){
         if(u.isAdmin()||(u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
             %>
-            <form method="post"  name="formulario1" id="formulario1" action="Libreta?id=<%=d.getId()%>">
-            <table  width='70%' align='center' style="text-align: left;" >
+            <form method="post"  name="formulario1" id="formulario1" action="Libreta?id=<%=d.getId()%>" style="padding-bottom: 5%">
+            <table  width='30%' align='center' style="text-align: left;" >
                  <tr>
                     <td>Profesor: </td>
                     <td>
@@ -734,8 +738,13 @@ else{
                         <a target="_blank" href="materia.jsp?id=<%= d.getMateria().getId() %>" > <%= d.getMateria().getNombre() %> </a>
                     </td>
                 </tr>
+                <tr>
+                    <td colspan="2">
+                        <p align='right'><input type="submit"  value="Modificar" /></p>
+                    </td>
+                </tr>
             </table>
-            <p align='right'><input type="submit"  value="Modificar" /></p>
+            
             </form>
             
             
@@ -743,7 +752,7 @@ else{
         }
         else{
           %>
-            <table  width='70%' align='center' style="text-align: left" >
+            <table  width='30%' align='center' style="text-align: left" >
                  <tr>
                     <td>Profesor: </td>
                     <td>
@@ -1025,18 +1034,18 @@ else{
                     </div>
                     <div id="historiaDeInasistencias">
                             <select onchange="cambiarGrilla(this,<%=d.getId()%>);">
-                                <option value="1" <% if(mes==1){out.print("selected");} %> > ENERO </option>
-                                <option value="2" <% if(mes==2){out.print("selected");} %> > FEBRERO </option>
+                                <% if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1)){ %>
                                 <option value="3" <% if(mes==3){out.print("selected");} %> > MARZO </option>
                                 <option value="4" <% if(mes==4){out.print("selected");} %> > ABRIL </option>
                                 <option value="5" <% if(mes==5){out.print("selected");} %> > MAYO </option>
                                 <option value="6" <% if(mes==6){out.print("selected");} %> > JUNIO </option>
+                                <%}
+                                 if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==2)){%>
                                 <option value="7" <% if(mes==7){out.print("selected");} %> > JULIO </option>
                                 <option value="8" <% if(mes==8){out.print("selected");} %> > AGOSTO </option>
                                 <option value="9" <% if(mes==9){out.print("selected");} %> > SETIEMBRE </option>
                                 <option value="10" <% if(mes==10){out.print("selected");} %> > OCTUBRE </option>
-                                <option value="11" <% if(mes==11){out.print("selected");} %> > NOVIEMBRE </option>
-                                <option value="12" <% if(mes==12){out.print("selected");} %> > DICIEMBRE </option>
+                                <%}%>
                             </select>
                             <table id="grillaFaltas" style="border-collapse: separate;border-spacing: 2px;text-align: center;vertical-align: central;">
                                 <%
@@ -1183,7 +1192,7 @@ else{
             %> 
                     </div>
                     <div id="notas">
-                        <form id='formAgregarNota' method="post" action="AgregarNota" onsubmit="return agregarNotaServidor(this);"/>
+                        <form id='formAgregarNota' method="post" onsubmit="return agregarNotaServidor(this,<%= d.getId() %>, <%= d.getProfesor().getCi() %>);"/>
                         <table id='tablaAgregarNota' style="display:none">
                             <tr style="display:none">
                                 <td>
@@ -1268,7 +1277,7 @@ else{
                                    VALOR:
                                 </td>
                                 <td>
-                                    <input id='valorAgregarNota' type="number" name="valorAgregarNota"/>
+                                    <input id='valorAgregarNota' step="0.01" min="1" max="<% if(d.getMateria().isSecundaria()){out.print("12");}else{out.print("10");}; %>"type="number" name="valorAgregarNota"/>
                                 </td>
                             </tr>
                             <tr>
@@ -1286,25 +1295,35 @@ else{
                             </tr>
                         </table> 
                         </form>
-                        <table id="grillaNotas" style=" border-collapse: separate;border-spacing: 2px;text-align: center;vertical-align: central;">
+                        <table id="grillaNotas" style=" width: 100%; overflow-x: scroll;border-collapse: separate;border-spacing: 2px;text-align: center;vertical-align: central;">
                                 
                                 <tr style='background-color:#ffcc66;padding:0px;'>
                                     <td></td>
                                     <td>Alumnos:</td>
                                     <% if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1)){ %>
-                                    <td colspan="3" style="min-width: 150px">MARZO</td>
-                                    <td colspan="3" style="min-width: 150px">ABRIL</td>
-                                    <td colspan="3" style="min-width: 150px">MAYO</td>
-                                    <td colspan="3" style="min-width: 150px">JUNIO</td>
+                                    <td colspan="3" style="width: 10%">MARZO</td>
+                                    <td colspan="3" style="width: 10%">ABRIL</td>
+                                    <td colspan="3" style="width: 10%">MAYO</td>
+                                    <td colspan="3" style="width: 10%">JUNIO</td>
                                     <%
+                                        if(d.getMateria().isSecundaria()){
+                                            %> <td style="width: 3%">1&deg;R</td>
+                                               <%
+                                        }
                                     }
                                     if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==2)){
                                     %>
-                                    <td colspan="3" style="min-width: 150px">JULIO</td>
-                                    <td colspan="3" style="min-width: 150px">AGOSTO</td>
-                                    <td colspan="3" style="min-width: 150px">SETIEMBRE</td>
-                                    <td colspan="3" style="min-width: 150px">OCTUBRE</td>
-                                    <%}%>
+                                    <td colspan="3" style="width: 10%">JULIO</td>
+                                    <td colspan="3" style="width: 10%">AGOSTO</td>
+                                    <td colspan="3" style="width: 10%">SETIEMBRE</td>
+                                    <td colspan="3" style="width: 10%">OCTUBRE</td>
+                                    <%
+                                        if(d.getMateria().isSecundaria()){
+                                            %> <td style="width: 3%">2&deg;R</td>
+                                               <%
+                                        }
+                                    }
+                                    %>
                                 </tr>
                                 <tr style='background-color:#ffcc66;padding:0px;'>
                                     <td></td>
@@ -1315,7 +1334,12 @@ else{
                                     <td>O</td><td>E</td><td>P</td>
                                     <td>O</td><td>E</td><td>P</td>
                                     <td>O</td><td>E</td><td>P</td>
-                                    <%}
+                                    <%
+                                         if(d.getMateria().isSecundaria()){
+                                            %> <td>P</td>
+                                               <%
+                                        }
+                                    }
                                     if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==2)){
                                     %>
                                     
@@ -1323,7 +1347,12 @@ else{
                                     <td>O</td><td>E</td><td>P</td>
                                     <td>O</td><td>E</td><td>P</td>
                                     <td>O</td><td>E</td><td>P</td>
-                                    <%}%>
+                                    <%
+                                    if(d.getMateria().isSecundaria()){
+                                            %> <td>P</td>
+                                               <%
+                                        }
+                                    }%>
                                 </tr>
                                     
                                     <%

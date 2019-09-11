@@ -11,6 +11,7 @@ import Classes.Bedelia.Grupo;
 import Classes.Bedelia.Libreta;
 import Classes.Bedelia.LibretaIndividual;
 import Classes.Bedelia.Materia;
+import Classes.Bedelia.Nota;
 import Classes.Bedelia.Notificacion;
 import Classes.Bedelia.RecordFalta;
 import Classes.Bedelia.RecordSancion;
@@ -47,7 +48,7 @@ public class ManejadorBedelia {
     public synchronized static ManejadorBedelia getInstance() {
         return ManejadorBedeliaHolder.INSTANCE;
     }
-    public boolean asociarMateriasCurso(String[] idMaterias, String idCurso) {
+    public synchronized boolean asociarMateriasCurso(String[] idMaterias, String idCurso) {
         ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
         if(mb.asociarMateriasCurso(idMaterias,idCurso)){
             HashMap mateCurso= cursos.get(Integer.valueOf(idCurso)).getMaterias();
@@ -97,7 +98,7 @@ public class ManejadorBedelia {
         }
         return l;
     }
-    public boolean desasociarAlumnoGrupo(Integer ciAlumno, Grupo grupo) {
+    public synchronized boolean desasociarAlumnoGrupo(Integer ciAlumno, Grupo grupo) {
         LinkedList<Libreta> listL = this.getLibretasAsociadasAGrupo(grupo);
         ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
         if(mb.desasociarAlumnoGrupo(ciAlumno,grupo,listL)){
@@ -294,7 +295,7 @@ public class ManejadorBedelia {
         return libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno).getFaltas().get(idFalta);
     }
 
-    public void agregarSancion(Libreta l, Cadete c, String fecha, String codigoSancion, Integer minutosTardes, String causa) {
+    public synchronized void agregarSancion(Libreta l, Cadete c, String fecha, String codigoSancion, Integer minutosTardes, String causa) {
         ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
         int codigo=2;
         if(codigoSancion.equals("M")){
@@ -338,7 +339,7 @@ public class ManejadorBedelia {
         }
     }
 
-    public boolean eliminarSancion(int id, int idLibreta, int ciAlumno, int ciProfesor) {
+    public synchronized boolean eliminarSancion(int id, int idLibreta, int ciAlumno, int ciProfesor) {
         ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
         if(mb.eliminarSancion(id)){
             LibretaIndividual li=libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno);
@@ -368,6 +369,27 @@ public class ManejadorBedelia {
             }
         }
         return false;
+    }
+    //retorna el id de la nota agregada;
+    public synchronized int agregarNota(int ciAlumno, int ciProfesor, int idLibreta, int tipo, int mes, double valor, String obs, String fecha) {
+        ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
+        int id = mb.agregarNota(ciAlumno,ciProfesor,idLibreta,tipo,mes,valor,obs,fecha);
+        if(id!=-1){
+            LibretaIndividual li = libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno);
+            if(tipo==2){
+                if(!li.getNotasOrales().containsKey(mes)){
+                    li.getNotasOrales().put(mes, new LinkedList<>());
+                }
+                li.getNotasOrales().get(mes).add(new Nota(id,fecha,tipo,obs,valor));
+            }
+            else{
+               if(!li.getNotasEscritos().containsKey(mes)){
+                    li.getNotasEscritos().put(mes, new LinkedList<>());
+                }
+                li.getNotasEscritos().get(mes).add(new Nota(id,fecha,tipo,obs,valor)); 
+            }
+        }
+        return id;
     }
     private static class ManejadorBedeliaHolder {
 
