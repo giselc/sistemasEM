@@ -9,7 +9,6 @@ import Classes.Cadete;
 import Classes.FaltaSancion;
 import Manejadores.ManejadorBedelia;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -218,7 +217,7 @@ public class LibretaIndividual {
                 if(notasOrales.containsKey(mes) && !notasOrales.get(mes).isEmpty()){
                     for(Nota n:notasOrales.get(mes)){
                         if(!l.getMesesCerrados().containsKey(mes)){
-                            out.print("<b title='Fecha alta: "+n.getFecha()+"&#10;Mes correspondiente: "+mes+"&#10;Nota: "+n.getNota()+"&#10;Observaciones: "+n.getObservacion()+"'><p id='NOTA-"+n.getId()+"' onMouseleave=\"eliminarNota(false,"+n.getId()+",'"+n.getNota()+"','"+l.getId()+"','"+alumno.getCi()+"','"+l.getProfesor().getCi()+"');\" onMouseEnter=\"eliminar(true,"+n.getId()+",'"+n.getNota()+"','"+l.getId()+"','"+alumno.getCi()+"','"+l.getProfesor().getCi()+"');\">"+n.getNota()+"</p></b>");
+                            out.print("<b title='Fecha alta: "+n.getFecha()+"&#10;Mes correspondiente: "+mes+"&#10;Nota: "+n.getNota()+"&#10;Observaciones: "+n.getObservacion()+"'><p id='NOTA-"+n.getId()+"' onMouseleave=\"eliminarNota(false,"+n.getId()+",'"+n.getNota()+"','"+l.getId()+"','"+alumno.getCi()+"','"+l.getProfesor().getCi()+"',2,"+mes+");\" onMouseEnter=\"eliminarNota(true,"+n.getId()+",'"+n.getNota()+"','"+l.getId()+"','"+alumno.getCi()+"','"+l.getProfesor().getCi()+"',2,"+mes+");\">"+n.getNota()+"</p></b>");
                         }
                         else{
                             out.print("<b title='Fecha alta: "+n.getFecha()+"&#10;Mes correspondiente: "+mes+"&#10;Nota: "+n.getNota()+"&#10;Observaciones: "+n.getObservacion()+"'><p id='NOTA-"+n.getId()+"' >"+n.getNota()+"</p></b>");
@@ -226,11 +225,11 @@ public class LibretaIndividual {
                     }
                 }
             out.print("</td>"
-                    + "<td id="+alumno.getCi()+"-E-"+mes+">");
+                    + "<td id="+alumno.getCi()+"-E-"+mes+"  style=\"color: #3333ff\">");
                 if(notasEscritos.containsKey(mes) && !notasEscritos.get(mes).isEmpty()){
                     for(Nota n:notasEscritos.get(mes)){
                         if(!l.getMesesCerrados().containsKey(mes)){
-                            out.print("<b title='Fecha alta: "+n.getFecha()+"&#10;Mes correspondiente: "+mes+"&#10;Nota: "+n.getNota()+"&#10;Observaciones: "+n.getObservacion()+"'><p id='NOTA-"+n.getId()+"' onMouseleave=\"eliminarNota(false,"+n.getId()+",'"+n.getNota()+"','"+l.getId()+"','"+alumno.getCi()+"','"+l.getProfesor().getCi()+"');\" onMouseEnter=\"eliminar(true,"+n.getId()+",'"+n.getNota()+"','"+l.getId()+"','"+alumno.getCi()+"','"+l.getProfesor().getCi()+"');\">"+n.getNota()+"</p></b>");
+                            out.print("<b title='Fecha alta: "+n.getFecha()+"&#10;Mes correspondiente: "+mes+"&#10;Nota: "+n.getNota()+"&#10;Observaciones: "+n.getObservacion()+"'><p id='NOTA-"+n.getId()+"' onMouseleave=\"eliminarNota(false,"+n.getId()+",'"+n.getNota()+"','"+l.getId()+"','"+alumno.getCi()+"','"+l.getProfesor().getCi()+"',1,"+mes+");\" onMouseEnter=\"eliminarNota(true,"+n.getId()+",'"+n.getNota()+"','"+l.getId()+"','"+alumno.getCi()+"','"+l.getProfesor().getCi()+"',1,"+mes+");\">"+n.getNota()+"</p></b>");
                         }
                         else{
                             out.print("<b title='Fecha alta: "+n.getFecha()+"&#10;Mes correspondiente: "+mes+"&#10;Nota: "+n.getNota()+"&#10;Observaciones: "+n.getObservacion()+"'><p id='NOTA-"+n.getId()+"' >"+n.getNota()+"</p></b>");

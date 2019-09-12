@@ -28,10 +28,6 @@
                 $('#' + $(this).attr('title')).fadeIn();
             });
         });
-        function nombreMateria(){
-            alert(document.getElementById("nombre").value);
-            return true;
-        }
 </script>
 <% 
     if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
@@ -52,7 +48,7 @@
 <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
 <h1 align="center" style="font-family: arial"><u><% if (d!=null){out.print("Editar Materia");}else{out.print("Agregar Materia");}%></u></h1>
 <div id="enviando"  style="position: fixed; top:0; left:0; width:100%; height: 100%;background: url('images/loading-verde.gif') center center no-repeat; background-size: 20%; display: none"></div>
-<form method="post"  name="formulario" id="formulario"  action="Materia?id=<%if (d!=null){out.print(d.getId());}else{out.print("-1");}; if(request.getParameter("idCurso")!=null){out.print("&idCurso="+request.getParameter("idCurso"));} %>"  onsubmit="return nombreMateria();">
+<form method="post"  name="formulario" id="formulario"  action="Materia?id=<%if (d!=null){out.print(d.getId());}else{out.print("-1");}; if(request.getParameter("idCurso")!=null){out.print("&idCurso="+request.getParameter("idCurso"));} %>" >
     <table  width='70%' align='center' style="text-align: left">
         <%if(d!=null){%>
         <tr>

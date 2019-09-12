@@ -866,5 +866,17 @@ public class ManejadorBedeliaBD {
         return -1;
     }
 
+    public boolean eliminarNota(int idNota) {
+        Statement s;
+        try {
+            s = connection.createStatement();
+            String sql="DELETE FROM sistemasem.notas where id="+idNota;
+            return(s.executeUpdate(sql)>0);
+        } catch (SQLException ex) {
+            System.out.print("eliminarNota-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return false;
+    }
+
    
 }

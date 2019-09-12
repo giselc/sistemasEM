@@ -391,6 +391,31 @@ public class ManejadorBedelia {
         }
         return id;
     }
+
+    public boolean eliminarNota(int idNota, int idLibreta, int ciProfesor, int ciAlumno, int tipo,int mes) {
+        ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
+        LinkedList<Nota> listaRemover=null;
+        LibretaIndividual li=libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno);
+        if(mb.eliminarNota(idNota)){
+            if(tipo==1){
+                listaRemover=li.getNotasEscritos().get(mes);
+            }
+            else{
+                listaRemover=li.getNotasOrales().get(mes);
+            }
+            Iterator it=listaRemover.iterator();
+            Nota n;
+            while(it.hasNext()){
+                n=(Nota)it.next();
+                if(n.getId()==idNota){
+                    it.remove();
+                    break;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
     private static class ManejadorBedeliaHolder {
 
         private static final ManejadorBedelia INSTANCE = new ManejadorBedelia();

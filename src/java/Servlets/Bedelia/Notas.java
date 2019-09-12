@@ -50,15 +50,31 @@ public class Notas extends HttpServlet {
                 cerod="0";
             }
             String fecha =  fechaAux.get(java.util.Calendar.YEAR)+"-"+cero+mesFecha+"-"+cerod+dia;
+            ManejadorBedelia mb =Manejadores.ManejadorBedelia.getInstance();
             if(request.getParameter("eliminar")!=null){
-                
+                int idNota=Integer.valueOf(request.getParameter("eliminar"));
+                int tipo=Integer.valueOf(request.getParameter("tipo"));
+                int mes=Integer.valueOf(request.getParameter("mes"));
+                JsonObjectBuilder json = Json.createObjectBuilder(); 
+                JsonArrayBuilder jab= Json.createArrayBuilder();
+                if(mb.eliminarNota(idNota,idLibreta,ciProfesor,ciAlumno,tipo,mes)){
+                    jab.add(Json.createObjectBuilder()
+                        .add("mensaje","ok")
+                    );
+                    json.add("msj", jab);
+                }else{
+                    jab.add(Json.createObjectBuilder()
+                        .add("mensaje","ERROR: contacte al administrador.")
+                    );
+                    json.add("msj", jab);
+                };
+                out.print(json.build());
             }
             else{ //agregar
                 String obs = request.getParameter("obs");
                 int tipo = Integer.valueOf(request.getParameter("tipo"));
                 int mes = Integer.valueOf(request.getParameter("mes"));
                 double valor = Double.valueOf(request.getParameter("valor"));
-                ManejadorBedelia mb =Manejadores.ManejadorBedelia.getInstance();
                 int id = mb.agregarNota(ciAlumno,ciProfesor,idLibreta,tipo,mes,valor,obs,fecha);
                 JsonObjectBuilder json = Json.createObjectBuilder(); 
                 JsonArrayBuilder jab= Json.createArrayBuilder();

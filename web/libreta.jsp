@@ -323,15 +323,15 @@
                 document.getElementById(id).innerHTML=codigo;
             }
         }
-        function eliminarNota(over,id,nota,idLibreta,ciAlumno,ciProfesor){
+        function eliminarNota(over,id,nota,idLibreta,ciAlumno,ciProfesor,tipo,mes){
             if(over){
-                document.getElementById("NOTA-"+id).innerHTML="<image src='images/eliminar.png' width='50%' onclick='eliminarNotaServidor("+id+","+idLibreta+","+ciAlumno+","+ciProfesor+")'/>";
+                document.getElementById("NOTA-"+id).innerHTML="<image src='images/eliminar.png' width='20%' onclick='eliminarNotaServidor("+id+","+idLibreta+","+ciAlumno+","+ciProfesor+","+tipo+","+mes+")'/>";
             }
             else{
-                document.getElementById(id).innerHTML=nota;
+                document.getElementById("NOTA-"+id).innerHTML=nota;
             }
         }
-        function eliminarNotaServidor(idNota,idLibreta,ciAlumno,ciProfesor){
+        function eliminarNotaServidor(idNota,idLibreta,ciAlumno,ciProfesor,tipo,mes){
            xmlhttp=new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState==4 && xmlhttp.status==200) {
@@ -346,7 +346,7 @@
                         }
                     };
                 };
-                xmlhttp.open("POST","Notas?eliminar="+idNota+"&idLibreta="+idLibreta+"&ciAlumno="+ciAlumno+"&ciProfesor="+ciProfesor);
+                xmlhttp.open("POST","Notas?eliminar="+idNota+"&idLibreta="+idLibreta+"&ciAlumno="+ciAlumno+"&ciProfesor="+ciProfesor+"&tipo="+tipo+"&mes="+mes);
                 xmlhttp.send();
                 return false; 
         }
@@ -582,10 +582,10 @@
                         }
                         var trAgregar=document.getElementById(ci+"-"+auxTipo+"-"+mes);
                         valorAux=valor;
-                        if(valor%10==0 && !valor.includes('.')){
+                        if(!valor.includes('.')){
                             valorAux+=".0";
                         }
-                        trAgregar.innerHTML += "<b title='Fecha alta: "+msj[0].fecha+"&#10;Mes correspondiente:"+mes+"&#10;Nota: "+valorAux+"&#10;Observaciones: "+obs+"'><p id='NOTA-"+msj[0].id+"' onMouseleave=\"eliminarNota(false,"+msj[0].id+",'"+valorAux+"','"+idLibreta+"','"+ci+"','"+ciProfesor+"');\" onMouseEnter=\"eliminar(true,"+msj[0].id+",'"+valor+"','"+idLibreta+"','"+ci+"','"+ciProfesor+"');\">"+valorAux+"</p></b>";
+                        trAgregar.innerHTML += "<b title='Fecha alta: "+msj[0].fecha+"&#10;Mes correspondiente:"+mes+"&#10;Nota: "+valorAux+"&#10;Observaciones: "+obs+"'><p id='NOTA-"+msj[0].id+"' onMouseleave=\"eliminarNota(false,"+msj[0].id+",'"+valorAux+"','"+idLibreta+"','"+ci+"','"+ciProfesor+"');\" onMouseEnter=\"eliminarNota(true,"+msj[0].id+",'"+valor+"','"+idLibreta+"','"+ci+"','"+ciProfesor+"');\">"+valorAux+"</p></b>";
                     }
                     else{
                         document.getElementById("mensaje").innerHTML="<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+msj[0].mensaje;
@@ -1196,7 +1196,7 @@ else{
                         <table id='tablaAgregarNota' style="display:none">
                             <tr style="display:none">
                                 <td>
-                                   CI: 
+                                    CI:
                                 </td>
                                 <td>
                                     <input type="number" id='ciAgregarNota' name='ciAgregarNota'/>
