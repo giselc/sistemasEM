@@ -81,7 +81,7 @@ public class Materia extends HttpServlet {
                         activo = request.getParameter("activo").equals("on");
                    }
                     int semestre=0;
-                    if(request.getParameter("semestre")!=null){
+                    if(semestral && request.getParameter("semestre")!=null){
                         semestre=Integer.valueOf(request.getParameter("semestre"));
                     }
                     double coeficiente=Double.valueOf(request.getParameter("coeficiente"));

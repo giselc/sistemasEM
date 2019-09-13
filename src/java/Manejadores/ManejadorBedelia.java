@@ -134,7 +134,7 @@ public class ManejadorBedelia {
             for(Cadete c: g.getAlumnos().values()){
                 libretasIndividuales.put(c.getCi(), new LibretaIndividual(idLibreta, c));
             }
-            Libreta l = new Libreta(idLibreta,materias.get(idMateria),g,mp.getProfesor(ciProfesor),salon,libretasIndividuales,new LinkedList<>(),new HashMap<>());
+            Libreta l = new Libreta(idLibreta,materias.get(idMateria),g,mp.getProfesor(ciProfesor),salon,libretasIndividuales,new LinkedList<>(),false,false,new HashMap<>());
             if(!libretas.containsKey(ciProfesor)){
                 libretas.put(ciProfesor, new HashMap<>());
             }

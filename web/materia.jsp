@@ -28,6 +28,33 @@
                 $('#' + $(this).attr('title')).fadeIn();
             });
         });
+        function mostrarSemestral(secundaria){
+            if(secundaria.checked){
+                document.getElementById("inputSemestral").checked=false;
+                document.getElementById("inputSemestre").min=0;
+                document.getElementById("inputSemestre").value=0;
+                document.getElementById("semestral").style="display:none";
+                document.getElementById("semestre").style="display:none";
+            }
+            else{
+                document.getElementById("semestral").style="";
+            };
+        };
+        function mostrarSemestre(semestral){
+            if(semestral.checked){
+                document.getElementById("semestre").style="";
+                document.getElementById("inputSemestre").value=1;
+                document.getElementById("inputSemestre").min=1;
+            }
+            else{
+                document.getElementById("semestre").style="display:none";
+                document.getElementById("inputSemestre").value=0;
+                document.getElementById("inputSemestre").min=0;
+            };
+        };
+        function verificar(){
+            return true;
+        }
 </script>
 <% 
     if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
@@ -41,14 +68,14 @@
         d= mp.getMaterias().get(id);
     }
 %>
-<p id="mensaje" style="color: #ffffff"><% if(sesion.getAttribute("Mensaje")!=null){out.print("<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+sesion.getAttribute("Mensaje"));}%></p>
+<p id="mensaje" style="color: #ffffff;"><% if(sesion.getAttribute("Mensaje")!=null){out.print("<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+sesion.getAttribute("Mensaje"));}%></p>
 <%
     sesion.setAttribute("Mensaje",null);
 %>
 <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
 <h1 align="center" style="font-family: arial"><u><% if (d!=null){out.print("Editar Materia");}else{out.print("Agregar Materia");}%></u></h1>
 <div id="enviando"  style="position: fixed; top:0; left:0; width:100%; height: 100%;background: url('images/loading-verde.gif') center center no-repeat; background-size: 20%; display: none"></div>
-<form method="post"  name="formulario" id="formulario"  action="Materia?id=<%if (d!=null){out.print(d.getId());}else{out.print("-1");}; if(request.getParameter("idCurso")!=null){out.print("&idCurso="+request.getParameter("idCurso"));} %>" >
+<form method="post"  name="formulario" id="formulario"  action="Materia?id=<%if (d!=null){out.print(d.getId());}else{out.print("-1");}; if(request.getParameter("idCurso")!=null){out.print("&idCurso="+request.getParameter("idCurso"));} %>" onsubmit="return verificar();">
     <table  width='70%' align='center' style="text-align: left">
         <%if(d!=null){%>
         <tr>
@@ -65,17 +92,18 @@
             <td><input type=text name="nombre" id="nombre" required="required"  <% if(d!=null){out.print("value='"+ d.getNombre()+"'");} %> /> </td>
         </tr>
         <tr>
-            <td>Semestral: </td>
-            <td><input type=checkbox name="semestral" <% if(d!=null && d.isSemestral()||d==null){out.print("checked=\"checked\"");} %> /> </td>
-        </tr>
-        <tr>
-            <td>Semestre: </td>
-            <td><input type=number name="semestre" <% if(d!=null && d.isSemestral()){out.print("value='"+ d.getSemestre()+"'");}else{out.print("value='0'");}; %> min="0" max="2" step="1" required="required"/> </td>
-        </tr>
-        <tr>
             <td>Secundaria: </td>
-            <td><input type=checkbox name="secundaria" <% if(d!=null && d.isSecundaria()||d==null){out.print("checked=\"checked\"");}%> /> </td>
+            <td><input type=checkbox name="secundaria" <% if(d!=null && d.isSecundaria()||d==null){out.print("checked=\"checked\"");}%> onchange="mostrarSemestral(this);"/> </td>
         </tr>
+        <tr id="semestral" <%if(d!=null && d.isSecundaria()||d==null){out.print("style=\"display:none\"");};%>>
+            <td>Semestral: </td>
+            <td><input id="inputSemestral" type=checkbox name="semestral" <% if(d!=null && d.isSemestral()||d==null){out.print("checked=\"checked\"");} %> onchange="mostrarSemestre(this);"/> </td>
+        </tr>
+        <tr id="semestre" <% if(d!=null && d.isSecundaria()|| (d!=null && !d.isSemestral()) ||d==null){out.print("style=\"display:none\"");}; %>>
+            <td>Semestre: </td>
+            <td><input id="inputSemestre" type=number name="semestre" <% if(d!=null && d.isSemestral()){out.print("value='"+ d.getSemestre()+"'");}else{out.print("value='0'");}; %> min="0" max="2" step="1"/> </td>
+        </tr>
+        
         <tr>
             <td>Coeficiente: </td>
             <td><input type=number name="coeficiente"  <% if(d!=null){out.print("value='"+ d.getCoeficiente()+"'");} %> required="required"/> </td>

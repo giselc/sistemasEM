@@ -180,7 +180,7 @@ public class ManejadorBedeliaBD {
                 }
                 HashMap<Integer,LibretaIndividual> libretasIndividuales = obtenerLibretasIndividuales(rs.getInt("id"));
                 LinkedList<TemaTratado> temasTratados = obtenerTemasTratados(rs.getInt("id"));
-                p.get(rs.getInt("ciProfesor")).put(rs.getInt("id"), new Libreta(rs.getInt("id"),materias.get(rs.getInt("idMateria")),cursos.get(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombreGrupo")),mp.getProfesor(ciProfesor),rs.getString("salon"),libretasIndividuales,temasTratados,obtenerMesesCerrados(rs.getInt("id"))));
+                p.get(rs.getInt("ciProfesor")).put(rs.getInt("id"), new Libreta(rs.getInt("id"),materias.get(rs.getInt("idMateria")),cursos.get(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombreGrupo")),mp.getProfesor(ciProfesor),rs.getString("salon"),libretasIndividuales,temasTratados,rs.getBoolean("cerrada"),rs.getBoolean("cerradaPrimeraReunion"),obtenerMesesCerrados(rs.getInt("id"))));
             }
             
         } catch (Exception ex) {
