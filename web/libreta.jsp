@@ -1399,6 +1399,11 @@ else{
                             </table>
                     </div>
                     <div id="promedios">
+                        <p align="right">
+                            <button onclick="guardarPromedios();" style="background-color: #ff6600; border-radius: 15px; color: #ffffff; font-size: large;">&nbsp;GUARDAR CAMBIOS&nbsp;</button>
+                            <button onclick="cerrarMesPromedios();" style="background-color: #cd0a0a; border-radius: 15px; color: #ffffff; font-size: large;">&nbsp;CERRAR MES&nbsp;</button>
+                        </p>
+                        <form id='formGuardarPromedios' method="post" action="Promedios?idLibreta=<%= d.getId() %>,&ciProfesor=<%= d.getProfesor().getCi() %>" >
                         <table>
                             <tr>
                                 <td>
@@ -1477,96 +1482,97 @@ else{
                             </tr>
                             
                         </table>
-                                <table id="grillaPromedios">
-                                    <tr>
-                                    <td></td>
-                                    <td>Nombre y Apellido</td>
-                                    <%
-                                    if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1)){
-                                        if(mes==3 && !d.getMesesCerrados().containsKey(3)){
-                                        %>
-                                        <td>MARZO</td>
-                                        <%
-                                        }
-                                        if(mes==4 && !d.getMesesCerrados().containsKey(4)){
-                                        %>
-                                        <td>ABRIL</td>
-                                        <%
-                                        }
-                                        if(mes==5 && !d.getMesesCerrados().containsKey(5)){
-                                        %>
-                                        <td>MAYO</td>
-                                        <%
-                                        }
-                                        if(mes==6 && !d.getMesesCerrados().containsKey(6)){
-                                        %>
-                                        <td>JUNIO</td>
-                                        <%
-                                        }
-                                        if(d.getMateria().isSecundaria() && mes==6 && d.getMesesCerrados().containsKey(6)){
-                                        %>
-                                        <td>MARZO</td>
-                                        <td>ABRIL</td>
-                                        <td>MAYO</td>
-                                        <td>JUNIO</td>
-                                        <%
-                                        }
-                                    }
-                                    if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==2)){
-                                        if(mes==7 && !d.getMesesCerrados().containsKey(7)){
-                                        %>
-                                        <td>JULIO</td>
-                                        <%
-                                        }
-                                        if(mes==8 && !d.getMesesCerrados().containsKey(8)){
-                                        %>
-                                        <td>AGOSTO</td>
-                                        <%
-                                        }
-                                        if(mes==9 && !d.getMesesCerrados().containsKey(9)){
-                                        %>
-                                        <td>SETIEMBRE</td>
-                                        <%
-                                        }
-                                        if(mes==10 && !d.getMesesCerrados().containsKey(10)){
-                                        %>
-                                        <td>OCTUBRE</td>
-                                        <%
-                                        }
-                                    }
-                                    %>
-                                        
-                                    </tr>
-                                     <%
-                                    i=0;
-                                    for(LibretaIndividual l: d.getLibretasIndividuales().values()){
-                                        if ((i%2)==0){
-                                            color=" #ccccff";
-                                        }
-                                        else{
-                                            color=" #ffff99";
-                                        }
-                                        i++;
-                    out.print("<tr style=\"background-color:"+color+"; \" >" );
-                        out.print("<td>");
-                            if(l.getAlumno().getFoto()!=""){
+                        <table id="grillaPromedios">
+                            <tr style='background-color:#ffcc66;padding:0px;'>
+                            <td></td>
+                            <td>Nombre y Apellido</td>
+                            <%
+                            if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1)){
+                                if(mes==3 && !d.getMesesCerrados().containsKey(3)){
                                 %>
-                                <a href="Listar?List[]=<%=l.getAlumno().getCi()%>&fichas=1&tipoPersonal=1" target="_blank">   <p align="center"><label for="uploadImage" ><img src="<%=request.getContextPath()%>/Imagenes?foto=<%=l.getAlumno().getCi() %>" id="uploadPreview" style="width: 50px; height: 65px;" onclick=""/></label></p></a>
+                                <td>MARZO</td>
                                 <%
+                                }
+                                if(mes==4 && !d.getMesesCerrados().containsKey(4)){
+                                %>
+                                <td>ABRIL</td>
+                                <%
+                                }
+                                if(mes==5 && !d.getMesesCerrados().containsKey(5)){
+                                %>
+                                <td>MAYO</td>
+                                <%
+                                }
+                                if(mes==6 && !d.getMesesCerrados().containsKey(6)){
+                                %>
+                                <td>JUNIO</td>
+                                <%
+                                }
+                                if(d.getMateria().isSecundaria() && mes==6 && d.getMesesCerrados().containsKey(6)){
+                                %>
+                                <td>MARZO</td>
+                                <td>ABRIL</td>
+                                <td>MAYO</td>
+                                <td>JUNIO</td>
+                                <%
+                                }
+                            }
+                            if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==2)){
+                                if(mes==7 && !d.getMesesCerrados().containsKey(7)){
+                                %>
+                                <td>JULIO</td>
+                                <%
+                                }
+                                if(mes==8 && !d.getMesesCerrados().containsKey(8)){
+                                %>
+                                <td>AGOSTO</td>
+                                <%
+                                }
+                                if(mes==9 && !d.getMesesCerrados().containsKey(9)){
+                                %>
+                                <td>SETIEMBRE</td>
+                                <%
+                                }
+                                if(mes==10 && !d.getMesesCerrados().containsKey(10)){
+                                %>
+                                <td>OCTUBRE</td>
+                                <%
+                                }
+                            }
+                            %>
+
+                            </tr>
+                             <%
+                            i=0;
+                            for(LibretaIndividual l: d.getLibretasIndividuales().values()){
+                                if ((i%2)==0){
+                                    color=" #ccccff";
                                 }
                                 else{
-                                %>
-
-                                <a href="Listar?List[]=<%=l.getAlumno().getCi()%>&fichas=1&tipoPersonal=1" target="_blank"> <p align="center"><label for="uploadImage" ><img src="images/silueta.jpg" id="uploadPreview" style="width: 50px; height: 65px;" onclick=""/></label></p></a>
-                                <%
+                                    color=" #ffff99";
                                 }
-                            out.print("</td>");
-                            out.print( "<td>"
-                                + l.getAlumno().getPrimerApellido()+ " " + l.getAlumno().getPrimerNombre() 
-                            +"</td>");
-                                   }
-                                    %>
-                                </table>
+                                i++;
+            out.print("<tr style=\"background-color:"+color+"; \" >" );
+                out.print("<td>");
+                    if(l.getAlumno().getFoto()!=""){
+                        %>
+                        <a href="Listar?List[]=<%=l.getAlumno().getCi()%>&fichas=1&tipoPersonal=1" target="_blank">   <p align="center"><label for="uploadImage" ><img src="<%=request.getContextPath()%>/Imagenes?foto=<%=l.getAlumno().getCi() %>" id="uploadPreview" style="width: 50px; height: 65px;" onclick=""/></label></p></a>
+                        <%
+                        }
+                        else{
+                        %>
+
+                        <a href="Listar?List[]=<%=l.getAlumno().getCi()%>&fichas=1&tipoPersonal=1" target="_blank"> <p align="center"><label for="uploadImage" ><img src="images/silueta.jpg" id="uploadPreview" style="width: 50px; height: 65px;" onclick=""/></label></p></a>
+                        <%
+                        }
+                    out.print("</td>");
+                    out.print( "<td>"
+                        + l.getAlumno().getPrimerApellido()+ " " + l.getAlumno().getPrimerNombre() 
+                    +"</td>");
+                           }
+                            %>
+                        </table>
+                        </form>
                     </div>
                     
                     
