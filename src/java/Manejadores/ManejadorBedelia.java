@@ -376,17 +376,25 @@ public class ManejadorBedelia {
         int id = mb.agregarNota(ciAlumno,ciProfesor,idLibreta,tipo,mes,valor,obs,fecha);
         if(id!=-1){
             LibretaIndividual li = libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno);
-            if(tipo==2){
-                if(!li.getNotasOrales().containsKey(mes)){
-                    li.getNotasOrales().put(mes, new LinkedList<>());
-                }
-                li.getNotasOrales().get(mes).add(new Nota(id,fecha,tipo,obs,valor));
-            }
-            else{
-               if(!li.getNotasEscritos().containsKey(mes)){
-                    li.getNotasEscritos().put(mes, new LinkedList<>());
-                }
-                li.getNotasEscritos().get(mes).add(new Nota(id,fecha,tipo,obs,valor)); 
+            switch (tipo){
+                case 2:     
+                    if(!li.getNotasOrales().containsKey(mes)){
+                        li.getNotasOrales().put(mes, new LinkedList<>());
+                    }
+                    li.getNotasOrales().get(mes).add(new Nota(id,fecha,tipo,obs,valor));
+                    break;
+                case 1:
+                    if(!li.getNotasEscritos().containsKey(mes)){
+                        li.getNotasEscritos().put(mes, new LinkedList<>());
+                    }
+                    li.getNotasEscritos().get(mes).add(new Nota(id,fecha,tipo,obs,valor)); 
+                    break;
+                case 3:
+                    li.setPrimerParcial(new Nota(id, fecha, tipo, obs, valor));
+                    break;
+                case 4:
+                    li.setSegundoParcial(new Nota(id, fecha, tipo, obs, valor));
+                    break;
             }
         }
         return id;
@@ -397,24 +405,163 @@ public class ManejadorBedelia {
         LinkedList<Nota> listaRemover=null;
         LibretaIndividual li=libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno);
         if(mb.eliminarNota(idNota)){
-            if(tipo==1){
-                listaRemover=li.getNotasEscritos().get(mes);
+            if(tipo==1||tipo==2){
+                if(tipo==1){
+                    listaRemover=li.getNotasEscritos().get(mes);
+                }
+                else{
+                    listaRemover=li.getNotasOrales().get(mes);
+                }
+                Iterator it=listaRemover.iterator();
+                Nota n;
+                while(it.hasNext()){
+                    n=(Nota)it.next();
+                    if(n.getId()==idNota){
+                        it.remove();
+                        break;
+                    }
+                }
             }
             else{
-                listaRemover=li.getNotasOrales().get(mes);
-            }
-            Iterator it=listaRemover.iterator();
-            Nota n;
-            while(it.hasNext()){
-                n=(Nota)it.next();
-                if(n.getId()==idNota){
-                    it.remove();
-                    break;
+                if(tipo==3){
+                    li.setPrimerParcial(null);
+                }
+                else{
+                    li.setSegundoParcial(null);
                 }
             }
             return true;
         }
         return false;
+    }
+
+    public String cambiarGrillaPromedio(int idLibreta, int ciProfesor, int mes, String contextPath) {
+        Libreta l = this.libretas.get(ciProfesor).get(idLibreta);
+        String fila="<tr style='background-color:#ffcc66;padding:0px'><td></td><td></td>";
+        String html = "<tr style='background-color:#ffcc66;padding:0px'>"
+                + "     <td></td>"
+                + "     <td>NOMBRE Y APELLIDO</td>";
+            if(mes<=10){
+                switch(mes){
+                    case 3: html+="<td colspan='2'>MARZO</td>"; fila+="<td>O</td><td>E</td>"; break;
+                    case 4 : html+="<td colspan='2'>ABRIL</td>"; fila+="<td>O</td><td>E</td>"; break;
+                    case 5: html+="<td colspan='2'>MAYO</td>"; fila+="<td>O</td><td>E</td>"; break;
+                    case 6: html+="<td colspan='2'>JUNIO</td>"; fila+="<td>O</td><td>E</td>"; break;
+                    case 7: html+="<td colspan='2'>JULIO</td>"; fila+="<td>O</td><td>E</td>"; break;
+                    case 8: html+="<td colspan='2'>AGOSTO</td>"; fila+="<td>O</td><td>E</td>"; break;
+                    case 9: html+="<td colspan='2'>SETIEMBRE</td>"; fila+="<td>O</td><td>E</td>"; break;
+                    case 10: html+="<td colspan='2'>OCTUBRE</td>"; fila+="<td>O</td><td>E</td>"; break;
+                }
+            }
+            else{
+                if(mes==13){
+                    html+="<td>PRIMERA REUNI&Oacute;N</b></td>"; fila+="<td>P</td>";
+                    html+= "<td colspan='2'>JULIO</td>"; fila+="<td>O</td><td>E</td>";
+                    html+= "<td colspan='2'>AGOSTO</td>"; fila+="<td>O</td><td>E</td>";
+                    html+="<td colspan='2'>SETIEMBRE</td>"; fila+="<td>O</td><td>E</td>";
+                    html+= "<td colspan='2'>OCTUBRE</td>"; fila+="<td>O</td><td>E</td>";
+                }
+                else{
+                    html+="<td>MARZO</td>"; fila+="<td>P</td>";
+                    html+="<td>ABRIL</td>"; fila+="<td>P</td>";
+                    html+= "<td>MAYO</td>"; fila+="<td>P</td>";
+                    html+= "<td>JUNIO</td>"; fila+="<td>P</td>";
+                    html+= "<td>JULIO</td>"; fila+="<td>P</td>";
+                    html+= "<td>AGOSTO</td>"; fila+="<td>P</td>";
+                    html+="<td>SETIEMBRE</td>"; fila+="<td>P</td>";
+                    html+= "<td>OCTUBRE</td>"; fila+="<td>P</td>";
+                }
+                    
+                
+            }
+            html+= "<td>PROMEDIO</td>";fila+="<td></td>";
+        html+= "</tr>";
+        html+=fila;
+        int i=0;
+        String color="";
+        for(LibretaIndividual li: l.getLibretasIndividuales().values()){
+            if ((i%2)==0){
+                color=" #ccccff";
+            }
+            else{
+                color=" #ffff99";
+            }
+            i++;
+            html+="<tr style='background-color:"+color+"'>"
+                    + "<td>";
+            if(li.getAlumno().getFoto()!=""){
+                html+="<a href=\"Listar?List[]="+li.getAlumno().getCi()+"&fichas=1&tipoPersonal=1\" target=\"_blank\">   <p align=\"center\"><label for=\"uploadImage\" ><img src=\""+contextPath+"/Imagenes?foto="+li.getAlumno().getCi()+"\" id=\"uploadPreview\" style=\"width: 50px; height: 65px;\"/></label></p></a>";
+            }
+            else{
+                html+="<a href=\"Listar?List[]="+li.getAlumno().getCi()+"&fichas=1&tipoPersonal=1\" target=\"_blank\">   <p align=\"center\"><label for=\"uploadImage\" ><img src=\"images/silueta.jpg\" id=\"uploadPreview\" style=\"width: 50px; height: 65px;\"/></label></p></a>";
+            }
+            html+="</td>"
+                + "<td>";
+            html+= li.getAlumno().getPrimerApellido()+ " " + li.getAlumno().getPrimerNombre();
+            html+="</td>";
+            if(mes<=10){
+                html+=notasMesHTML(li, mes);
+            }
+            else{
+                if(mes==13){
+                    html+="<td><b><p>"+li.getPromedioPrimeraReunion()+"</p></b>";
+                    html+=notasMesHTML(li, 7);
+                    html+=notasMesHTML(li, 8);
+                    html+=notasMesHTML(li, 9);
+                    html+=notasMesHTML(li, 10);
+                }
+                else{
+                    html+=promedioMesHTML(li, 3);
+                    html+=promedioMesHTML(li, 4);
+                    html+=promedioMesHTML(li, 5);
+                    html+=promedioMesHTML(li, 6);
+                    html+=promedioMesHTML(li, 7);
+                    html+=promedioMesHTML(li, 8);
+                    html+=promedioMesHTML(li, 9);
+                    html+=promedioMesHTML(li, 10);
+                }
+            }
+            html+= "<td>";
+            String max="max='10'";
+            if (l.getMateria().isSecundaria()){
+                max="max='12'";
+            }
+            if(li.getPromedios().containsKey(mes)){
+
+                html+="<input type='number' min = '1' step='0.01' max="+max+" value='"+li.getPromedios().get(mes)+"' name='PROMEDIO-"+li.getAlumno().getCi()+"'/>";
+            }
+            else{
+                html+="<input type='number' min = '1' step='0.01' max="+max+" value='' name='PROMEDIO-"+li.getAlumno().getCi()+"'/>";
+            }
+            html+="</td>";
+            html+="</tr>";
+        }
+        return html;
+    }
+    private String promedioMesHTML(LibretaIndividual li,int mes){
+        String html="<td>";
+        if(li.getPromedios().containsKey(mes)){
+            html+=li.getPromedios().get(mes);
+        }
+        html+="</td>";
+        return html;
+    }
+    private String notasMesHTML(LibretaIndividual li,int mes){
+        String html="<td>";
+        if(li.getNotasOrales().containsKey(mes) && !li.getNotasOrales().get(mes).isEmpty()){
+            for(Nota n:li.getNotasOrales().get(mes)){
+                html+="<b title='Fecha alta: "+n.getFecha()+"&#10;Mes correspondiente: "+mes+"&#10;Nota: "+n.getNota()+"&#10;Observaciones: "+n.getObservacion()+"'><p>"+n.getNota()+"</p></b>";
+            }
+        }
+        html+="</td>"
+                + "<td>";
+        if(li.getNotasEscritos().containsKey(mes) && !li.getNotasEscritos().get(mes).isEmpty()){
+            for(Nota n:li.getNotasEscritos().get(mes)){
+                html+="<b title='Fecha alta: "+n.getFecha()+"&#10;Mes correspondiente: "+mes+"&#10;Nota: "+n.getNota()+"&#10;Observaciones: "+n.getObservacion()+"'><p>"+n.getNota()+"</p></b>";
+            }
+        }
+        html+="</td>";
+        return html;
     }
     private static class ManejadorBedeliaHolder {
 

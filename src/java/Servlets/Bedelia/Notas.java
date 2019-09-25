@@ -54,7 +54,10 @@ public class Notas extends HttpServlet {
             if(request.getParameter("eliminar")!=null){
                 int idNota=Integer.valueOf(request.getParameter("eliminar"));
                 int tipo=Integer.valueOf(request.getParameter("tipo"));
-                int mes=Integer.valueOf(request.getParameter("mes"));
+                int mes=0;
+                if(tipo==1 || tipo==2){
+                    mes=Integer.valueOf(request.getParameter("mes"));
+                }
                 JsonObjectBuilder json = Json.createObjectBuilder(); 
                 JsonArrayBuilder jab= Json.createArrayBuilder();
                 if(mb.eliminarNota(idNota,idLibreta,ciProfesor,ciAlumno,tipo,mes)){
@@ -73,7 +76,10 @@ public class Notas extends HttpServlet {
             else{ //agregar
                 String obs = request.getParameter("obs");
                 int tipo = Integer.valueOf(request.getParameter("tipo"));
-                int mes = Integer.valueOf(request.getParameter("mes"));
+                int mes=0;
+                if(tipo==1 || tipo==2){
+                    mes=Integer.valueOf(request.getParameter("mes"));
+                }
                 double valor = Double.valueOf(request.getParameter("valor"));
                 int id = mb.agregarNota(ciAlumno,ciProfesor,idLibreta,tipo,mes,valor,obs,fecha);
                 JsonObjectBuilder json = Json.createObjectBuilder(); 

@@ -25,7 +25,9 @@ public class LibretaIndividual {
     private boolean activo;
     private double promedioAnual;
     private double promedioPrimeraReunion;//solo para caso aspirantes
+    private Nota primerParcial;//solo para caso aspirantes
     private double promedioSegundaReunion;//solo para caso aspitantes
+    private Nota segundoParcial;//solo para caso aspirantes
     private double notaFinal; //calculado en base al promedioAnual y nota de Examen
     HashMap<Integer, Falta> faltas;
     HashMap<Integer,HashMap<Integer,LinkedList<FaltaSancion>>> grillaFaltasSanciones; //mes*dia* listaFaltas del dia
@@ -34,7 +36,7 @@ public class LibretaIndividual {
     HashMap<Integer,Promedio> promedios; // key es el mes del promedio
     HashMap<Integer,Sancion> sanciones;
 
-    public LibretaIndividual(int idLibreta, Cadete alumno, HashMap<Integer, Falta> faltas, HashMap<Integer,HashMap<Integer,LinkedList<FaltaSancion>>> grillaFaltasSanciones, HashMap<Integer, LinkedList<Nota>> notasOrales, HashMap<Integer, LinkedList<Nota>> notasEscritos, HashMap<Integer, Promedio> promedios, HashMap<Integer, Sancion> sanciones, double promedioAnual, double notaFinal, boolean activo,double promedioPrimeraReunion,double promedioSegundaReunion) {
+    public LibretaIndividual(int idLibreta, Cadete alumno, HashMap<Integer, Falta> faltas, HashMap<Integer,HashMap<Integer,LinkedList<FaltaSancion>>> grillaFaltasSanciones, HashMap<Integer, LinkedList<Nota>> notasOrales, HashMap<Integer, LinkedList<Nota>> notasEscritos, HashMap<Integer, Promedio> promedios, HashMap<Integer, Sancion> sanciones, double promedioAnual, double notaFinal, boolean activo,double promedioPrimeraReunion,double promedioSegundaReunion, Nota primerParcial,Nota segundoParcial) {
         this.idLibreta = idLibreta;
         this.alumno = alumno;
         this.faltas = faltas;
@@ -48,6 +50,9 @@ public class LibretaIndividual {
         this.grillaFaltasSanciones = grillaFaltasSanciones;
         this.promedioPrimeraReunion=promedioPrimeraReunion;
         this.promedioSegundaReunion=promedioSegundaReunion;
+        this.primerParcial=primerParcial;
+        this.segundoParcial = segundoParcial;
+                
     }
     public LibretaIndividual(int idLibreta, Cadete alumno) {
         this.idLibreta = idLibreta;
@@ -181,6 +186,12 @@ public class LibretaIndividual {
             imprimirGrillaNotasMes(out, 6, l);
             if(l.getMateria().isSecundaria()){
                 try {
+                    if(primerParcial==null){
+                        out.print("<td id="+alumno.getCi()+"-PP></td>");
+                    }
+                    else{
+                    out.print("<td id="+alumno.getCi()+"-PP><b title='PRIMER PARCIAL&#10;Fecha alta: "+primerParcial.getFecha()+"&#10;Nota: "+primerParcial.getNota()+"&#10;Observaciones: "+primerParcial.getObservacion()+"'><p id='NOTA-"+primerParcial.getId()+"' onMouseleave=\"eliminarNota(false,"+primerParcial.getId()+",'"+primerParcial.getNota()+"','"+l.getId()+"','"+alumno.getCi()+"','"+l.getProfesor().getCi()+"',3,0);\" onMouseEnter=\"eliminarNota(true,"+primerParcial.getId()+",'"+primerParcial.getNota()+"','"+l.getId()+"','"+alumno.getCi()+"','"+l.getProfesor().getCi()+"',3,0);\">"+primerParcial.getNota()+"</p></b></td>");
+                    }
                    if(promedioPrimeraReunion==0){
                         out.print("<td></td>");
                     }
@@ -199,6 +210,12 @@ public class LibretaIndividual {
             imprimirGrillaNotasMes(out, 10, l);
             if(l.getMateria().isSecundaria()){
                 try {
+                    if(segundoParcial==null){
+                        out.print("<td id="+alumno.getCi()+"-SP></td>");
+                    }
+                    else{
+                    out.print("<td id="+alumno.getCi()+"-SP><b title='SEGUNDO PARCIAL&#10;Fecha alta: "+segundoParcial.getFecha()+"&#10;Nota: "+segundoParcial.getNota()+"&#10;Observaciones: "+segundoParcial.getObservacion()+"'><p id='NOTA-"+segundoParcial.getId()+"' onMouseleave=\"eliminarNota(false,"+segundoParcial.getId()+",'"+segundoParcial.getNota()+"','"+l.getId()+"','"+alumno.getCi()+"','"+l.getProfesor().getCi()+"',4,0);\" onMouseEnter=\"eliminarNota(true,"+segundoParcial.getId()+",'"+segundoParcial.getNota()+"','"+l.getId()+"','"+alumno.getCi()+"','"+l.getProfesor().getCi()+"',4,0);\">"+segundoParcial.getNota()+"</p></b></td>");
+                    }
                     if(promedioSegundaReunion==0){
                         out.print("<td></td>");
                     }
@@ -248,5 +265,22 @@ public class LibretaIndividual {
         }
         
     }
+
+    public Nota getPrimerParcial() {
+        return primerParcial;
+    }
+
+    public void setPrimerParcial(Nota primerParcial) {
+        this.primerParcial = primerParcial;
+    }
+
+    public Nota getSegundoParcial() {
+        return segundoParcial;
+    }
+
+    public void setSegundoParcial(Nota segundoParcial) {
+        this.segundoParcial = segundoParcial;
+    }
+
     
 }

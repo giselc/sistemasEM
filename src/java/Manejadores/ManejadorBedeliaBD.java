@@ -201,11 +201,15 @@ public class ManejadorBedeliaBD {
             HashMap<Integer, LinkedList<Nota>> notasOrales;
             HashMap<Integer, LinkedList<Nota>> notasEscritos;
             HashMap<Integer, Falta> faltas;
+            Nota notaPrimerParcial = null;
+            Nota notaSegundoParcial = null;
             ManejadorPersonal mp = ManejadorPersonal.getInstance();
             while (rs.next()){
                 sanciones= obtenerSancionesLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
                 promedios = obtenerPromediosLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
                 notasOrales = obtenerNotasLibretaIndividual(2,rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
+                notaPrimerParcial=obtenerNotaParcialLibretaIndividual(3,rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
+                notaSegundoParcial=obtenerNotaParcialLibretaIndividual(4,rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
                 notasEscritos = obtenerNotasLibretaIndividual(1,rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
                 faltas = obtenerFaltasLibretaIndividual(rs.getInt("idLibreta"),rs.getInt("ciAlumno"));
                 HashMap<Integer,HashMap<Integer,LinkedList<FaltaSancion>>> grillaFaltasSancion= new HashMap<>();
@@ -232,7 +236,7 @@ public class ManejadorBedeliaBD {
                     }
                     grillaFaltasSancion.get(mes).get(dia).add(new FaltaSancion(null,sancion));
                 }
-                p.put(rs.getInt("ciAlumno"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciAlumno")), faltas, grillaFaltasSancion, notasOrales,notasEscritos, promedios, sanciones,rs.getDouble("PromedioAnual"),rs.getDouble("NotaFinal"),rs.getBoolean("activo"),rs.getDouble("promedioPrimeraReunion"),rs.getDouble("promedioSegundaReunion")));
+                p.put(rs.getInt("ciAlumno"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciAlumno")), faltas, grillaFaltasSancion, notasOrales,notasEscritos, promedios, sanciones,rs.getDouble("PromedioAnual"),rs.getDouble("NotaFinal"),rs.getBoolean("activo"),rs.getDouble("promedioPrimeraReunion"),rs.getDouble("promedioSegundaReunion"),notaPrimerParcial,notaSegundoParcial));
             }
             
         } catch (SQLException | NumberFormatException ex) {
@@ -302,6 +306,22 @@ public class ManejadorBedeliaBD {
         return p;
     }
 
+    private Nota obtenerNotaParcialLibretaIndividual(int tipo, int idLibreta, int ciAlumno) {
+        try {
+            Statement s= connection.createStatement();
+            String sql;
+            sql="SELECT * FROM sistemasem.notas where idLibreta="+idLibreta + " and ciAlumno="+ciAlumno +" and tipo="+tipo;
+            ResultSet rs=s.executeQuery(sql);
+            if(rs.next()){
+                return new Nota(rs.getInt("id"),rs.getString("fecha"),rs.getInt("tipo"), rs.getString("observaciones"),rs.getDouble("valor"));
+            }
+        } catch (Exception ex) {
+            System.out.print("obtenerNotaParcialLibretaIndividual-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return null;
+    }
+
+   
     private HashMap<Integer, LinkedList<Nota>> obtenerNotasLibretaIndividual(int tipo,int idLibretaIndividual, int ciAlumno) {
         HashMap<Integer, LinkedList<Nota>> p= new HashMap<>();
         try {
@@ -311,7 +331,7 @@ public class ManejadorBedeliaBD {
             ResultSet rs=s.executeQuery(sql);
             int mesNota;
             while (rs.next()){
-                mesNota= Integer.valueOf(rs.getString("fecha").split("-")[1]);
+                mesNota= Integer.valueOf(rs.getString("mes"));
                 if(!p.containsKey(mesNota)){
                     p.put(mesNota,new LinkedList<>());
                 }
@@ -878,5 +898,4 @@ public class ManejadorBedeliaBD {
         return false;
     }
 
-   
 }
