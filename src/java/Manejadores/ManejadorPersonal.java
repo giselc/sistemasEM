@@ -27,7 +27,7 @@ import javax.servlet.http.Part;
  */
 public class ManejadorPersonal {
     
-    private HashMap<Integer,LinkedList<Personal>> personal;//hashmap idTipoPersoanal -- 1-Cadetes,2-PSubalterno,3-Oficiales,4-Profesores
+    private HashMap<Integer,LinkedList<Personal>> personal;//hashmap idTipoPersoanal -- 1-Cadetes,2-PSubalterno,3-Oficiales
     //private HashMap<Integer,Personal>personalTodos;
     private ManejadorPersonal() {
         ManejadorPersonalBD mp = new ManejadorPersonalBD();

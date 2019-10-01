@@ -52,9 +52,10 @@ public class Libreta extends HttpServlet {
                 else{     
                     int id= Integer.valueOf(request.getParameter("id"));
                     if(id!=-1){
+                        Classes.Bedelia.Libreta l = mp.getLibreta(id);
+
                          if(request.getParameter("pasarLista")!=null){
                             //pasarLista
-                            Classes.Bedelia.Libreta l = mp.getLibreta(id);
                             if(u.isProfesor() && u.getCiProfesor()!=l.getProfesor().getCi()){
                                 sesion.setAttribute("Mensaje", "Disculpe, pero no tiene permisos para operar en esta libreta.");
                                 response.sendRedirect("libretas.jsp");
@@ -75,7 +76,6 @@ public class Libreta extends HttpServlet {
                             response.sendRedirect(redirect);
                         }
                         if(request.getParameter("sancionar")!=null){
-                            Classes.Bedelia.Libreta l = mp.getLibreta(id);
                             if(u.isProfesor() && u.getCiProfesor()!=l.getProfesor().getCi()){
                                 sesion.setAttribute("Mensaje", "Disculpe, pero no tiene permisos para operar en esta libreta.");
                                 response.sendRedirect("libretas.jsp");
@@ -96,31 +96,29 @@ public class Libreta extends HttpServlet {
                             response.sendRedirect(redirect);
                         }
                         else{
-                            JsonObjectBuilder json = Json.createObjectBuilder(); 
-                            JsonArrayBuilder jab= Json.createArrayBuilder();
-                            System.out.print("Leguee");
                             if(request.getParameter("agregartematratado")!=null){
-                                 Classes.Bedelia.Libreta l = mp.getLibreta(id);
-                                 int idTema=l.agregarTemaTratado(request.getParameter("fecha"),request.getParameter("texto"));
-                                 if(idTema>0){
-                                    System.out.print("idTema");
-                                    jab.add(Json.createObjectBuilder()
-                                        .add("mensaje","ok")
-                                        .add("id",idTema)
-                                    );
-                                    json.add("msj", jab);
-                                 }
-                                 else{
-                                    jab.add(Json.createObjectBuilder()
-                                        .add("mensaje","ERROR al agregar los datos. Contacte al administrador.")
-                                    );
-                                    json.add("msj", jab);
-                                 }
-                                 out.print(json.build());
+                                JsonObjectBuilder json = Json.createObjectBuilder(); 
+                                JsonArrayBuilder jab= Json.createArrayBuilder();
+                                int idTema=l.agregarTemaTratado(request.getParameter("fecha"),request.getParameter("texto"));
+                                if(idTema>0){
+                                   jab.add(Json.createObjectBuilder()
+                                       .add("mensaje","ok")
+                                       .add("id",idTema)
+                                   );
+                                   json.add("msj", jab);
+                                }
+                                else{
+                                   jab.add(Json.createObjectBuilder()
+                                       .add("mensaje","ERROR al agregar los datos. Contacte al administrador.")
+                                   );
+                                   json.add("msj", jab);
+                                }
+                                out.print(json.build());
                              }
                              else{
                                 if(request.getParameter("elimTemaTratado")!=null){
-                                    Classes.Bedelia.Libreta l = mp.getLibreta(id);
+                                    JsonObjectBuilder json = Json.createObjectBuilder(); 
+                                    JsonArrayBuilder jab= Json.createArrayBuilder();
                                     if(l.elimTemaTratado(Integer.valueOf(request.getParameter("idTema")))){
                                        jab.add(Json.createObjectBuilder()
                                             .add("mensaje","ok")
@@ -135,6 +133,21 @@ public class Libreta extends HttpServlet {
                                     }
                                     out.print(json.build());
                                 } 
+                                else{ //modificarLibreta
+                                    int ciProfesor= Integer.valueOf(request.getParameter("profesor"));
+                                    String salon = request.getParameter("salon");
+                                    ManejadorBedelia mb = ManejadorBedelia.getInstance();
+                                    if(mb.modificarLibreta(l,ciProfesor,salon)){
+                                        mensaje="Datos modificados correctamente.";
+                                        redirect="libreta.jsp?id="+id;
+                                    }
+                                    else{
+                                        mensaje="ERROR al modificar los datos. Contacte con el administrador";
+                                        redirect="libreta.jsp?id="+id;
+                                    };
+                                    sesion.setAttribute("Mensaje", mensaje);
+                                    response.sendRedirect(redirect);
+                                }
                              }
                          }
                     }

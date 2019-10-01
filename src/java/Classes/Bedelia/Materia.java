@@ -20,8 +20,9 @@ public class Materia {
     private boolean secundaria;
     private double coeficiente;
     private boolean activo;
+    private boolean especifica;
 
-    public Materia(int id, String nombre, String codigo, boolean semestral, int semestre, boolean secundaria, double coeficiente, boolean activo) {
+    public Materia(int id, String nombre, String codigo, boolean semestral, int semestre, boolean secundaria, double coeficiente, boolean activo, boolean especifica) {
         this.id = id;
         this.nombre = nombre;
         this.codigo = codigo;
@@ -30,6 +31,15 @@ public class Materia {
         this.secundaria = secundaria;
         this.coeficiente = coeficiente;
         this.activo=activo;
+        this.especifica=especifica;
+    }
+
+    public boolean isEspecifica() {
+        return especifica;
+    }
+
+    public void setEspecifica(boolean especifica) {
+        this.especifica = especifica;
     }
 
     public boolean isActivo() {

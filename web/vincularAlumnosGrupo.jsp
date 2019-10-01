@@ -14,7 +14,7 @@
 <!DOCTYPE html>
 <%@ include file="header.jsp" %>   
 <% 
-    if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4){
+    if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
         ManejadorBedelia mb= ManejadorBedelia.getInstance();
         CursoBedelia c= mb.getCurso(Integer.valueOf(request.getParameter("idCurso")));
 %>

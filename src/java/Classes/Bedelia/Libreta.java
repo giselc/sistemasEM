@@ -22,11 +22,13 @@ public class Libreta {
     private String salon;
     private boolean cerrada;
     private boolean cerradaPrimeraReunion;
+    private String juicioGrupalPrimeraReunion;
+     private String juicioGrupalSegundaReunion;
     private HashMap<Integer,LibretaIndividual> libretasIndividuales;
     private LinkedList<TemaTratado> temasTratados;
     private HashMap<Integer,Boolean> mesesCerrados; 
 
-    public Libreta(int id,Materia materia, Grupo grupo, Profesor profesor, String salon, HashMap<Integer, LibretaIndividual> libretasIndividuales, LinkedList<TemaTratado> temasTratados,boolean cerrada,boolean cerradaPrimeraReunion,HashMap<Integer,Boolean> mesesCerrados) {
+    public Libreta(int id,Materia materia, Grupo grupo, Profesor profesor, String salon, HashMap<Integer, LibretaIndividual> libretasIndividuales, LinkedList<TemaTratado> temasTratados,boolean cerrada,boolean cerradaPrimeraReunion,HashMap<Integer,Boolean> mesesCerrados,String juicioGrupalPrimeraReunion,String juicioGrupalSegundaReunion) {
         this.id=id;
         this.materia = materia;
         this.grupo = grupo;
@@ -37,6 +39,24 @@ public class Libreta {
         this.mesesCerrados=mesesCerrados;
         this.cerrada = cerrada;
         this.cerradaPrimeraReunion = cerradaPrimeraReunion;
+        this.juicioGrupalPrimeraReunion = juicioGrupalPrimeraReunion;
+        this.juicioGrupalSegundaReunion = juicioGrupalSegundaReunion;
+    }
+
+    public String getJuicioGrupalPrimeraReunion() {
+        return juicioGrupalPrimeraReunion;
+    }
+
+    public void setJuicioGrupalPrimeraReunion(String juicioGrupalPrimeraReunion) {
+        this.juicioGrupalPrimeraReunion = juicioGrupalPrimeraReunion;
+    }
+
+    public String getJuicioGrupalSegundaReunion() {
+        return juicioGrupalSegundaReunion;
+    }
+
+    public void setJuicioGrupalSegundaReunion(String juicioGrupalSegundaReunion) {
+        this.juicioGrupalSegundaReunion = juicioGrupalSegundaReunion;
     }
 
     public boolean isCerrada() {

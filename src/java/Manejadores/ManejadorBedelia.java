@@ -13,6 +13,7 @@ import Classes.Bedelia.LibretaIndividual;
 import Classes.Bedelia.Materia;
 import Classes.Bedelia.Nota;
 import Classes.Bedelia.Notificacion;
+import Classes.Bedelia.Profesor;
 import Classes.Bedelia.RecordFalta;
 import Classes.Bedelia.RecordSancion;
 import Classes.Bedelia.Sancion;
@@ -34,6 +35,7 @@ public class ManejadorBedelia {
     private HashMap<Integer, HashMap<Integer,Libreta>> libretas; //HashMap<ciProfesor,Hashmap<idLibreta,Libreta>>
     private LinkedList<Notificacion> notificacionesNuevas;
     private LinkedList<Notificacion> notificacionesLeidas;
+    
     
     private ManejadorBedelia() {
         ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
@@ -134,7 +136,7 @@ public class ManejadorBedelia {
             for(Cadete c: g.getAlumnos().values()){
                 libretasIndividuales.put(c.getCi(), new LibretaIndividual(idLibreta, c));
             }
-            Libreta l = new Libreta(idLibreta,materias.get(idMateria),g,mp.getProfesor(ciProfesor),salon,libretasIndividuales,new LinkedList<>(),false,false,new HashMap<>());
+            Libreta l = new Libreta(idLibreta,materias.get(idMateria),g,mp.getProfesor(ciProfesor),salon,libretasIndividuales,new LinkedList<>(),false,false,new HashMap<>(),"","");
             if(!libretas.containsKey(ciProfesor)){
                 libretas.put(ciProfesor, new HashMap<>());
             }
@@ -294,7 +296,6 @@ public class ManejadorBedelia {
     public Falta obtenerFalta(int idFalta, int idLibreta, int ciAlumno, int ciProfesor) {
         return libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno).getFaltas().get(idFalta);
     }
-
     public synchronized void agregarSancion(Libreta l, Cadete c, String fecha, String codigoSancion, Integer minutosTardes, String causa) {
         ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
         int codigo=2;
@@ -338,7 +339,6 @@ public class ManejadorBedelia {
             };
         }
     }
-
     public synchronized boolean eliminarSancion(int id, int idLibreta, int ciAlumno, int ciProfesor) {
         ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
         if(mb.eliminarSancion(id)){
@@ -399,7 +399,6 @@ public class ManejadorBedelia {
         }
         return id;
     }
-
     public boolean eliminarNota(int idNota, int idLibreta, int ciProfesor, int ciAlumno, int tipo,int mes) {
         ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
         LinkedList<Nota> listaRemover=null;
@@ -434,14 +433,12 @@ public class ManejadorBedelia {
         }
         return false;
     }
-
-    public String cambiarGrillaPromedio(int idLibreta, int ciProfesor, int mes, String contextPath) {
+    public synchronized String cambiarGrillaPromedio(int idLibreta, int ciProfesor, int mes, String contextPath) {
         Libreta l = this.libretas.get(ciProfesor).get(idLibreta);
         String fila="<tr style='background-color:#ffcc66;padding:0px'><td></td><td></td>";
         String html = "<tr style='background-color:#ffcc66;padding:0px'>"
                 + "     <td></td>"
                 + "     <td>NOMBRE Y APELLIDO</td>";
-            if(mes<=10){
                 switch(mes){
                     case 3: html+="<td colspan='2'>MARZO</td>"; fila+="<td>O</td><td>E</td>"; break;
                     case 4 : html+="<td colspan='2'>ABRIL</td>"; fila+="<td>O</td><td>E</td>"; break;
@@ -451,30 +448,47 @@ public class ManejadorBedelia {
                     case 8: html+="<td colspan='2'>AGOSTO</td>"; fila+="<td>O</td><td>E</td>"; break;
                     case 9: html+="<td colspan='2'>SETIEMBRE</td>"; fila+="<td>O</td><td>E</td>"; break;
                     case 10: html+="<td colspan='2'>OCTUBRE</td>"; fila+="<td>O</td><td>E</td>"; break;
-                }
-            }
-            else{
-                if(mes==13){
-                    html+="<td>PRIMERA REUNI&Oacute;N</b></td>"; fila+="<td>P</td>";
-                    html+= "<td colspan='2'>JULIO</td>"; fila+="<td>O</td><td>E</td>";
-                    html+= "<td colspan='2'>AGOSTO</td>"; fila+="<td>O</td><td>E</td>";
-                    html+="<td colspan='2'>SETIEMBRE</td>"; fila+="<td>O</td><td>E</td>";
-                    html+= "<td colspan='2'>OCTUBRE</td>"; fila+="<td>O</td><td>E</td>";
-                }
-                else{
-                    html+="<td>MARZO</td>"; fila+="<td>P</td>";
-                    html+="<td>ABRIL</td>"; fila+="<td>P</td>";
-                    html+= "<td>MAYO</td>"; fila+="<td>P</td>";
-                    html+= "<td>JUNIO</td>"; fila+="<td>P</td>";
-                    html+= "<td>JULIO</td>"; fila+="<td>P</td>";
-                    html+= "<td>AGOSTO</td>"; fila+="<td>P</td>";
-                    html+="<td>SETIEMBRE</td>"; fila+="<td>P</td>";
-                    html+= "<td>OCTUBRE</td>"; fila+="<td>P</td>";
+                    case 11:
+                        html+="<td colspan='2'>MARZO</td>"; fila+="<td>O</td><td>E</td>"; 
+                        html+="<td colspan='2'>ABRIL</td>"; fila+="<td>O</td><td>E</td>";
+                        html+="<td colspan='2'>MAYO</td>"; fila+="<td>O</td><td>E</td>"; 
+                        html+="<td colspan='2'>JUNIO</td>"; fila+="<td>O</td><td>E</td>"; 
+                        html+="<td>PRIMER PARCIAL</b></td>"; fila+="<td>E</td>";
+                        break;
+                    case 12:
+                        html+="<td>MARZO</td>"; fila+="<td>P</td>";
+                        html+="<td>ABRIL</td>"; fila+="<td>P</td>";
+                        html+= "<td>MAYO</td>"; fila+="<td>P</td>";
+                        html+= "<td>JUNIO</td>"; fila+="<td>P</td>";
+                        break;
+                    case 13: 
+                        html+="<td>PRIMERA REUNI&Oacute;N</b></td>"; fila+="<td>P</td>";
+                        html+= "<td colspan='2'>JULIO</td>"; fila+="<td>O</td><td>E</td>";
+                        html+= "<td colspan='2'>AGOSTO</td>"; fila+="<td>O</td><td>E</td>";
+                        html+="<td colspan='2'>SETIEMBRE</td>"; fila+="<td>O</td><td>E</td>";
+                        html+= "<td colspan='2'>OCTUBRE</td>"; fila+="<td>O</td><td>E</td>";
+                        html+="<td>SEGUNDO PARCIAL</b></td>"; fila+="<td>E</td>";
+                        break;
+                    case 14:
+                        if(!l.getMateria().isSemestral()){
+                            html+="<td>MARZO</td>"; fila+="<td>P</td>";
+                            html+="<td>ABRIL</td>"; fila+="<td>P</td>";
+                            html+= "<td>MAYO</td>"; fila+="<td>P</td>";
+                            html+= "<td>JUNIO</td>"; fila+="<td>P</td>";
+                        }
+                        html+= "<td>JULIO</td>"; fila+="<td>P</td>";
+                        html+= "<td>AGOSTO</td>"; fila+="<td>P</td>";
+                        html+="<td>SETIEMBRE</td>"; fila+="<td>P</td>";
+                        html+= "<td>OCTUBRE</td>"; fila+="<td>P</td>";
+                        break;
                 }
                     
                 
-            }
-            html+= "<td>PROMEDIO</td>";fila+="<td></td>";
+            
+                    html+= "<td>PROMEDIO</td>";fila+="<td></td>";
+                    if(mes==11||mes==13){
+                         html+="<td>JUICIO</b></td>"; fila+="<td></td>";
+                    }
         html+= "</tr>";
         html+=fila;
         int i=0;
@@ -499,44 +513,105 @@ public class ManejadorBedelia {
                 + "<td>";
             html+= li.getAlumno().getPrimerApellido()+ " " + li.getAlumno().getPrimerNombre();
             html+="</td>";
-            if(mes<=10){
-                html+=notasMesHTML(li, mes);
-            }
-            else{
-                if(mes==13){
-                    html+="<td><b><p>"+li.getPromedioPrimeraReunion()+"</p></b>";
-                    html+=notasMesHTML(li, 7);
-                    html+=notasMesHTML(li, 8);
-                    html+=notasMesHTML(li, 9);
-                    html+=notasMesHTML(li, 10);
-                }
-                else{
+            switch(mes){
+                case 11:
+                    html+=notasMesHTML(li, 3);
+                    html+=notasMesHTML(li, 4);
+                    html+=notasMesHTML(li, 5);
+                    html+=notasMesHTML(li, 6);
+                    if(li.getPrimerParcial()!=null){
+                        html+="<td><b title='PRIMER PARCIAL&#10;Fecha alta: "+li.getPrimerParcial().getFecha()+"&#10;Nota: "+li.getPrimerParcial().getNota()+"&#10;Observaciones: "+li.getPrimerParcial().getObservacion()+"'><p>"+li.getPrimerParcial().getNota()+"</p></b></td>";
+                    }
+                    else{
+                        html+="<td></td>";
+                    }
+                    break;
+                case 12:
                     html+=promedioMesHTML(li, 3);
                     html+=promedioMesHTML(li, 4);
                     html+=promedioMesHTML(li, 5);
                     html+=promedioMesHTML(li, 6);
+                    break;
+                case 13: 
+                    html+="<td><b><p>"+li.getPromedioPrimeraReunion()+"</p></b></td>";
+                    html+=notasMesHTML(li, 7);
+                    html+=notasMesHTML(li, 8);
+                    html+=notasMesHTML(li, 9);
+                    html+=notasMesHTML(li, 10);
+                    if(li.getSegundoParcial()!=null){
+                        html+="<td><b title='SEGUNDO PARCIAL&#10;Fecha alta: "+li.getSegundoParcial().getFecha()+"&#10;Nota: "+li.getSegundoParcial().getNota()+"&#10;Observaciones: "+li.getSegundoParcial().getObservacion()+"'><p>"+li.getSegundoParcial().getNota()+"</p></b></td>";
+                    }
+                    else{
+                        html+="<td></td>";
+                    }
+                    break;
+                case 14: 
+                    if(!l.getMateria().isSemestral()){
+                        html+=promedioMesHTML(li, 3);
+                        html+=promedioMesHTML(li, 4);
+                        html+=promedioMesHTML(li, 5);
+                        html+=promedioMesHTML(li, 6);
+                    }
                     html+=promedioMesHTML(li, 7);
                     html+=promedioMesHTML(li, 8);
                     html+=promedioMesHTML(li, 9);
                     html+=promedioMesHTML(li, 10);
+                    break;
+                default : html+=notasMesHTML(li, mes); break;
+            }
+            html+= "<td style='color:#1e2eef'><b>";
+            if(l.getMateria().isSecundaria()){
+                if(li.getPromedios().containsKey(mes)){
+                        html+="<input type='number' min = '1' step='0.01' max=12 value='"+li.getPromedios().get(mes)+"' name='PROMEDIO-"+li.getAlumno().getCi()+"'/>";
+
+                }
+                else{
+                    html+="<input type='number' min = '1' step='0.01' max=12 value='' name='PROMEDIO-"+li.getAlumno().getCi()+"'/>";
                 }
             }
-            html+= "<td>";
-            String max="max='10'";
-            if (l.getMateria().isSecundaria()){
-                max="max='12'";
-            }
-            if(li.getPromedios().containsKey(mes)){
-
-                html+="<input type='number' min = '1' step='0.01' max="+max+" value='"+li.getPromedios().get(mes)+"' name='PROMEDIO-"+li.getAlumno().getCi()+"'/>";
-            }
             else{
-                html+="<input type='number' min = '1' step='0.01' max="+max+" value='' name='PROMEDIO-"+li.getAlumno().getCi()+"'/>";
+                html+=this.calculoPromedio(li,mes);
             }
-            html+="</td>";
+            html+="</b></td>";
+            if(mes==11){
+                
+                html+="<td><input type='text' value='"+li.getJuicioPrimeraReunion()+"' name='JUICIO-"+li.getAlumno().getCi()+"'/></td>";
+            }
+            if(mes==13){
+                html+="<td><input type='text' value='"+li.getJuicioSegundaReunion()+"' name='JUICIO-"+li.getAlumno().getCi()+"'/></td>";
+            }
+            
             html+="</tr>";
         }
+        if(mes==11){
+            html+="<tr><td>JUICIO GRUPAL:</td><td><input type='text' value='"+l.getJuicioGrupalPrimeraReunion()+"' name='JUICIOGRUPALPR'/></td></tr>";
+        }
+        if(mes==13){
+            html+="<tr><td>JUICIO GRUPAL:</td><td><input type='text' value='"+l.getJuicioGrupalSegundaReunion()+"' name='JUICIOGRUPALSR'/></td></tr>";
+        }
         return html;
+    }
+    private double calculoPromedio(LibretaIndividual li, int mes){
+        double suma= 0;
+        int sumacoef = 0;
+        if(li.getNotasOrales().containsKey(mes)){
+            for(Nota n:li.getNotasOrales().get(mes)){
+                suma+=n.getNota()*2;
+                sumacoef+=2;
+            }
+        }
+        if(li.getNotasEscritos().containsKey(mes)){
+            for(Nota n:li.getNotasEscritos().get(mes)){
+                suma+=n.getNota()*3;
+                sumacoef+=3;
+            }
+        }
+        if(sumacoef>0){
+            return (double)Math.round((suma/sumacoef) * 100d) / 100d;
+        }
+        else{
+            return 1.00;
+        }
     }
     private String promedioMesHTML(LibretaIndividual li,int mes){
         String html="<td>";
@@ -563,6 +638,23 @@ public class ManejadorBedelia {
         html+="</td>";
         return html;
     }
+    public boolean modificarLibreta(Libreta l, int ciProfesor, String salon) {
+        ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
+        if(mb.modificarLibreta(l.getId(),ciProfesor,salon)){
+            if(l.getProfesor().getCi()!=ciProfesor){
+                if(!libretas.containsKey(ciProfesor)){
+                    libretas.put(ciProfesor, new HashMap<>());
+                }
+                libretas.get(ciProfesor).put(l.getId(), l);
+                libretas.get(l.getProfesor().getCi()).remove(l.getId());
+                ManejadorProfesores mp = ManejadorProfesores.getInstance();
+                l.setProfesor(mp.getProfesor(ciProfesor));
+            }
+            l.setSalon(salon);
+            return true;
+        }
+        return false;
+    }
     private static class ManejadorBedeliaHolder {
 
         private static final ManejadorBedelia INSTANCE = new ManejadorBedelia();
@@ -570,7 +662,7 @@ public class ManejadorBedelia {
     public HashMap<Integer, CursoBedelia> getCursos() {
         return cursos;
     }
-     public CursoBedelia getCurso(int id) {
+    public CursoBedelia getCurso(int id) {
         return cursos.get(id);
     }
     public HashMap<Integer, Materia> getMaterias() {
@@ -616,6 +708,7 @@ public class ManejadorBedelia {
             mat.setSemestre(m.getSemestre());
             mat.setSemestral(m.isSemestral());
             mat.setActivo(m.isActivo());
+            mat.setEspecifica(m.isEspecifica());
             return true;
         }
         return false;//error BD

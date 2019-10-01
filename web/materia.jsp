@@ -33,11 +33,15 @@
                 document.getElementById("inputSemestral").checked=false;
                 document.getElementById("inputSemestre").min=0;
                 document.getElementById("inputSemestre").value=0;
+                document.getElementById("especifica").style="";
+                document.getElementById("especifica").checked=false;
                 document.getElementById("semestral").style="display:none";
                 document.getElementById("semestre").style="display:none";
             }
             else{
                 document.getElementById("semestral").style="";
+                document.getElementById("especifica").checked=false;
+                document.getElementById("especifica").style="display:none";
             };
         };
         function mostrarSemestre(semestral){
@@ -94,6 +98,10 @@
         <tr>
             <td>Secundaria: </td>
             <td><input type=checkbox name="secundaria" <% if(d!=null && d.isSecundaria()||d==null){out.print("checked=\"checked\"");}%> onchange="mostrarSemestral(this);"/> </td>
+        </tr>
+        <tr <% if(d!=null && !d.isSecundaria()||(d==null)){out.print("style=\"display:none\"");}; %> id="especifica">
+            <td>Espec&iacute;fica: </td>
+            <td><input type=checkbox  name="especifica" <% if(d!=null && d.isSecundaria() && d.isEspecifica()){out.print("checked=\"checked\"");}%>/> </td>
         </tr>
         <tr id="semestral" <%if(d!=null && d.isSecundaria()||d==null){out.print("style=\"display:none\"");};%>>
             <td>Semestral: </td>

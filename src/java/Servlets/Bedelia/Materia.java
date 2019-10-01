@@ -84,8 +84,12 @@ public class Materia extends HttpServlet {
                     if(semestral && request.getParameter("semestre")!=null){
                         semestre=Integer.valueOf(request.getParameter("semestre"));
                     }
+                    boolean especifica=false;
+                    if (request.getParameter("especifica")!=null && secundaria){
+                        especifica = request.getParameter("especifica").equals("on");
+                   }
                     double coeficiente=Double.valueOf(request.getParameter("coeficiente"));
-                    Classes.Bedelia.Materia m = new Classes.Bedelia.Materia(id, nombre, codigo,semestral, semestre, secundaria, coeficiente,activo);
+                    Classes.Bedelia.Materia m = new Classes.Bedelia.Materia(id, nombre, codigo,semestral, semestre, secundaria, coeficiente,activo,especifica);
                     if(id!=-1){
                         if(mp.modificarMateria(m)){
                             mensaje="Materia modificada sastisfactoriamente.";

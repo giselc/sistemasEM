@@ -90,6 +90,19 @@
     </ul>
     <div id="content">
         <div id="Datos-Personales">
+            <%
+                ManejadorCodigoBD mcbd = new ManejadorCodigoBD();
+                if(mcbd.existeUsuarioProfesor(c.getCi())){
+                    %>
+                    <a style="float: right" href="cambiarContrasena.jsp">CAMBIAR CONTRASE&Ntilde;A</a>
+                    <%
+                }
+                else{
+                    %>
+                    <a style="float: right" href="usuario.jsp?ciProfesor=<%= c.getCi() %>">CREAR USUARIO SISTEMA</a>
+                    <%
+                };
+            %>
             <form <% if (request.getParameter("id")==null){ out.print("action='Profesores'");} else{out.print("action='Profesores?id="+request.getParameter("id")+"'");} %> method="post" id="formularioAlta" onsubmit="return Validar(this);">
                 <table>
                     <tr>

@@ -35,11 +35,9 @@ import java.util.LinkedList;
  */
 public class ManejadorBedeliaBD {
     private Connection connection;
-
     public ManejadorBedeliaBD() {
         connection = ConexionDB.GetConnection();
     }
-    
     public HashMap<Integer, CursoBedelia> obtenerCursos(HashMap <Integer, Materia> materias) {
         HashMap<Integer, CursoBedelia> p= new HashMap<>();
         try {
@@ -80,7 +78,6 @@ public class ManejadorBedeliaBD {
         }
         return p;
     }
-
     public HashMap<Integer, Materia> obtenerMaterias() {
         HashMap<Integer, Materia> p= new HashMap<>();
         try {
@@ -90,7 +87,7 @@ public class ManejadorBedeliaBD {
             sql="SELECT * FROM sistemasem.materias order by nombre asc;";
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                p.put(rs.getInt("id"),new Materia(rs.getInt("id"),rs.getString("nombre"),rs.getString("codigo"),rs.getBoolean("semestral"),rs.getInt("semestre"),rs.getBoolean("secundaria"),rs.getDouble("coeficiente"),rs.getBoolean("activo")));
+                p.put(rs.getInt("id"),new Materia(rs.getInt("id"),rs.getString("nombre"),rs.getString("codigo"),rs.getBoolean("semestral"),rs.getInt("semestre"),rs.getBoolean("secundaria"),rs.getDouble("coeficiente"),rs.getBoolean("activo"),rs.getBoolean("especifica")));
             }
             
         } catch (Exception ex) {
@@ -125,7 +122,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     boolean modificarCurso(CursoBedelia cb) {
         String sql = "UPDATE sistemasem.cursosBedelia set nombre=?,anioCurricular=?, jefatura=?, activo=? where id=?";
         int i=1;
@@ -144,7 +140,6 @@ public class ManejadorBedeliaBD {
             return false;
         }
     }
-
     boolean eliminarCurso(CursoBedelia c) {
         Statement s,s1;
         try {
@@ -162,7 +157,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     HashMap<Integer, HashMap<Integer,Libreta>> obtenerLibretas(HashMap<Integer, Materia> materias, HashMap<Integer, CursoBedelia> cursos) {
         HashMap<Integer, HashMap<Integer,Libreta>> p= new HashMap<>();
         try {
@@ -180,7 +174,7 @@ public class ManejadorBedeliaBD {
                 }
                 HashMap<Integer,LibretaIndividual> libretasIndividuales = obtenerLibretasIndividuales(rs.getInt("id"));
                 LinkedList<TemaTratado> temasTratados = obtenerTemasTratados(rs.getInt("id"));
-                p.get(rs.getInt("ciProfesor")).put(rs.getInt("id"), new Libreta(rs.getInt("id"),materias.get(rs.getInt("idMateria")),cursos.get(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombreGrupo")),mp.getProfesor(ciProfesor),rs.getString("salon"),libretasIndividuales,temasTratados,rs.getBoolean("cerrada"),rs.getBoolean("cerradaPrimeraReunion"),obtenerMesesCerrados(rs.getInt("id"))));
+                p.get(rs.getInt("ciProfesor")).put(rs.getInt("id"), new Libreta(rs.getInt("id"),materias.get(rs.getInt("idMateria")),cursos.get(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombreGrupo")),mp.getProfesor(ciProfesor),rs.getString("salon"),libretasIndividuales,temasTratados,rs.getBoolean("cerrada"),rs.getBoolean("cerradaPrimeraReunion"),obtenerMesesCerrados(rs.getInt("id")),rs.getString("juicioGrupalPrimeraReunion"),rs.getString("juicioGrupalSegundaReunion")));
             }
             
         } catch (Exception ex) {
@@ -188,7 +182,6 @@ public class ManejadorBedeliaBD {
         }
         return p;
     }
-    
     private HashMap<Integer, LibretaIndividual> obtenerLibretasIndividuales(int idLibreta) {
         HashMap<Integer, LibretaIndividual> p= new HashMap<>();
         try {
@@ -236,7 +229,7 @@ public class ManejadorBedeliaBD {
                     }
                     grillaFaltasSancion.get(mes).get(dia).add(new FaltaSancion(null,sancion));
                 }
-                p.put(rs.getInt("ciAlumno"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciAlumno")), faltas, grillaFaltasSancion, notasOrales,notasEscritos, promedios, sanciones,rs.getDouble("PromedioAnual"),rs.getDouble("NotaFinal"),rs.getBoolean("activo"),rs.getDouble("promedioPrimeraReunion"),rs.getDouble("promedioSegundaReunion"),notaPrimerParcial,notaSegundoParcial));
+                p.put(rs.getInt("ciAlumno"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciAlumno")), faltas, grillaFaltasSancion, notasOrales,notasEscritos, promedios, sanciones,rs.getDouble("PromedioAnual"),rs.getDouble("NotaFinal"),rs.getBoolean("activo"),rs.getDouble("promedioPrimeraReunion"),rs.getDouble("promedioSegundaReunion"),notaPrimerParcial,notaSegundoParcial,rs.getString("juicioPrimeraReunion"),rs.getString("juicioSegundaReunion")));
             }
             
         } catch (SQLException | NumberFormatException ex) {
@@ -305,7 +298,6 @@ public class ManejadorBedeliaBD {
         }
         return p;
     }
-
     private Nota obtenerNotaParcialLibretaIndividual(int tipo, int idLibreta, int ciAlumno) {
         try {
             Statement s= connection.createStatement();
@@ -320,8 +312,6 @@ public class ManejadorBedeliaBD {
         }
         return null;
     }
-
-   
     private HashMap<Integer, LinkedList<Nota>> obtenerNotasLibretaIndividual(int tipo,int idLibretaIndividual, int ciAlumno) {
         HashMap<Integer, LinkedList<Nota>> p= new HashMap<>();
         try {
@@ -342,7 +332,6 @@ public class ManejadorBedeliaBD {
         }
         return p;
     }
-
     private HashMap<Integer, Falta> obtenerFaltasLibretaIndividual(int idLibretaIndividual, int ciAlumno) {
         HashMap<Integer, Falta> p= new HashMap<>();
         try {
@@ -358,10 +347,9 @@ public class ManejadorBedeliaBD {
         }
         return p;
     }
-
     public boolean agregarMateria(Materia m) {
         try {
-            String sql= "insert into sistemasEM.materias (nombre,codigo,semestral, semestre,secundaria,coeficiente,activo) values(?,?,?,?,?,?,?)";
+            String sql= "insert into sistemasEM.materias (nombre,codigo,semestral, semestre,secundaria,coeficiente,activo,especifica) values(?,?,?,?,?,?,?,?)";
             PreparedStatement s= connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             int i=1;
             int clave;
@@ -372,6 +360,7 @@ public class ManejadorBedeliaBD {
             s.setBoolean(i++, m.isSecundaria());
             s.setDouble(i++, m.getCoeficiente());
             s.setBoolean(i++, m.isActivo());
+            s.setBoolean(i++, m.isEspecifica());
             int row=s.executeUpdate();
             if(row>0){
                 ResultSet rs=s.getGeneratedKeys(); //obtengo las ultimas llaves generadas
@@ -388,7 +377,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     boolean asociarMateriaCurso(int idMateria, int idCurso) {
         try {
             String sql= "insert into sistemasEM.`cursos-materias` (idCursoBedelia,idMateria) values(?,?)";
@@ -405,7 +393,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     boolean desasociarMateriaCurso(int idMateria, int idCurso) {
         Statement s;
         try {
@@ -418,7 +405,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     //precondicion: idMateria no tiene libretas asociadas
     boolean eliminarMateriaDeCursos(int idMateria) {
         Statement s;
@@ -445,9 +431,8 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     boolean modificarMateria(Materia m) {
-        String sql = "UPDATE sistemasem.materias set nombre=?, semestral=?, secundaria=?, activo=?,semestre=? , coeficiente=? where id=?";
+        String sql = "UPDATE sistemasem.materias set nombre=?, semestral=?, secundaria=?, activo=?,semestre=? , coeficiente=?, especifica=? where id=?";
         int i=1;
         try {
             PreparedStatement statement= connection.prepareStatement(sql); // sql a insertar en postulantes
@@ -457,7 +442,9 @@ public class ManejadorBedeliaBD {
             statement.setBoolean(i++,m.isActivo());
             statement.setInt(i++,m.getSemestre());
             statement.setDouble(i++,m.getCoeficiente());
+            statement.setBoolean(i++,m.isEspecifica());
             statement.setInt(i++,m.getId());
+            
             int row=statement.executeUpdate();
             return(row>0);
             
@@ -466,7 +453,6 @@ public class ManejadorBedeliaBD {
             return false;
         }
     }
-
     public boolean asociarMateriasCurso(String[] idMaterias, String idCurso) {
         try {
             String sql= "insert into sistemasEM.`cursos-materias` (idCursoBedelia,idMateria) values(?,?)";
@@ -490,7 +476,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     public boolean agregarGrupoCurso(int idCurso, int anio, String nombre) {
         try {
             String sql= "insert into sistemasEM.`cursos-grupos` (idCursoBedelia,anio,nombre) values(?,?,?)";
@@ -506,7 +491,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     boolean asociarAlumnosGrupo(LinkedList<Cadete> alumnos, LinkedList<Libreta> listaL,Grupo g) {
         try {
             String sql= "insert into sistemasEM.`grupos-alumnos` (idCursoBedelia,anio,nombre,ciAlumno) values(?,?,?,?)";
@@ -550,7 +534,6 @@ public class ManejadorBedeliaBD {
         }
         return true;
     }
-
     boolean desasociarAlumnoGrupo(Integer ciAlumno, Grupo grupo, LinkedList<Libreta> listaL) {
         try{
             String sql= "DELETE FROM sistemasEM.`grupos-alumnos` where ciAlumno="+ciAlumno;
@@ -573,7 +556,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     boolean desasociarAlumnosGrupo(String[] listaAlumnos, Grupo grupo, LinkedList<Libreta> listL) {
         try{
             String sql= "DELETE FROM sistemasEM.`grupos-alumnos` where ciAlumno=?";
@@ -600,7 +582,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     public int crearLibreta(int idCurso, int anioGrupo, String nombreGrupo, int idMateria, int ciProfesor,String salon, HashMap<Integer, Cadete> alumnos) {
         try {
             String sql="insert into sistemasEM.libretas(ciProfesor,idCurso,anio,nombreGrupo,idMateria,salon) values (?,?,?,?,?,?)";
@@ -640,7 +621,6 @@ public class ManejadorBedeliaBD {
         }
         return -1;
     }
-
     public int agregarFalta(Libreta l, Cadete c, String fecha, String codigoFalta, int cantHoras, String observaciones) {
         try {
             String sql= "insert into sistemasEM.faltas (idLibreta,ciAlumno,fecha, codigoMotivo,cantHoras,observaciones) values(?,?,?,?,?,?)";
@@ -664,7 +644,6 @@ public class ManejadorBedeliaBD {
         }
         return -1;
     }
-
     public int agregarNotificacion(Libreta libreta, Cadete cadete, RecordFalta falta, RecordSancion sancion,String fecha,boolean eliminado) {
         try {
             String sql= "insert into sistemasEM.notificaciones (idLibreta,ciCadete,idFalta,cantHoras,codigoMotivo,observaciones, idSancion,tipo,minutosTardes,causa ,estado,fecha,eliminado) values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -711,7 +690,6 @@ public class ManejadorBedeliaBD {
         }
         return -1;
     }
-
     LinkedList<Notificacion> obtenerNotificaciones(HashMap<Integer, HashMap<Integer,Libreta>> libretas, int estado) {
         LinkedList<Notificacion> p= new LinkedList<>();
         try {
@@ -747,7 +725,6 @@ public class ManejadorBedeliaBD {
         }
         return p;
     }
-
     boolean marcarLeidoNotificacion(int id, boolean aLeido) {
         String sql = "UPDATE sistemasem.notificaciones set estado=? where id=?";
         int i=1;
@@ -767,7 +744,6 @@ public class ManejadorBedeliaBD {
             return false;
         }
     }
-
     boolean eliminarNotificacion(int id) {
         Statement s;
         try {
@@ -779,7 +755,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     boolean eliminarFalta(int idFalta) {
         Statement s;
         try {
@@ -791,7 +766,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     public int agregarTemaTratado(String fecha, String texto,int idLibreta) {
         try {
             String sql= "insert into sistemasEM.temasTratados (fecha,texto,idLibreta) values(?,?,?)";
@@ -812,7 +786,6 @@ public class ManejadorBedeliaBD {
         }
         return -1;
     }
-
     public boolean elimTemaTratado(Integer idTema) {
         Statement s;
         try {
@@ -824,7 +797,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     public int agregarSancion(Libreta l, Cadete c, String fecha, int codigoSancion, Integer minutosTardes, String causa) {
         try {
             String sql= "insert into sistemasEM.sanciones (idLibreta,ciAlumno,fecha, tipo,minutosTarde,causa) values(?,?,?,?,?,?)";
@@ -848,7 +820,6 @@ public class ManejadorBedeliaBD {
         }
         return -1;
     }
-
     public boolean eliminarSancion(int id) {
         Statement s;
         try {
@@ -860,7 +831,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     public int agregarNota(int ciAlumno, int ciProfesor, int idLibreta, int tipo, int mes, double valor, String obs, String fecha) {
         try {
             String sql= "insert into sistemasEM.notas (idLibreta,ciAlumno,fecha, tipo,mes,valor,observaciones) values(?,?,?,?,?,?,?)";
@@ -885,7 +855,6 @@ public class ManejadorBedeliaBD {
         }
         return -1;
     }
-
     public boolean eliminarNota(int idNota) {
         Statement s;
         try {
@@ -898,4 +867,20 @@ public class ManejadorBedeliaBD {
         return false;
     }
 
+    public boolean modificarLibreta(int id, int ciProfesor, String salon) {
+        String sql = "UPDATE sistemasem.libretas set ciProfesor=?,salon=? where id=?";
+        int i=1;
+        try {
+            PreparedStatement statement= connection.prepareStatement(sql); // sql a insertar en postulantes
+            statement.setInt(i++,ciProfesor);
+            statement.setString(i++,salon);
+            statement.setInt(i++,id);
+            int row=statement.executeUpdate();
+            return(row>0);
+            
+        } catch (SQLException ex) {
+            System.out.print("modificarLibreta-ManejadorBedeliaBD: "+ex);
+            return false;
+        }
+    }
 }

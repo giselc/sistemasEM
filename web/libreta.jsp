@@ -340,6 +340,8 @@
                         if(msj[0].mensaje=="ok"){
                             var pNota=document.getElementById("NOTA-"+idNota);
                             pNota.removeChild(pNota.firstChild);
+                            document.getElementById("grillaPromedios").innerHTML ="";
+                            document.getElementById("mesPromedio").value=-1;
                         }
                         else{
                             document.getElementById("mensaje").innerHTML="<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+msj[0].mensaje;
@@ -393,7 +395,7 @@
                         }
                     };
                 };
-                xmlhttp.open("POST","HistorialFalta?eliminar="+idSancion+"&idLibreta="+idLibreta+"&sancion=1&ciAlumno="+ciAlumno+"&ciProfesor="+ciProfesor);
+                xmlhttp.open("POST","HistorialFaltas?eliminar="+idSancion+"&idLibreta="+idLibreta+"&sancion=1&ciAlumno="+ciAlumno+"&ciProfesor="+ciProfesor);
                 xmlhttp.send();
                 return false; 
         }
@@ -608,7 +610,9 @@
                         if(!valor.includes('.')){
                             valorAux+=".0";
                         }
-                        trAgregar.innerHTML += "<b "+txtMes+"title='Fecha alta: "+msj[0].fecha+"&#10;Nota: "+valorAux+"&#10;Observaciones: "+obs+"'><p id='NOTA-"+msj[0].id+"' onMouseleave=\"eliminarNota(false,"+msj[0].id+",'"+valorAux+"','"+idLibreta+"','"+ci+"','"+ciProfesor+"');\" onMouseEnter=\"eliminarNota(true,"+msj[0].id+",'"+valor+"','"+idLibreta+"','"+ci+"','"+ciProfesor+"');\">"+valorAux+"</p></b>";
+                        trAgregar.innerHTML += "<b "+txtMes+"title='Fecha alta: "+msj[0].fecha+"&#10;Nota: "+valorAux+"&#10;Observaciones: "+obs+"'><p id='NOTA-"+msj[0].id+"' onMouseleave=\"eliminarNota(false,"+msj[0].id+",'"+valorAux+"','"+idLibreta+"','"+ci+"','"+ciProfesor+"',"+tipo+","+mes+");\" onMouseEnter=\"eliminarNota(true,"+msj[0].id+",'"+valor+"','"+idLibreta+"','"+ci+"','"+ciProfesor+"',"+tipo+","+mes+");\">"+valorAux+"</p></b>";
+                        document.getElementById("grillaPromedios").innerHTML ="";
+                        document.getElementById("mesPromedio").value=-1;
                     }
                     else{
                         document.getElementById("mensaje").innerHTML="<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+msj[0].mensaje;
@@ -635,6 +639,9 @@
             };
             xmlhttp.open("POST","Promedios?cambiarGrilla=1&idLibreta="+idLibreta+"&ciProfesor="+ciProfesor+"&mes="+mesPromedio);
             xmlhttp.send();
+        }
+        function cambiarProfesor(select){
+            document.getElementById("editarProfesor").href="profesor.jsp?id="+select.value;
         }
 </script>
 <style>
@@ -674,14 +681,16 @@ if(d==null){
                  <tr>
                     <td>Profesor: </td>
                     <td>
-                        <select name="profesor" form="formulario" required="required" id="profesor">
+                        <select name="profesor" form="formulario" required="required" id="profesor" onchange="cambiarProfesor(this);">
                             <option value="-1" disabled="disabled" selected="selected" ></option>
                             <%
                             Manejadores.ManejadorProfesores mprof = ManejadorProfesores.getInstance();
+                            int ci=-1;
                             for(Profesor prof: mprof.getProfesores() ){
                                 String s="";
                                 if(d!=null && d.getProfesor()!=null && d.getProfesor().getCi()==prof.getCi()){
                                     s="selected";
+                                    ci=d.getProfesor().getCi();
                                 }
                                 String grado="";
                                 if(prof.getGrado()!=null){
@@ -691,6 +700,7 @@ if(d==null){
                             }
                             %>
                          </select>
+                         <a target="_blank" id="editarProfesor" href="profesor.jsp?id=<%= ci %>">VER</a>
                     </td>
                 </tr>
                 <tr>
@@ -729,18 +739,21 @@ else{
                  <tr>
                     <td>Profesor: </td>
                     <td>
-                        <select name="profesor" form="formulario1" required="required">
+                        <select name="profesor" form="formulario1" required="required" onchange="cambiarProfesor(this);">
                             <%
+                            int ci=-1;
                             Manejadores.ManejadorProfesores mprof = ManejadorProfesores.getInstance();
                             for(Profesor prof: mprof.getProfesores() ){
                                 String s="";
                                 if(d!=null && d.getProfesor()!=null && d.getProfesor().getCi()==prof.getCi()){
                                     s="selected";
+                                    ci= d.getProfesor().getCi();
                                 }
                                 out.print("<option " + s +" value='"+String.valueOf(prof.getCi()) +"'>"+ prof.obtenerNombreCompleto() +"</option>");
                             }
                             %>
                          </select>
+                         <a target="_blank" id="editarProfesor" href="profesor.jsp?id=<%= ci %>">VER</a>
                     </td>
                 </tr>
                 <tr>
@@ -1373,6 +1386,11 @@ else{
                                                <%
                                         }
                                     }
+                                    if(!d.getMateria().isSecundaria()){
+                                        %>
+                                             <td style="width: 3%">PA</td>  
+                                        <%
+                                    }
                                     %>
                                 </tr>
                                 <tr style='background-color:#ffcc66;padding:0px;'>
@@ -1406,7 +1424,13 @@ else{
                                             <td>P</td>
                                                <%
                                         }
-                                    }%>
+                                    }
+                                    if(!d.getMateria().isSecundaria()){
+                                        %>
+                                        <td>P</td>     
+                                        <%
+                                    }
+                                    %>
                                 </tr>
                                     
                                     <%
@@ -1444,7 +1468,13 @@ else{
                     </div>
                     <div id="promedios">
                         <p align="right">
+                            <%
+                            if(d.getMateria().isSecundaria()){
+                            %>
                             <button onclick="guardarPromedios();" style="background-color: #ff6600; border-radius: 15px; color: #ffffff; font-size: large;">&nbsp;GUARDAR CAMBIOS&nbsp;</button>
+                            <%
+                            }
+                            %>
                             <button onclick="cerrarMesPromedios();" style="background-color: #cd0a0a; border-radius: 15px; color: #ffffff; font-size: large;">&nbsp;CERRAR MES&nbsp;</button>
                         </p>
                         <form id='formGuardarPromedios' method="post" action="Promedios?idLibreta=<%= d.getId() %>,&ciProfesor=<%= d.getProfesor().getCi() %>" >
@@ -1528,7 +1558,7 @@ else{
                             </tr>
                             
                         </table>
-                                <table id="grillaPromedios" style="text-align: center;">
+                        <table id="grillaPromedios" style="text-align: center;">
                             
                             
                         </table>

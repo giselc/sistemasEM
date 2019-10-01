@@ -169,10 +169,11 @@
                             +"<td style='width: 5%' align='center'><input type='checkbox' onclick='seleccionar_todo()' id='selTodo'></td>"
                             +"<td style='width: 5%' align='center'> ID </td>"
                             +"<td style='width: 15%' align='center'>C&oacute;digo</td>"
-                            +"<td style='width: 20%' align='center'>Nombre</td>"
+                            +"<td style='width: 15%' align='center'>Nombre</td>"
                             +"<td style='width: 10%' align='center'>Semestral</td>"
                             +"<td style='width: 10%' align='center'>Semestre</td>"
                             +"<td style='width: 10%' align='center'>Secundaria</td>"
+                             +"<td style='width: 10%' align='center'>Espec&iacute;fica</td>"
                             +"<td style='width: 5%' align='center'>Coeficiente</td>"
                            +"<td style='width: 5%' align='center'>Ver</td>"
                         +"<td style='width: 5%' align='center'>Elim</td>");
@@ -193,11 +194,27 @@
                        +"<td style='width: 5%"+display+"' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(m.getId())+"' form='formCadeteListar' /></td>"
                        +"<td style='width: 5%' align='center'>"+m.getId()+"</td>"
                        +"<td style='width: 15%' align='center'>"+ m.getCodigo() +"</td>"
-                       +"<td style='width: 20%' align='center'>"+ m.getNombre() +"</td>"
-                       +"<td style='width: 5%' align='center'>"+ m.isSemestral() +"</td>"
-                       +"<td style='width: 10%' align='center'>"+ m.getSemestre() +"</td>"
-                       +"<td style='width: 10%' align='center'>"+ m.isSecundaria() +"</td>"
-                       +"<td style='width: 10%' align='center'>"+m.getCoeficiente()+"</td>"
+                       +"<td style='width: 15%' align='center'>"+ m.getNombre() +"</td>");
+            if(m.isSemestral()){
+                      out.print("<td style='width: 5%' align='center'>SI</td>");
+            }
+            else{
+                out.print("<td style='width: 5%' align='center'>NO</td>");
+            }
+                       out.print("<td style='width: 10%' align='center'>"+ m.getSemestre() +"</td>");
+            if(m.isSecundaria()){
+                      out.print("<td style='width: 5%' align='center'>SI</td>");
+            }
+            else{
+                out.print("<td style='width: 5%' align='center'>NO</td>");
+            }
+            if(m.isEspecifica()){
+                      out.print("<td style='width: 5%' align='center'>SI</td>");
+            }
+            else{
+                out.print("<td style='width: 5%' align='center'>NO</td>");
+            }
+                       out.print("<td style='width: 10%' align='center'>"+m.getCoeficiente()+"</td>"
                        +"<td style='width: 5%' align='center'><a href='materia.jsp?id="+m.getId()+"'><img src='images/ver.png' width='60%' /></a></td>");
               out.print("<td style='width: 5%' align='center'><a href='Materia?elim="+m.getId()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
                     +"</tr>"); 

@@ -25,8 +25,10 @@ public class LibretaIndividual {
     private boolean activo;
     private double promedioAnual;
     private double promedioPrimeraReunion;//solo para caso aspirantes
+    private String juicioPrimeraReunion;
     private Nota primerParcial;//solo para caso aspirantes
     private double promedioSegundaReunion;//solo para caso aspitantes
+    private String juicioSegundaReunion;
     private Nota segundoParcial;//solo para caso aspirantes
     private double notaFinal; //calculado en base al promedioAnual y nota de Examen
     HashMap<Integer, Falta> faltas;
@@ -36,7 +38,7 @@ public class LibretaIndividual {
     HashMap<Integer,Promedio> promedios; // key es el mes del promedio
     HashMap<Integer,Sancion> sanciones;
 
-    public LibretaIndividual(int idLibreta, Cadete alumno, HashMap<Integer, Falta> faltas, HashMap<Integer,HashMap<Integer,LinkedList<FaltaSancion>>> grillaFaltasSanciones, HashMap<Integer, LinkedList<Nota>> notasOrales, HashMap<Integer, LinkedList<Nota>> notasEscritos, HashMap<Integer, Promedio> promedios, HashMap<Integer, Sancion> sanciones, double promedioAnual, double notaFinal, boolean activo,double promedioPrimeraReunion,double promedioSegundaReunion, Nota primerParcial,Nota segundoParcial) {
+    public LibretaIndividual(int idLibreta, Cadete alumno, HashMap<Integer, Falta> faltas, HashMap<Integer,HashMap<Integer,LinkedList<FaltaSancion>>> grillaFaltasSanciones, HashMap<Integer, LinkedList<Nota>> notasOrales, HashMap<Integer, LinkedList<Nota>> notasEscritos, HashMap<Integer, Promedio> promedios, HashMap<Integer, Sancion> sanciones, double promedioAnual, double notaFinal, boolean activo,double promedioPrimeraReunion,double promedioSegundaReunion, Nota primerParcial,Nota segundoParcial,String juicioPrimeraReunion, String juicioSegundaReunion) {
         this.idLibreta = idLibreta;
         this.alumno = alumno;
         this.faltas = faltas;
@@ -52,6 +54,8 @@ public class LibretaIndividual {
         this.promedioSegundaReunion=promedioSegundaReunion;
         this.primerParcial=primerParcial;
         this.segundoParcial = segundoParcial;
+        this.juicioPrimeraReunion = juicioPrimeraReunion;
+        this.juicioSegundaReunion = juicioSegundaReunion;
                 
     }
     public LibretaIndividual(int idLibreta, Cadete alumno) {
@@ -70,6 +74,22 @@ public class LibretaIndividual {
 
     public boolean isActivo() {
         return activo;
+    }
+
+    public String getJuicioPrimeraReunion() {
+        return juicioPrimeraReunion;
+    }
+
+    public void setJuicioPrimeraReunion(String juicioPrimeraReunion) {
+        this.juicioPrimeraReunion = juicioPrimeraReunion;
+    }
+
+    public String getJuicioSegundaReunion() {
+        return juicioSegundaReunion;
+    }
+
+    public void setJuicioSegundaReunion(String juicioSegundaReunion) {
+        this.juicioSegundaReunion = juicioSegundaReunion;
     }
 
     public void setActivo(boolean activo) {
@@ -196,7 +216,7 @@ public class LibretaIndividual {
                         out.print("<td></td>");
                     }
                     else{
-                    out.print("<td>"+this.promedioPrimeraReunion+"</td>");
+                    out.print("<td><b title='JUICIO:"+juicioPrimeraReunion+"'>"+this.promedioPrimeraReunion+"</b></td>");
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(LibretaIndividual.class.getName()).log(Level.SEVERE, null, ex);
@@ -220,11 +240,23 @@ public class LibretaIndividual {
                         out.print("<td></td>");
                     }
                     else{
-                    out.print("<td>"+this.promedioSegundaReunion+"</td>");
+                        out.print("<td><b title='JUICIO:"+juicioSegundaReunion+"'>"+this.promedioSegundaReunion+"</b></td>");
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(LibretaIndividual.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
+        }
+        if(!l.getMateria().isSecundaria()){
+            try {
+                if(this.promedioAnual!=0){
+                    out.print("<td><b>"+this.promedioAnual+"</b></td>");
+                }
+                else{
+                    out.print("<td></td>");
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(LibretaIndividual.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -242,7 +274,7 @@ public class LibretaIndividual {
                     }
                 }
             out.print("</td>"
-                    + "<td id="+alumno.getCi()+"-E-"+mes+"  style=\"color: #3333ff\">");
+                    + "<td id="+alumno.getCi()+"-E-"+mes+">");
                 if(notasEscritos.containsKey(mes) && !notasEscritos.get(mes).isEmpty()){
                     for(Nota n:notasEscritos.get(mes)){
                         if(!l.getMesesCerrados().containsKey(mes)){

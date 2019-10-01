@@ -362,6 +362,20 @@ public class ManejadorCodigoBD {
         }
         return false;
     }
+    public boolean existeUsuarioProfesor(int ciProfesor){
+        try {
+            Statement s= connection.createStatement();
+            String sql="Select * from sistemasEM.usuarios where profesor=1 && ciProfesor="+ciProfesor+"";
+            ResultSet rs= s.executeQuery(sql);
+            if (rs.next()){
+                return true;
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
     
     //Retorna un Usuario con los parametros indicados persistiendolo en la base de datos si 'creador' es Admin.
     //retorna null si creador no es admin o se produjo algun error en la escritura de la base de datos.
