@@ -11,7 +11,7 @@
 <!DOCTYPE html>
 <%@ include file="header.jsp" %>   
 <% 
-    if(u!=null && (u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4))){
+    if(u!=null && (u.isAdmin() || u.isNotas())){
 %>
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/jquery-ui.js"></script>
@@ -218,7 +218,7 @@
                 +"</tr>" );
                 int i=0;
                 String color;
-                if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
+                if(u.isAdmin()|| u.isNotas()){
                     for (  Notificacion p : mp.getNotificacionesNuevas()){
                             if ((i%2)==0){
                                 color=" #ccccff";
@@ -300,7 +300,7 @@
                 out.print(  "<td style='width: 5%' align='center'>Elim</td>"   
                 +"</tr>" );
                 i=0;
-                if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
+                if(u.isAdmin()|| u.isNotas()){
                     for (  Notificacion p : mp.getNotificacionesLeidas()){
                             if ((i%2)==0){
                                 color=" #ccccff";

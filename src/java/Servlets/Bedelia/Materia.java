@@ -37,7 +37,7 @@ public class Materia extends HttpServlet {
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
         //System.out.print("aca");
-        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
+        if(u.isAdmin()|| u.isNotas()){
             String mensaje="";
             String redirect="";
            /* Enumeration<String> params = request.getParameterNames(); 

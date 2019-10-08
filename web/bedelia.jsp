@@ -38,7 +38,7 @@
     }
 </script>
 <%@ include file="header.jsp" %>
-<% if(u!=null && (u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4))){
+<% if(u!=null && (u.isAdmin()|| u.isNotas())){
     ManejadorBedelia mb= ManejadorBedelia.getInstance();
 %>
 <style type="text/css">

@@ -9,7 +9,7 @@ package Classes;
  *
  * @author Gisel
  */
-public class TipoPersonal extends Tipo{
+public class TipoPersonal extends Tipo{ //1-cadetes, 2-ps, 3-oficiales
 
     public TipoPersonal(int id, String descripcion) {
         super(id, descripcion);

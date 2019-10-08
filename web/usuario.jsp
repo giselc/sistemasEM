@@ -61,11 +61,11 @@
     }
     .title{
         font-size: large;
-        background-color: #555555;
+        background-color: #656565;
     }
 </style>
 <% 
-    if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4) ){
+    if(u.isAdmin() || u.isNotas() ){
         Manejadores.ManejadorCodigoBD mcbd= new Manejadores.ManejadorCodigoBD();
         Profesor p=null;
         Usuario u1= null;
@@ -162,7 +162,6 @@
                                 <option value="1" <% if(u1!=null&& u1.getPermisosPersonal()!=null && u1.getPermisosPersonal().getId()==1){out.print("selected");}%>>CADETES</option>
                                 <option value="2" <% if(u1!=null&& u1.getPermisosPersonal()!=null && u1.getPermisosPersonal().getId()==2){out.print("selected");}%>>PS</option>
                                 <option value="3" <% if(u1!=null&& u1.getPermisosPersonal()!=null && u1.getPermisosPersonal().getId()==3){out.print("selected");}%>>OFICIALES</option>
-                                <option value="4" <% if(u1!=null&& u1.getPermisosPersonal()!=null && u1.getPermisosPersonal().getId()==4){out.print("selected");}%>>PROFESORES</option>
                             </select>
                         </td>
                     </tr>

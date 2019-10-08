@@ -9,7 +9,7 @@
 <%@page import="Manejadores.ManejadorBedelia"%>
 <%@ include file="header.jsp" %>   
 <% 
-    if(u!=null && (u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4) || u.isProfesor())){
+    if(u!=null && (u.isAdmin() || u.isNotas() || u.isProfesor())){
 %>
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/jquery-ui.js"></script>
@@ -139,7 +139,7 @@
                 <tr>
                     
                     <%
-                        if(u.isAdmin()||(u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
+                        if(u.isAdmin()|| u.isNotas()){
                     %>
                     <td style="width: 55%"><h3 style="float: left;">LIBRETAS</h3></td>
                     <td style="width: 15%"><a href="libreta.jsp" title="Agregar"><img width="40%" src='images/agregarLista.png' /></a> </td>
@@ -179,7 +179,7 @@
                 out.print("</tr>" );
                 int i=0;
                 String color;
-                if(u.isAdmin()||(u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
+                if(u.isAdmin()||u.isNotas()){
                     for (  HashMap<Integer,Libreta> p : mp.getLibretas().values()){
                         for (  Libreta l : p.values()){
                             if ((i%2)==0){

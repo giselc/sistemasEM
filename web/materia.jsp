@@ -61,7 +61,7 @@
         }
 </script>
 <% 
-    if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
+    if(u.isAdmin() || u.isNotas()){
 %>
 <% 
     Materia d=null;    

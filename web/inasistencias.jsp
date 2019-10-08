@@ -8,7 +8,7 @@
 <!DOCTYPE html>
 <%@ include file="header.jsp" %>
 <% 
-    if(u!=null &&(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4))){
+    if(u!=null &&(u.isAdmin() || u.isNotas())){
 %>
  <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>   
 <h1 align="center"><u>Imprimir faltas</u></h1>

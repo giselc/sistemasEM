@@ -51,8 +51,14 @@ public class login extends HttpServlet {
                 }
                 else{
                     if(u.getPermisosPersonal()!=null){
-                        sesion.setAttribute("inicio", "personal.jsp?id="+u.getPermisosPersonal().getId());
-                        response.sendRedirect("personal.jsp");
+                        if(u.getPermisosPersonal().getId()==4){
+                            sesion.setAttribute("inicio", "bedelia.jsp");
+                            response.sendRedirect("bedelia.jsp");
+                        }
+                        else{
+                            sesion.setAttribute("inicio", "personal.jsp?id="+u.getPermisosPersonal().getId());
+                            response.sendRedirect("personal.jsp");
+                        }
                     }
                     else{
                         if(u.getPermisosDescuento()!=null){
@@ -60,27 +66,21 @@ public class login extends HttpServlet {
                             response.sendRedirect("descuentos.jsp");
                         }
                         else{
-                            if(u.isNotas()){
-                                sesion.setAttribute("inicio", "notas.jsp");
-                                response.sendRedirect("notas.jsp");
+                            if(u.isHabilitacion()){
+                                sesion.setAttribute("inicio", "habilitacion.jsp");
+                                response.sendRedirect("habilitacion.jsp");
                             }
                             else{
-                                if(u.isHabilitacion()){
-                                    sesion.setAttribute("inicio", "habilitacion.jsp");
-                                    response.sendRedirect("habilitacion.jsp");
+
+                                if(u.isProfesor()){
+                                    sesion.setAttribute("inicio", "libretas.jsp");
+                                    response.sendRedirect("libretas.jsp");
                                 }
                                 else{
-                                    
-                                    if(u.isProfesor()){
-                                        sesion.setAttribute("inicio", "libretas.jsp");
-                                        response.sendRedirect("libretas.jsp");
-                                    }
-                                    else{
-                                        sesion.setAttribute("usuarioID", null);
-                                        sesion.setAttribute("usuario", null);
-                                        sesion.setAttribute("login", "sinpermisos");
-                                        response.sendRedirect("");
-                                    }
+                                    sesion.setAttribute("usuarioID", null);
+                                    sesion.setAttribute("usuario", null);
+                                    sesion.setAttribute("login", "sinpermisos");
+                                    response.sendRedirect("");
                                 }
                             }
                         }

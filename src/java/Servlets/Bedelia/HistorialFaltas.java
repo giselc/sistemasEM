@@ -39,7 +39,7 @@ public class HistorialFaltas extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         Usuario u = (Usuario)sesion.getAttribute("usuario");
         //.out.print("aca");
-        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4) ||u.isProfesor()){
+        if(u.isAdmin()|| u.isNotas() ||u.isProfesor()){
             response.setContentType("text/html;charset=UTF-8");
             String mensaje="";
             try (PrintWriter out = response.getWriter()) {

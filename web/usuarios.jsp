@@ -5,12 +5,12 @@
 --%>
 
 <%@page import="java.util.ArrayList"%>
-<%@page import="Classes.ManejadorCodigoBD"%>
+<%@page import="Manejadores.ManejadorCodigoBD"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%@ include file="header.jsp" %>
 <% 
-    if(u.isSuperAdmin()){
+    if(u.isAdmin()){
 
 %>
 
@@ -50,19 +50,19 @@
         </tr>
         <tr>
             <td style="width: 55%"><h3 style="float: left; font-family: sans-serif">Usuarios del sistema:</h3></td>
-            <td style="width: 15%"><a href="postulantes.jsp"><img src="images/atras.png" width="100%"/></a></td>
+            <td style="width: 15%"><p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p></td>
             <td style="width: 15%"><a href="usuario.jsp" title="Agregar Usuario"><img width="30%" src='images/agregarLista.png' /></a> </td>
-            <td style="width: 15%"><input type="image" width="30%" title="Imprimir usuarios"src="images/imprimir.png" alt="Submit Form" /></td>
         </tr>
     </table>
 </form>    
     <table style="width: 100%;" align='center'>
             <%
-                ArrayList<Usuario> au = mc.getUsuarios(u);
+                ManejadorCodigoBD mcbd = new ManejadorCodigoBD();
+                ArrayList<Usuario> au = mcbd.getUsuarios(u);
                 out.print("<tr style='background-color:#ffcc66'>");
                             out.print("<td style='width: 20%' align='center'><h3 style='margin:2%;'>Usuario</h3></td>");
                             out.print("<td style='width: 20%' align='center'><h3 style='margin:2%;'>Nombre para mostrar</h3></td>");
-                            out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Super Admin</h3></td>");
+                            out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Admin</h3></td>");
                             out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Admin</h3></td>");
                             out.print("<td style='width: 5%' align='center'><h3 style='margin:2%;'>Email</h3></td>");
                             out.print("<td style='width: 10%' align='center'></td>");

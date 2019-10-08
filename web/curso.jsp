@@ -29,7 +29,7 @@
         
 </script>
 <% 
-    if(u!=null &&(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4))){
+    if(u!=null &&(u.isAdmin() || u.isNotas())){
 %>
 <% 
     CursoBedelia d=null;    

@@ -47,7 +47,7 @@ public class ObtenerCamposParaLibreta extends HttpServlet {
         HttpSession sesion = request.getSession();
         response.setContentType("UTF-8");
         Usuario u = (Usuario)sesion.getAttribute("usuario");
-        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4) || u.isProfesor()){
+        if(u.isAdmin()|| u.isNotas() || u.isProfesor()){
             try (PrintWriter out = response.getWriter()) {
                 /* TODO output your page here. You may use following sample code. */
                 Manejadores.ManejadorBedelia mb= ManejadorBedelia.getInstance();

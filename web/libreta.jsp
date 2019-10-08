@@ -674,7 +674,7 @@
 <div id="enviando"  style="position: fixed; top:0; left:0; width:100%; height: 100%;background: url('images/loading-verde.gif') center center no-repeat; background-size: 20%; display: none"></div>
 <%
 if(d==null){
-    if(u.isAdmin() || (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
+    if(u.isAdmin() || u.isNotas()){
 %>
         <form method="post"  name="formulario" id="formulario"  onsubmit="return verificarFormulario();" action="Libreta?id=<%if (d!=null){out.print(d.getId());}else{out.print("-1");}%>">
             <table  width='50%' align='center' style="text-align: left;" id="tablaformulario">
@@ -731,8 +731,8 @@ if(d==null){
     }
 }
 else{
-    if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4) ||(u.isProfesor()&& u.getCiProfesor()==d.getProfesor().getCi())){
-        if(u.isAdmin()||(u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()==4)){
+    if(u.isAdmin()|| u.isNotas() ||(u.isProfesor()&& u.getCiProfesor()==d.getProfesor().getCi())){
+        if(u.isAdmin()||u.isNotas()){
             %>
             <form method="post"  name="formulario1" id="formulario1" action="Libreta?id=<%=d.getId()%>" style="padding-bottom: 5%">
             <table  width='30%' align='center' style="text-align: left;" >
