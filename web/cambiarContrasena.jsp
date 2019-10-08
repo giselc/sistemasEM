@@ -17,7 +17,7 @@
                 <form method="post" action="Usuario?pass=<%= request.getParameter("id") %>" onsubmit="return validarContrasena(this);">
                     <table>
                         <% 
-                            if(!u.isSuperAdmin()){
+                            if(!u.isAdmin()){
 
                         %>
                         <tr>

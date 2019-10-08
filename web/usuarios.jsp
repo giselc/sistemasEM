@@ -60,11 +60,14 @@
                 ManejadorCodigoBD mcbd = new ManejadorCodigoBD();
                 ArrayList<Usuario> au = mcbd.getUsuarios(u);
                 out.print("<tr style='background-color:#ffcc66'>");
-                            out.print("<td style='width: 20%' align='center'><h3 style='margin:2%;'>Usuario</h3></td>");
-                            out.print("<td style='width: 20%' align='center'><h3 style='margin:2%;'>Nombre para mostrar</h3></td>");
+                            out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Usuario</h3></td>");
+                            out.print("<td style='width: 15%' align='center'><h3 style='margin:2%;'>Nombre para mostrar</h3></td>");
                             out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Admin</h3></td>");
-                            out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Admin</h3></td>");
-                            out.print("<td style='width: 5%' align='center'><h3 style='margin:2%;'>Email</h3></td>");
+                            out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Personal</h3></td>");
+                            out.print("<td style='width: 10%' align='center'><h3 style='margin:2%;'>Descuento</h3></td>");
+                            out.print("<td style='width: 5%' align='center'><h3 style='margin:2%;'>Notas</h3></td>");
+                            out.print("<td style='width: 5%' align='center'><h3 style='margin:2%;'>Habilitaci&oacute;n</h3></td>");
+                            out.print("<td style='width: 5%' align='center'><h3 style='margin:2%;'>Profesor</h3></td>");
                             out.print("<td style='width: 10%' align='center'></td>");
                             out.print("<td style='width: 10%' align='center'></td>");
                             out.print("<td style='width: 10%' align='center'></td>");
@@ -81,11 +84,53 @@
                         i++;
 
                     out.print("<tr style='background-color:"+color+"'>");
-                    out.print("<td style='width: 20%' align='center'>"+u1.getNombre()+"</td>");
-                    out.print("<td style='width: 20%' align='center'>"+u1.getNombreMostrar()+"</td>");
-                    out.print("<td style='width: 10%' align='center'>"+u1.isSuperAdmin()+"</td>");
-                    out.print("<td style='width: 10%' align='center'>"+u1.isAdmin()+"</td>");
-                    out.print("<td style='width: 5%' align='center'>"+u1.getEmail()+"</td>"); 
+                    out.print("<td style='width: 10%' align='center'>"+u1.getNombre()+"</td>");
+                    out.print("<td style='width: 15%' align='center'>"+u1.getNombreMostrar()+"</td>");
+                    out.print("<td style='width: 10%' align='center'>");
+                    if(u1.isAdmin()){
+                       out.print("SI");
+                    }
+                            
+                    out.print("</td>");
+                    out.print("<td style='width: 10%' align='center'>");
+                        if(u1.getPermisosPersonal()!=null){
+                            switch( u1.getPermisosPersonal().getId()){
+                                case 1: out.print("Cadetes");break;
+                                case 2: out.print("P.S.");break;
+                                case 3: out.print("Oficiales");break;
+                            }
+                        }
+                    out.print("</td>");
+                    out.print("<td style='width: 10%' align='center'>");
+                        if(u1.getPermisosDescuento()!=null){
+                            switch( u1.getPermisosDescuento().getId()){
+                                case 1: out.print("Biblioteca");break;
+                                case 2: out.print("Impresiones");break;
+                                case 3: out.print("Farmacia");break;
+                                case 4: out.print("Enfermer&iacute;a");break;
+                                case 5: out.print("Casino SS.OO.");break;
+                                case 6: out.print("Casino CC.");break;
+                            }
+                        }
+                    out.print("</td>");
+                    out.print("<td style='width: 5%' align='center'>");
+                    if(u1.isNotas()){
+                       out.print("SI");
+                    }
+                            
+                    out.print("</td>");
+                    out.print("<td style='width: 5%' align='center'>");
+                    if(u1.isHabilitacion()){
+                       out.print("SI");
+                    }
+                            
+                    out.print("</td>");
+                    out.print("<td style='width: 5%' align='center'>");
+                    if(u1.isProfesor()){
+                       out.print("SI");
+                    }
+                            
+                    out.print("</td>");
                     out.print("<td style='width: 10%' align='center'><a href='usuario.jsp?id="+String.valueOf(u1.getId())+"'><img src='images/ver.png' width='25%' /></a></td>");
                     out.print("<td style='width: 10%' align='center'><form method='post' onsubmit=\"return confirmar(this,'"+u1.getNombre()+"')\" action='Usuario?elim="+u1.getId()+"'><input type='image' width='25%' title='Eliminar Usuario' src='images/eliminar.png' alt='Submit Form' /> </form></td>");
                     out.print("<td style='width: 10%' align='center'><a href='cambiarContrasena.jsp?id="+String.valueOf(u1.getId())+"'><img src='images/pass.png' width='25%' /></a></td>");
@@ -98,6 +143,7 @@
 <% 
     }
     else{
+        sesion.setAttribute("Mensaje","Lo sentimos, no tiene permisos para acceder a esta p&aacute;gina. Contacte al administrador.");
          response.sendRedirect("");
     }
 

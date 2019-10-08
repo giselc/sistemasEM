@@ -37,7 +37,7 @@ public class Listar extends HttpServlet {
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
         int tipoPersonal=Integer.valueOf(request.getParameter("tipoPersonal"));
-        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()!=tipoPersonal) || u.isProfesor()){
+        if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()!=tipoPersonal) || u.isProfesor() || u.isNotas()){
             try (PrintWriter out = response.getWriter()) {
                 /* TODO output your page here. You may use following sample code. */
                 String[] lista= request.getParameterValues("List[]");
@@ -77,6 +77,7 @@ public class Listar extends HttpServlet {
             }
         }
         else{
+            sesion.setAttribute("Mensaje","Lo sentimos, no tiene permisos para acceder a esta p&aacute;gina. Contacte al administrador.");
                 response.sendRedirect("");
         }
     }

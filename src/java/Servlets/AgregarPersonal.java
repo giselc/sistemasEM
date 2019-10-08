@@ -47,6 +47,7 @@ public class AgregarPersonal extends HttpServlet {
             }
         }
         else{
+            sesion.setAttribute("Mensaje","Lo sentimos, no tiene permisos para acceder a esta p&aacute;gina. Contacte al administrador.");
                 response.sendRedirect("");
         }
     }

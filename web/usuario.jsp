@@ -119,7 +119,7 @@
                                 };
                             };
                             %>
-                            <p align="center"><input type="text" onblur="validarNoAdmin(this,<%= u1==null %>);" value="<% if (u1!=null){out.print(u1.getNombre());}else{if(p!=null){out.print(nombreUsuarioProfesor);}%>" <% if (u1!=null){out.print("readonly='readonly'");}else{out.print("required='required'");}}%> name="usuario" /></p>
+                            <p align="center"><input type="text" onblur="validarNoAdmin(this,<%= u1==null %>);" value="<% if (u1!=null){out.print(u1.getNombre());}else{if(p!=null){out.print(nombreUsuarioProfesor);}}%>" <% if (u1!=null){out.print("readonly='readonly'");}else{out.print("required='required'");}%> name="usuario" /></p>
                         </td>
                     </tr>
                     <tr>
@@ -246,6 +246,7 @@
 <% 
     }
     else{
+        sesion.setAttribute("Mensaje","Lo sentimos, no tiene permisos para acceder a esta p&aacute;gina. Contacte al administrador.");
          response.sendRedirect("");
     }
 

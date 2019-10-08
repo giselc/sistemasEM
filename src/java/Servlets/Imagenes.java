@@ -39,7 +39,7 @@ public class Imagenes extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             HttpSession sesion = request.getSession();
             Usuario u = (Usuario)sesion.getAttribute("usuario");
-            if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()!=1) || u.isProfesor()){
+            if(u.isAdmin()|| (u.getPermisosPersonal()!=null && u.getPermisosPersonal().getId()!=1) || u.isProfesor() || u.isNotas()){
                 String path="";
                 ManejadorPersonal mp = ManejadorPersonal.getInstance();
                 if(request.getParameter("foto")!=null){
@@ -96,6 +96,7 @@ public class Imagenes extends HttpServlet {
                 }
             }
             else{
+                sesion.setAttribute("Mensaje","Lo sentimos, no tiene permisos para acceder a esta p&aacute;gina. Contacte al administrador.");
                 response.sendRedirect("");
             }
     }

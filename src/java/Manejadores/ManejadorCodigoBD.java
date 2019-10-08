@@ -258,7 +258,7 @@ public class ManejadorCodigoBD {
                 d = new TipoPersonal(codigo, rs.getString("descripcion"));
             }
         } catch (Exception ex) {
-            Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.print("ManejadorCodigoBD-getTipoPersonal: "+ex.getMessage());
         }
         return d;
     }
@@ -272,7 +272,7 @@ public class ManejadorCodigoBD {
                 al.put(rs.getInt("codigo"),new TipoDocumento(rs.getInt("codigo"), rs.getString("descripcion")));
             }
         } catch (Exception ex) {
-            Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.print("ManejadorCodigoBD-getTipoPersonal: "+ex.getMessage());
         }
         return al;
     }
@@ -289,7 +289,7 @@ public class ManejadorCodigoBD {
 
             }
         } catch (Exception ex) {
-            Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+           System.out.print("ManejadorCodigoBD-getUsuario: "+ex.getMessage());
         }
         return d;
     }
@@ -305,7 +305,7 @@ public class ManejadorCodigoBD {
                 al.add( new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"),rs.getInt("ciProfesor")));
             }
         } catch (Exception ex) {
-            Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+             System.out.print("ManejadorCodigoBD-getUsuarios: "+ex.getMessage());
         }
         return al;
     }
@@ -323,18 +323,18 @@ public class ManejadorCodigoBD {
                b=rs.getInt("id");
             }
         } catch (Exception ex) {
-            Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.print("ManejadorCodigoBD-loginCorrecto: "+ex.getMessage());
         }
         return b;
     }
-  /*  public int cambiarContrasena(int userId, String passOld, String passNew){
+    public int cambiarContrasena(int userId, String passOld, String passNew){
         int b=-1;
         try {
             Statement s= connection.createStatement();
-            String sql="Select * from postulantes.usuarios where id=" + String.valueOf(userId) + " and contrasena=MD5('" + passOld + "')";
+            String sql="Select * from sistemasEM.usuarios where id=" + String.valueOf(userId) + " and contrasena=MD5('" + passOld + "')";
             ResultSet rs=s.executeQuery(sql);
             if (rs.next()){
-                String sql1="UPDATE postulantes.usuarios set contrasena=MD5('" + passNew + "') where id=" + String.valueOf(userId);
+                String sql1="UPDATE sistemasEM.usuarios set contrasena=MD5('" + passNew + "') where id=" + String.valueOf(userId);
                 Statement r= connection.createStatement();
                 int a = r.executeUpdate(sql1);
                 if(a>0){
@@ -342,10 +342,10 @@ public class ManejadorCodigoBD {
                 }
             }
         } catch (Exception ex) {
-            //out.print(ex.getMessage());
+            System.out.print("ManejadorCodigoBD-cambiarContrasena: "+ex.getMessage());
         }
         return b;
-    }*/
+    }
     
     //funcion creada para asegurar que no existe otro usuario con usuario='usuario'
     public boolean existeUsuario(String usuario){
@@ -380,21 +380,22 @@ public class ManejadorCodigoBD {
     //Retorna un Usuario con los parametros indicados persistiendolo en la base de datos si 'creador' es Admin.
     //retorna null si creador no es admin o se produjo algun error en la escritura de la base de datos.
     //PRECONDICIONES: - existeUsuario(usuario)==false
-    public boolean crarUsuario(Usuario creador, String nombre, String nombreMostrar, String contrasena, boolean admin,boolean s1,boolean descuentos, int tipodescuento, boolean notas, boolean habilitacion){
+    public boolean crarUsuario(Usuario creador, String nombre, String nombreMostrar, String contrasena, boolean admin,int tipoPersonal,int tipodescuento, boolean notas, boolean habilitacion,boolean profesor, int ciProfesor){
         if (creador.isAdmin()){
             try {
-                String sql= "insert into sistemasEM.usuarios (nombre, mostrar, contrasena,admin,s1,descuentos, tipodescuento,notas, habilitacion) values(?,?,MD5(?),?,?,?,?,?,?)";
+                String sql= "insert into sistemasEM.usuarios (nombre, mostrar, contrasena,admin,permisosPersonal,permisosDescuento,notas, habilitacion,profesor,ciProfesor) values(?,?,MD5(?),?,?,?,?,?,?,?)";
                 PreparedStatement s= connection.prepareStatement(sql);
                 int i=1;
                 s.setString(i++, nombre);
                 s.setString(i++, nombreMostrar);
                 s.setString(i++, contrasena);
                 s.setBoolean(i++, admin);
-                s.setBoolean(i++, s1);
-                s.setBoolean(i++, descuentos);
+                s.setInt(i++, tipoPersonal);
                 s.setInt(i++, tipodescuento);
                 s.setBoolean(i++, notas);
                 s.setBoolean(i++, habilitacion);
+                s.setBoolean(i++, profesor);
+                s.setInt(i++, ciProfesor);
                 int result = s.executeUpdate();
                 if(result>0){
                     return true;
@@ -409,19 +410,20 @@ public class ManejadorCodigoBD {
     //retorna false si 'creador' no es admin o se produjo algun error en la escritura de la base de datos.
     //atributo usuario no es modificable.
     //atributo contrasena modificable con la funcion cambiarContrasena
-    public boolean ModificarUsuario(Usuario creador, int id, String nombreMostrar, boolean admin, boolean s1, boolean descuentos, int tipoDescuento, boolean notas, boolean habilitacion){
+    public boolean ModificarUsuario(Usuario creador, int id, String nombreMostrar, boolean admin,int tipoPersonal,int tipodescuento, boolean notas, boolean habilitacion,boolean profesor, int ciProfesor){
         if (creador.isAdmin()){
             try {
-                String sql= "Update sistemasEM.usuarios set mostrar=?, admin=?, s1=?, descuentos=?, tipoDescuento=?, notas=?, habilitacion=? where id="+id;
+                String sql= "Update sistemasEM.usuarios set mostrar=?, admin=?, permisosPersonal=?, permisosDescuentos=?, notas=?, habilitacion=?, profesor=?,ciProfesor=? where id="+id;
                 PreparedStatement s= connection.prepareStatement(sql);
                 int i=1;
                 s.setString(i++, nombreMostrar);
                 s.setBoolean(i++, admin);
-                s.setBoolean(i++, s1);
-                s.setBoolean(i++, descuentos);
-                s.setInt(i++, tipoDescuento);
+                s.setInt(i++, tipoPersonal);
+                s.setInt(i++, tipodescuento);
                 s.setBoolean(i++, notas);
                 s.setBoolean(i++, habilitacion);
+                s.setBoolean(i++, profesor);
+                s.setInt(i++, ciProfesor);
                 int result = s.executeUpdate();
                 if(result>0){
                     return true;
@@ -451,7 +453,7 @@ public class ManejadorCodigoBD {
         else{
             if(creador.getId()== id){
                 try {
-                    String sql= "Update sistemaEM.usuarios set contrasena=MD5('"+contrasenaNueva+"') where id="+id + " and contrasena=MD5('"+contrasenaAnterior+"')";
+                    String sql= "Update sistemasEM.usuarios set contrasena=MD5('"+contrasenaNueva+"') where id="+id + " and contrasena=MD5('"+contrasenaAnterior+"')";
                     Statement s= connection.createStatement();
                     int result = s.executeUpdate(sql);
                     if(result>0){
@@ -491,7 +493,7 @@ public class ManejadorCodigoBD {
         Usuario u=null;
         if (creador.isAdmin() || creador.getId()==id){
             try {
-                String sql= "Select * from postulantes.usuarios where id="+id;
+                String sql= "Select * from sistemasEM.usuarios where id="+id;
                 Statement s= connection.createStatement();
                 ResultSet rs = s.executeQuery(sql);
                 while(rs.next()){
@@ -510,7 +512,7 @@ public class ManejadorCodigoBD {
        
         Usuario u= null;
         try {
-                String sql= "Select * from postulantes.usuarios where usuario='"+usuario+"' and contrasena=MD5('"+pass+"')";
+                String sql= "Select * from sistemasEM.usuarios where usuario='"+usuario+"' and contrasena=MD5('"+pass+"')";
                 Statement s= connection.createStatement();
                 ResultSet rs = s.executeQuery(sql);
                 while(rs.next()){
@@ -585,6 +587,22 @@ public class ManejadorCodigoBD {
             Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
         }
         return al;
+    }
+
+    public boolean eliminarUsuario(Usuario creador, int id) {
+        if(creador.isAdmin()){
+            try {
+                String sql= "delete from sistemasEm.usuarios where id="+id;
+                Statement s= connection.createStatement();
+                int result = s.executeUpdate(sql);
+                if(result>0){
+                    return true;
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return false;
     }
     
     
