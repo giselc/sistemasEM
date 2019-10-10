@@ -5,6 +5,8 @@
  */
 package Servlets.Bedelia;
 
+import Classes.Bedelia.LibretaIndividual;
+import Classes.Bedelia.Promedio;
 import Manejadores.ManejadorBedelia;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -38,10 +40,9 @@ public class Promedios extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             int idLibreta= Integer.valueOf(request.getParameter("idLibreta"));
-            int ciProfesor= Integer.valueOf(request.getParameter("ciProfesor"));
+            Manejadores.ManejadorBedelia mb = ManejadorBedelia.getInstance();
             if(request.getParameter("cambiarGrilla")!=null){
                 int mes = Integer.valueOf(request.getParameter("mes"));
-                Manejadores.ManejadorBedelia mb = ManejadorBedelia.getInstance();
                 String html= mb.cambiarGrillaPromedio(idLibreta,mes,request.getContextPath());
                 JsonObjectBuilder json = Json.createObjectBuilder(); 
                 JsonArrayBuilder jab= Json.createArrayBuilder();
@@ -50,6 +51,35 @@ public class Promedios extends HttpServlet {
                 );
                 json.add("msj", jab);
                 out.print(json.build());
+            }
+            else{
+                Classes.Bedelia.Libreta l = mb.getLibretas().get(idLibreta);
+                Promedio promedio=null;
+                double valorPromedio = 0;
+                String juicio="";
+                int mes = Integer.valueOf(request.getParameter("mesAgregarNota"));
+                if(request.getParameter("guardarPromedios")!=null || request.getParameter("cerrarPromedios")!=null){
+                   for(LibretaIndividual li : l.getLibretasIndividuales().values()){
+                       if(l.getMateria().isSecundaria()){
+                           valorPromedio = Double.valueOf(request.getParameter("PROMEDIO-"+li.getAlumno().getCi()));
+                           if(request.getParameter("JUICIO-"+li.getAlumno().getCi())!=null){
+                               juicio=request.getParameter("JUICIO-"+li.getAlumno().getCi());
+                           }
+                       }
+                       else{
+                           valorPromedio = mb.calculoPromedio(li, mes);
+                       }
+                       if(request.getParameter("guardarPromedios")!=null ){
+                           mb.guardarPromedio(li,valorPromedio,mes,juicio,false);
+                       }
+                       else{
+                           mb.guardarPromedio(li,valorPromedio,mes,juicio,true);
+                       }
+                   }
+                   if(request.getParameter("JUICIOGRUPAL")!=null){
+                       mb.guardarJuicioGrupal(request.getParameter("JUICIOGRUPAL"),mes);
+                   }
+                }
             }
         }
     }

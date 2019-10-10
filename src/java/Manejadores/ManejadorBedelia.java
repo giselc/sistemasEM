@@ -589,14 +589,14 @@ public class ManejadorBedelia {
             html+="</tr>";
         }
         if(mes==11){
-            html+="<tr><td>JUICIO GRUPAL:</td><td><input type='text' value='"+l.getJuicioGrupalPrimeraReunion()+"' name='JUICIOGRUPALPR'/></td></tr>";
+            html+="<tr><td>JUICIO GRUPAL:</td><td><input type='text' value='"+l.getJuicioGrupalPrimeraReunion()+"' name='JUICIOGRUPAL'/></td></tr>";
         }
         if(mes==13){
-            html+="<tr><td>JUICIO GRUPAL:</td><td><input type='text' value='"+l.getJuicioGrupalSegundaReunion()+"' name='JUICIOGRUPALSR'/></td></tr>";
+            html+="<tr><td>JUICIO GRUPAL:</td><td><input type='text' value='"+l.getJuicioGrupalSegundaReunion()+"' name='JUICIOGRUPAL'/></td></tr>";
         }
         return html;
     }
-    private double calculoPromedio(LibretaIndividual li, int mes){
+    public double calculoPromedio(LibretaIndividual li, int mes){
         double suma= 0;
         int sumacoef = 0;
         if(li.getNotasOrales().containsKey(mes)){

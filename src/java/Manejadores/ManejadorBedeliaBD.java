@@ -294,7 +294,7 @@ public class ManejadorBedeliaBD {
             sql="SELECT * FROM sistemasem.promedios where  idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno;
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                p.put(rs.getInt("id"),new Promedio(rs.getInt("id"),rs.getInt("tipoPromedio"), rs.getDouble("nota"),rs.getInt("mes"),rs.getString("juicio")));
+                p.put(rs.getInt("id"),new Promedio(rs.getInt("id"),rs.getInt("tipoPromedio"), rs.getDouble("nota"),rs.getInt("mes")));
             }
         } catch (Exception ex) {
             System.out.print("obtenerPromediosLibretaIndividual-ManejadorBedeliaBD:"+ex.getMessage());

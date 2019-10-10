@@ -643,6 +643,18 @@
         function cambiarProfesor(select){
             document.getElementById("editarProfesor").href="profesor.jsp?id="+select.value;
         }
+        function guardarPromedios(idLibreta){
+            form = document.getElementById("formGuardarPromedios");
+            form.action = "Promedios?idLibreta="+idLibreta+"&guardarPromedios=1"
+            form.submit();
+            return false;
+        }
+        function cerrarPromedios(idLibreta){
+            form = document.getElementById("formGuardarPromedios");
+            form.action = "Promedios?idLibreta="+idLibreta+"&cerrarPromedios=1"
+            form.submit();
+            return false;
+        }
 </script>
 <style>
     table tr td{
@@ -1471,13 +1483,13 @@ else{
                             <%
                             if(d.getMateria().isSecundaria()){
                             %>
-                            <button onclick="guardarPromedios();" style="background-color: #ff6600; border-radius: 15px; color: #ffffff; font-size: large;">&nbsp;GUARDAR CAMBIOS&nbsp;</button>
+                            <button onclick="guardarPromedios(<%= d.getId() %>);" style="background-color: #ff6600; border-radius: 15px; color: #ffffff; font-size: large;">&nbsp;GUARDAR CAMBIOS&nbsp;</button>
                             <%
                             }
                             %>
-                            <button onclick="cerrarMesPromedios();" style="background-color: #cd0a0a; border-radius: 15px; color: #ffffff; font-size: large;">&nbsp;CERRAR MES&nbsp;</button>
+                            <button onclick="cerrarMesPromedios(<%= d.getId() %>);" style="background-color: #cd0a0a; border-radius: 15px; color: #ffffff; font-size: large;">&nbsp;CERRAR MES&nbsp;</button>
                         </p>
-                        <form id='formGuardarPromedios' method="post" action="Promedios?idLibreta=<%= d.getId() %>,&ciProfesor=<%= d.getProfesor().getCi() %>" >
+                        <form id='formGuardarPromedios' method="post" action="Promedios?idLibreta=<%= d.getId() %>" >
                         <table>
                             <tr>
                                 <td>
@@ -1487,7 +1499,6 @@ else{
                                     <select  id="mesPromedio" name='mesPromedio' onchange="cambiarGrillaPromedio(<%= d.getId() %>, <%= d.getProfesor().getCi() %>);"/>
                                         <option value="-1" disabled="disabled" selected hidden>Seleccionar promedio a cerrar:</option>
                                     <%
-                                    
                                     if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1)){
                                         if(!d.getMesesCerrados().containsKey(3)){
                                         %>
@@ -1554,28 +1565,19 @@ else{
                                     }
                                     %>
                                 </td>
-                                
                             </tr>
-                            
                         </table>
                         <table id="grillaPromedios" style="text-align: center;">
-                            
-                            
                         </table>
                         </form>
                     </div>
-                    
-                    
                 </div> 
-                     
         <%
     }
     else{
         sesion.setAttribute("Mensaje","Lo sentimos, no tiene permisos para acceder a esta p&aacute;gina. Contacte al administrador.");
-     response.sendRedirect("");
+        response.sendRedirect("");
     }
 }
-
 %>
-
 <%@ include file="footer.jsp" %>
