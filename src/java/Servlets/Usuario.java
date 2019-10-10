@@ -32,6 +32,7 @@ public class Usuario extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
         HttpSession sesion = request.getSession();
         Classes.Usuario u = (Classes.Usuario) sesion.getAttribute("usuario");
         try (PrintWriter out = response.getWriter()) {

@@ -50,7 +50,7 @@
         </tr>
         <tr>
             <td style="width: 55%"><h3 style="float: left; font-family: sans-serif">Usuarios del sistema:</h3></td>
-            <td style="width: 15%"><p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p></td>
+            <td style="width: 15%"><p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="70%" /></a></p></td>
             <td style="width: 15%"><a href="usuario.jsp" title="Agregar Usuario"><img width="30%" src='images/agregarLista.png' /></a> </td>
         </tr>
     </table>

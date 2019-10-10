@@ -31,8 +31,9 @@ public class Profesor {
     private int categoria;
     private int antiguedad;
     private boolean adminBedelia;
+    private HashMap<Integer,Libreta> libretas;
 
-    public Profesor(int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, String observaciones, String fechaIngreso, String telefono, String correo, String numeroCuenta, String dependenciaFinanciera, int cantHoras, int categoria, int antiguedad, boolean adminBedelia) {
+    public Profesor(int ci, Grado grado, Arma arma, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, String observaciones, String fechaIngreso, String telefono, String correo, String numeroCuenta, String dependenciaFinanciera, int cantHoras, int categoria, int antiguedad, boolean adminBedelia,HashMap<Integer,Libreta> libretas) {
         this.ci = ci;
         this.grado = grado;
         this.arma = arma;
@@ -50,6 +51,15 @@ public class Profesor {
         this.categoria = categoria;
         this.antiguedad = antiguedad;
         this.adminBedelia = adminBedelia;
+        this.libretas = libretas;
+    }
+
+    public HashMap<Integer, Libreta> getLibretas() {
+        return libretas;
+    }
+
+    public void setLibretas(HashMap<Integer, Libreta> libretas) {
+        this.libretas = libretas;
     }
 
     public int getCi() {

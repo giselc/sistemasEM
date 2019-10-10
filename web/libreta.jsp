@@ -156,8 +156,8 @@
                 return false;
             }
             else{
-                document.getElementById("tablaformulario").deleteRow(2);
-                document.getElementById("tablaformulario").deleteRow(2);
+                document.getElementById("tablaformulario").deleteRow(3);
+                document.getElementById("tablaformulario").deleteRow(3);
                 mostrarCampos();
             }
         }
@@ -662,7 +662,7 @@
 
     if(request.getParameter("id")!=null){
         int id = Integer.valueOf(request.getParameter("id"));
-        d= mp.getLibreta(id);
+        d= mp.getLibretas().get(id);
     }
 %>
 <p id="mensaje" style="color: #ffffff"><% if(sesion.getAttribute("Mensaje")!=null){out.print("<img src='images/icono-informacion.png' width='3%' /> &nbsp;&nbsp;"+sesion.getAttribute("Mensaje"));}%></p>

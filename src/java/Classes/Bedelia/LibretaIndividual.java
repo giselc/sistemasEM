@@ -198,7 +198,7 @@ public class LibretaIndividual {
 
     public void imprimirGrillaNotas(JspWriter out){
         Manejadores.ManejadorBedelia mb= ManejadorBedelia.getInstance();
-        Libreta l = mb.getLibreta(idLibreta);
+        Libreta l = mb.getLibretas().get(idLibreta);
         if (!l.getMateria().isSemestral()||(l.getMateria().isSemestral()&& l.getMateria().getSemestre()==1)){ 
             imprimirGrillaNotasMes(out, 3, l);
             imprimirGrillaNotasMes(out, 4, l);

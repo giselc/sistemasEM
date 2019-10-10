@@ -52,7 +52,7 @@ public class Libreta extends HttpServlet {
                 else{     
                     int id= Integer.valueOf(request.getParameter("id"));
                     if(id!=-1){
-                        Classes.Bedelia.Libreta l = mp.getLibreta(id);
+                        Classes.Bedelia.Libreta l = mp.getLibretas().get(id);
 
                          if(request.getParameter("pasarLista")!=null){
                             //pasarLista

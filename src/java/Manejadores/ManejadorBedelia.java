@@ -32,7 +32,7 @@ import java.util.LinkedList;
 public class ManejadorBedelia {
     private HashMap<Integer, CursoBedelia> cursos;
     private HashMap<Integer, Materia> materias;
-    private HashMap<Integer, HashMap<Integer,Libreta>> libretas; //HashMap<ciProfesor,Hashmap<idLibreta,Libreta>>
+    private HashMap<Integer,Libreta> libretas; //HashMap<idLibreta,Libreta>
     private LinkedList<Notificacion> notificacionesNuevas;
     private LinkedList<Notificacion> notificacionesLeidas;
     
@@ -91,11 +91,9 @@ public class ManejadorBedelia {
     }
     private LinkedList<Libreta> getLibretasAsociadasAGrupo(Grupo g) {
         LinkedList<Libreta> l=new LinkedList<>();
-        for(HashMap<Integer,Libreta> libretaXProfe:libretas.values()){
-            for(Libreta libreta:libretaXProfe.values()){
-                if(libreta.getGrupo().getCusoBedelia().getId()==g.getCusoBedelia().getId() && libreta.getGrupo().getNombre().equals(g.getNombre()) && libreta.getGrupo().getAnio()==g.getAnio()){
-                    l.add(libreta);
-                }
+        for(Libreta libreta:libretas.values()){
+            if(libreta.getGrupo().getCusoBedelia().getId()==g.getCusoBedelia().getId() && libreta.getGrupo().getNombre().equals(g.getNombre()) && libreta.getGrupo().getAnio()==g.getAnio()){
+                l.add(libreta);
             }
         }
         return l;
@@ -136,11 +134,10 @@ public class ManejadorBedelia {
             for(Cadete c: g.getAlumnos().values()){
                 libretasIndividuales.put(c.getCi(), new LibretaIndividual(idLibreta, c));
             }
-            Libreta l = new Libreta(idLibreta,materias.get(idMateria),g,mp.getProfesor(ciProfesor),salon,libretasIndividuales,new LinkedList<>(),false,false,new HashMap<>(),"","");
-            if(!libretas.containsKey(ciProfesor)){
-                libretas.put(ciProfesor, new HashMap<>());
-            }
-            libretas.get(ciProfesor).put(idLibreta, l);
+            Profesor prof= mp.getProfesor(ciProfesor);
+            Libreta l = new Libreta(idLibreta,materias.get(idMateria),g,prof,salon,libretasIndividuales,new LinkedList<>(),false,false,new HashMap<>(),"","");
+            libretas.put(idLibreta, l);
+            prof.getLibretas().put(idLibreta, l);
             return l;
         }
         return null;
@@ -262,10 +259,10 @@ public class ManejadorBedelia {
             return false;
         }
     }
-    public synchronized boolean eliminarFalta(int idFalta, int idLibreta, int ciAlumno, int ciProfesor) {
+    public synchronized boolean eliminarFalta(int idFalta, int idLibreta, int ciAlumno) {
         ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
         if(mb. eliminarFalta(idFalta)){
-            LibretaIndividual li=libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno);
+            LibretaIndividual li=libretas.get(idLibreta).getLibretasIndividuales().get(ciAlumno);
             String fechaFalta= li.getFaltas().get(idFalta).getFecha();
             int mesFalta= Integer.valueOf(fechaFalta.split("-")[1]);
             int diaFalta= Integer.valueOf(fechaFalta.split("-")[2]);
@@ -279,11 +276,11 @@ public class ManejadorBedelia {
                     rf.cantHoras=faltaActual.getFalta().getCanthoras();
                     rf.codigoMotivo=faltaActual.getFalta().getCodigoMotivo();
                     rf.observaciones=faltaActual.getFalta().getObservaciones();
-                    Libreta l=libretas.get(ciProfesor).get(idLibreta);
+                    Libreta l=libretas.get(idLibreta);
                     Cadete c=ManejadorPersonal.getInstance().getCadete(ciAlumno);
                     int id= mb.agregarNotificacion(l, c, rf, null, fechaFalta,true);
                     if(id!=-1){
-                        notificacionesNuevas.add(new Notificacion(id, libretas.get(ciProfesor).get(idLibreta),c,rf, null,1, fechaFalta, true));
+                        notificacionesNuevas.add(new Notificacion(id, libretas.get(idLibreta),c,rf, null,1, fechaFalta, true));
                     }
                     it.remove();
                     li.getFaltas().remove(idFalta);
@@ -293,8 +290,8 @@ public class ManejadorBedelia {
         }
         return false;
     }
-    public Falta obtenerFalta(int idFalta, int idLibreta, int ciAlumno, int ciProfesor) {
-        return libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno).getFaltas().get(idFalta);
+    public Falta obtenerFalta(int idFalta, int idLibreta, int ciAlumno) {
+        return libretas.get(idLibreta).getLibretasIndividuales().get(ciAlumno).getFaltas().get(idFalta);
     }
     public synchronized void agregarSancion(Libreta l, Cadete c, String fecha, String codigoSancion, Integer minutosTardes, String causa) {
         ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
@@ -339,10 +336,10 @@ public class ManejadorBedelia {
             };
         }
     }
-    public synchronized boolean eliminarSancion(int id, int idLibreta, int ciAlumno, int ciProfesor) {
+    public synchronized boolean eliminarSancion(int id, int idLibreta, int ciAlumno) {
         ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
         if(mb.eliminarSancion(id)){
-            LibretaIndividual li=libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno);
+            LibretaIndividual li=libretas.get(idLibreta).getLibretasIndividuales().get(ciAlumno);
             String fecha= li.getSanciones().get(id).getFecha();
             int mes= Integer.valueOf(fecha.split("-")[1]);
             int dia= Integer.valueOf(fecha.split("-")[2]);
@@ -356,11 +353,11 @@ public class ManejadorBedelia {
                     rf.minutosTardes=faltaActual.getSancion().getMinutosTardes();
                     rf.tipo=faltaActual.getSancion().getTipo();
                     rf.causa=faltaActual.getSancion().getCausa();
-                    Libreta l=libretas.get(ciProfesor).get(idLibreta);
+                    Libreta l=libretas.get(idLibreta);
                     Cadete c=ManejadorPersonal.getInstance().getCadete(ciAlumno);
                     int idNot= mb.agregarNotificacion(l, c, null, rf, fecha,true);
                     if(idNot!=-1){
-                        notificacionesNuevas.add(new Notificacion(id, libretas.get(ciProfesor).get(idLibreta),c,null, rf,1, fecha, true));
+                        notificacionesNuevas.add(new Notificacion(id, libretas.get(idLibreta),c,null, rf,1, fecha, true));
                     }
                     it.remove();
                     li.getSanciones().remove(id);
@@ -375,7 +372,7 @@ public class ManejadorBedelia {
         ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
         int id = mb.agregarNota(ciAlumno,ciProfesor,idLibreta,tipo,mes,valor,obs,fecha);
         if(id!=-1){
-            LibretaIndividual li = libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno);
+            LibretaIndividual li = libretas.get(idLibreta).getLibretasIndividuales().get(ciAlumno);
             switch (tipo){
                 case 2:     
                     if(!li.getNotasOrales().containsKey(mes)){
@@ -402,7 +399,7 @@ public class ManejadorBedelia {
     public boolean eliminarNota(int idNota, int idLibreta, int ciProfesor, int ciAlumno, int tipo,int mes) {
         ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
         LinkedList<Nota> listaRemover=null;
-        LibretaIndividual li=libretas.get(ciProfesor).get(idLibreta).getLibretasIndividuales().get(ciAlumno);
+        LibretaIndividual li=libretas.get(idLibreta).getLibretasIndividuales().get(ciAlumno);
         if(mb.eliminarNota(idNota)){
             if(tipo==1||tipo==2){
                 if(tipo==1){
@@ -433,8 +430,8 @@ public class ManejadorBedelia {
         }
         return false;
     }
-    public synchronized String cambiarGrillaPromedio(int idLibreta, int ciProfesor, int mes, String contextPath) {
-        Libreta l = this.libretas.get(ciProfesor).get(idLibreta);
+    public synchronized String cambiarGrillaPromedio(int idLibreta, int mes, String contextPath) {
+        Libreta l = this.libretas.get(idLibreta);
         String fila="<tr style='background-color:#ffcc66;padding:0px'><td></td><td></td>";
         String html = "<tr style='background-color:#ffcc66;padding:0px'>"
                 + "     <td></td>"
@@ -449,10 +446,10 @@ public class ManejadorBedelia {
                     case 9: html+="<td colspan='2'>SETIEMBRE</td>"; fila+="<td>O</td><td>E</td>"; break;
                     case 10: html+="<td colspan='2'>OCTUBRE</td>"; fila+="<td>O</td><td>E</td>"; break;
                     case 11:
-                        html+="<td colspan='2'>MARZO</td>"; fila+="<td>O</td><td>E</td>"; 
-                        html+="<td colspan='2'>ABRIL</td>"; fila+="<td>O</td><td>E</td>";
-                        html+="<td colspan='2'>MAYO</td>"; fila+="<td>O</td><td>E</td>"; 
-                        html+="<td colspan='2'>JUNIO</td>"; fila+="<td>O</td><td>E</td>"; 
+                        html+="<td colspan='3'>MARZO</td>"; fila+="<td>O</td><td>E</td><td>P</td>"; 
+                        html+="<td colspan='3'>ABRIL</td>"; fila+="<td>O</td><td>E</td><td>P</td>";
+                        html+="<td colspan='3'>MAYO</td>"; fila+="<td>O</td><td>E</td><td>P</td>"; 
+                        html+="<td colspan='3'>JUNIO</td>"; fila+="<td>O</td><td>E</td><td>P</td>"; 
                         html+="<td>PRIMER PARCIAL</b></td>"; fila+="<td>E</td>";
                         break;
                     case 12:
@@ -463,10 +460,10 @@ public class ManejadorBedelia {
                         break;
                     case 13: 
                         html+="<td>PRIMERA REUNI&Oacute;N</b></td>"; fila+="<td>P</td>";
-                        html+= "<td colspan='2'>JULIO</td>"; fila+="<td>O</td><td>E</td>";
-                        html+= "<td colspan='2'>AGOSTO</td>"; fila+="<td>O</td><td>E</td>";
-                        html+="<td colspan='2'>SETIEMBRE</td>"; fila+="<td>O</td><td>E</td>";
-                        html+= "<td colspan='2'>OCTUBRE</td>"; fila+="<td>O</td><td>E</td>";
+                        html+= "<td colspan='3'>JULIO</td>"; fila+="<td>O</td><td>E</td><td>P</td>";
+                        html+= "<td colspan='3'>AGOSTO</td>"; fila+="<td>O</td><td>E</td><td>P</td>";
+                        html+="<td colspan='3'>SETIEMBRE</td>"; fila+="<td>O</td><td>E</td><td>P</td>";
+                        html+= "<td colspan='3'>OCTUBRE</td>"; fila+="<td>O</td><td>E</td><td>P</td>";
                         html+="<td>SEGUNDO PARCIAL</b></td>"; fila+="<td>E</td>";
                         break;
                     case 14:
@@ -516,9 +513,13 @@ public class ManejadorBedelia {
             switch(mes){
                 case 11:
                     html+=notasMesHTML(li, 3);
+                    html+=promedioMesHTML(li, 3);
                     html+=notasMesHTML(li, 4);
+                    html+=promedioMesHTML(li, 4);
                     html+=notasMesHTML(li, 5);
+                    html+=promedioMesHTML(li, 5);
                     html+=notasMesHTML(li, 6);
+                    html+=promedioMesHTML(li, 6);
                     if(li.getPrimerParcial()!=null){
                         html+="<td><b title='PRIMER PARCIAL&#10;Fecha alta: "+li.getPrimerParcial().getFecha()+"&#10;Nota: "+li.getPrimerParcial().getNota()+"&#10;Observaciones: "+li.getPrimerParcial().getObservacion()+"'><p>"+li.getPrimerParcial().getNota()+"</p></b></td>";
                     }
@@ -535,9 +536,13 @@ public class ManejadorBedelia {
                 case 13: 
                     html+="<td><b><p>"+li.getPromedioPrimeraReunion()+"</p></b></td>";
                     html+=notasMesHTML(li, 7);
+                    html+=promedioMesHTML(li, 7);
                     html+=notasMesHTML(li, 8);
+                    html+=promedioMesHTML(li, 8);
                     html+=notasMesHTML(li, 9);
+                    html+=promedioMesHTML(li, 9);
                     html+=notasMesHTML(li, 10);
+                    html+=promedioMesHTML(li, 10);
                     if(li.getSegundoParcial()!=null){
                         html+="<td><b title='SEGUNDO PARCIAL&#10;Fecha alta: "+li.getSegundoParcial().getFecha()+"&#10;Nota: "+li.getSegundoParcial().getNota()+"&#10;Observaciones: "+li.getSegundoParcial().getObservacion()+"'><p>"+li.getSegundoParcial().getNota()+"</p></b></td>";
                     }
@@ -642,13 +647,11 @@ public class ManejadorBedelia {
         ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
         if(mb.modificarLibreta(l.getId(),ciProfesor,salon)){
             if(l.getProfesor().getCi()!=ciProfesor){
-                if(!libretas.containsKey(ciProfesor)){
-                    libretas.put(ciProfesor, new HashMap<>());
-                }
-                libretas.get(ciProfesor).put(l.getId(), l);
-                libretas.get(l.getProfesor().getCi()).remove(l.getId());
                 ManejadorProfesores mp = ManejadorProfesores.getInstance();
-                l.setProfesor(mp.getProfesor(ciProfesor));
+                Profesor profNuevo = mp.getProfesor(ciProfesor);
+                l.getProfesor().getLibretas().remove(l.getId());
+                l.setProfesor(profNuevo);
+                profNuevo.getLibretas().put(l.getId(), l);
             }
             l.setSalon(salon);
             return true;
@@ -835,7 +838,7 @@ public class ManejadorBedelia {
         }
         return false;
     }
-    public HashMap<Integer, HashMap<Integer,Libreta>> getLibretas() {
+    public HashMap<Integer, Libreta> getLibretas() {
         return libretas;
     }
     public HashMap<Integer, CursoBedelia> getCursosMateria(int idMateria){
@@ -857,49 +860,40 @@ public class ManejadorBedelia {
         }
         return false;
     }
-    public Libreta getLibreta(int id){
-        for(HashMap<Integer,Libreta> lista:libretas.values()){
-            if(lista.containsKey(id)){
-                return lista.get(id);
-            }
-        }
-        return null;
-    }
     public void ImprmirFaltasxDia(PrintWriter out,String fecha){
         HashMap<Integer,HashMap<Integer,HashMap<Integer,LinkedList<Falta>>>> faltasxMateriaxAlumnoxGrado = new HashMap<>();
         HashMap<Integer, HashMap<Integer, LinkedList<Falta>>> faltasxMateriaxAlumno;
         HashMap<Integer,HashMap<Integer,Materia>> materiasEncontradas= new HashMap<>();
-        for(HashMap<Integer,Libreta> hl:libretas.values()){
-            for(Libreta l:hl.values()){
-                for(LibretaIndividual li:l.getLibretasIndividuales().values()){
-                    for(Falta f:li.getFaltas().values()){
-                        if(f.getFecha().equals(fecha)){
-                            if(!faltasxMateriaxAlumnoxGrado.containsKey(li.getAlumno().getGrado().getId())){
-                                faltasxMateriaxAlumnoxGrado.put(li.getAlumno().getGrado().getId(),new HashMap<>());
-                            }
-                            faltasxMateriaxAlumno = faltasxMateriaxAlumnoxGrado.get(li.getAlumno().getGrado().getId());
-                            if(!faltasxMateriaxAlumno.containsKey(li.getAlumno().getCi())){
-                                faltasxMateriaxAlumno.put(li.getAlumno().getCi(), new HashMap<>());
-                            }
-                            if(!faltasxMateriaxAlumno.get(li.getAlumno().getCi()).containsKey(l.getMateria().getId())){
-                                faltasxMateriaxAlumno.get(li.getAlumno().getCi()).put(l.getMateria().getId(), new LinkedList<>());
-                            }
-                            faltasxMateriaxAlumno.get(li.getAlumno().getCi()).get(l.getMateria().getId()).add(f);
-                            if(!materiasEncontradas.containsKey(li.getAlumno().getGrado().getId())){
-                                materiasEncontradas.put(li.getAlumno().getGrado().getId(),new HashMap<>());
-                            }
-                            materiasEncontradas.get(li.getAlumno().getGrado().getId()).put(l.getMateria().getId(),l.getMateria());                                
-
+        for(Libreta l:libretas.values()){
+            for(LibretaIndividual li:l.getLibretasIndividuales().values()){
+                for(Falta f:li.getFaltas().values()){
+                    if(f.getFecha().equals(fecha)){
+                        if(!faltasxMateriaxAlumnoxGrado.containsKey(li.getAlumno().getGrado().getId())){
+                            faltasxMateriaxAlumnoxGrado.put(li.getAlumno().getGrado().getId(),new HashMap<>());
                         }
-                        else{
-                            if(f.getFecha().compareTo(fecha)>0){
-                                break;
-                            }
+                        faltasxMateriaxAlumno = faltasxMateriaxAlumnoxGrado.get(li.getAlumno().getGrado().getId());
+                        if(!faltasxMateriaxAlumno.containsKey(li.getAlumno().getCi())){
+                            faltasxMateriaxAlumno.put(li.getAlumno().getCi(), new HashMap<>());
+                        }
+                        if(!faltasxMateriaxAlumno.get(li.getAlumno().getCi()).containsKey(l.getMateria().getId())){
+                            faltasxMateriaxAlumno.get(li.getAlumno().getCi()).put(l.getMateria().getId(), new LinkedList<>());
+                        }
+                        faltasxMateriaxAlumno.get(li.getAlumno().getCi()).get(l.getMateria().getId()).add(f);
+                        if(!materiasEncontradas.containsKey(li.getAlumno().getGrado().getId())){
+                            materiasEncontradas.put(li.getAlumno().getGrado().getId(),new HashMap<>());
+                        }
+                        materiasEncontradas.get(li.getAlumno().getGrado().getId()).put(l.getMateria().getId(),l.getMateria());                                
+
+                    }
+                    else{
+                        if(f.getFecha().compareTo(fecha)>0){
+                            break;
                         }
                     }
                 }
             }
         }
+        
         Calendar ahoraCal = java.util.Calendar.getInstance();
         int anio= ahoraCal.get(Calendar.YEAR);
         int mes=ahoraCal.get(Calendar.MONTH);

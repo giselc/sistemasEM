@@ -38,6 +38,7 @@ public class Profesores extends HttpServlet {
             throws ServletException, IOException {
         HttpSession sesion = request.getSession();
         Usuario u = (Usuario)sesion.getAttribute("usuario");
+        request.setCharacterEncoding("UTF-8");
         if(u.isAdmin()|| u.isNotas()){
             response.setContentType("text/html;charset=UTF-8");
             String mensaje;

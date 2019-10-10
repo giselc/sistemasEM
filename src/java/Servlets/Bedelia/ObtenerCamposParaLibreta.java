@@ -46,6 +46,7 @@ public class ObtenerCamposParaLibreta extends HttpServlet {
             throws ServletException, IOException {
         HttpSession sesion = request.getSession();
         response.setContentType("UTF-8");
+        request.setCharacterEncoding("UTF-8");
         Usuario u = (Usuario)sesion.getAttribute("usuario");
         if(u.isAdmin()|| u.isNotas() || u.isProfesor()){
             try (PrintWriter out = response.getWriter()) {
@@ -93,7 +94,7 @@ public class ObtenerCamposParaLibreta extends HttpServlet {
                         int mes= Integer.valueOf(request.getParameter("grilla"));
                         int idLibreta = Integer.valueOf(request.getParameter("idLibreta"));
                         JsonObjectBuilder json = Json.createObjectBuilder(); 
-                        Classes.Bedelia.Libreta libreta = mb.getLibreta(idLibreta);
+                        Classes.Bedelia.Libreta libreta = mb.getLibretas().get(idLibreta);
                         JsonArrayBuilder jab1= Json.createArrayBuilder();
                         JsonArrayBuilder jab2= Json.createArrayBuilder();
                         FaltaSancion f;

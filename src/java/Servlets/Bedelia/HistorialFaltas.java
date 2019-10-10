@@ -52,11 +52,10 @@ public class HistorialFaltas extends HttpServlet {
                         int id= Integer.valueOf(request.getParameter("eliminar"));
                         int idLibreta= Integer.valueOf(request.getParameter("idLibreta"));
                         int ciAlumno= Integer.valueOf(request.getParameter("ciAlumno"));
-                        int ciProfesor= Integer.valueOf(request.getParameter("ciProfesor"));
                         if(request.getParameter("sancion")!=null){
                             JsonObjectBuilder json = Json.createObjectBuilder(); 
                             JsonArrayBuilder jab= Json.createArrayBuilder();
-                            if(mp.eliminarSancion(id,idLibreta,ciAlumno,ciProfesor)){
+                            if(mp.eliminarSancion(id,idLibreta,ciAlumno)){
                                 jab.add(Json.createObjectBuilder()
                                     .add("mensaje","ok")
                                 );
@@ -71,10 +70,10 @@ public class HistorialFaltas extends HttpServlet {
                         }
                         else{
                             
-                            int cantHorasFalta=mp.obtenerFalta(id,idLibreta,ciAlumno,ciProfesor).getCanthoras();
+                            int cantHorasFalta=mp.obtenerFalta(id,idLibreta,ciAlumno).getCanthoras();
                             JsonObjectBuilder json = Json.createObjectBuilder(); 
                             JsonArrayBuilder jab= Json.createArrayBuilder();
-                            if(mp.eliminarFalta(id,idLibreta,ciAlumno,ciProfesor)){
+                            if(mp.eliminarFalta(id,idLibreta,ciAlumno)){
                                 jab.add(Json.createObjectBuilder()
                                     .add("mensaje","ok")
                                         .add("cantHorasFalta",cantHorasFalta)

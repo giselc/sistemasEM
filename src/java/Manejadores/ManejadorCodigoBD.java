@@ -413,7 +413,7 @@ public class ManejadorCodigoBD {
     public boolean ModificarUsuario(Usuario creador, int id, String nombreMostrar, boolean admin,int tipoPersonal,int tipodescuento, boolean notas, boolean habilitacion,boolean profesor, int ciProfesor){
         if (creador.isAdmin()){
             try {
-                String sql= "Update sistemasEM.usuarios set mostrar=?, admin=?, permisosPersonal=?, permisosDescuentos=?, notas=?, habilitacion=?, profesor=?,ciProfesor=? where id="+id;
+                String sql= "Update sistemasEM.usuarios set mostrar=?, admin=?, permisosPersonal=?, permisosDescuento=?, notas=?, habilitacion=?, profesor=?,ciProfesor=? where id="+id;
                 PreparedStatement s= connection.prepareStatement(sql);
                 int i=1;
                 s.setString(i++, nombreMostrar);

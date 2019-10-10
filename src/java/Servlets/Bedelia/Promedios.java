@@ -34,6 +34,7 @@ public class Promedios extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             int idLibreta= Integer.valueOf(request.getParameter("idLibreta"));
@@ -41,7 +42,7 @@ public class Promedios extends HttpServlet {
             if(request.getParameter("cambiarGrilla")!=null){
                 int mes = Integer.valueOf(request.getParameter("mes"));
                 Manejadores.ManejadorBedelia mb = ManejadorBedelia.getInstance();
-                String html= mb.cambiarGrillaPromedio(idLibreta,ciProfesor,mes,request.getContextPath());
+                String html= mb.cambiarGrillaPromedio(idLibreta,mes,request.getContextPath());
                 JsonObjectBuilder json = Json.createObjectBuilder(); 
                 JsonArrayBuilder jab= Json.createArrayBuilder();
                 jab.add(Json.createObjectBuilder()

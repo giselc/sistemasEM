@@ -4,6 +4,8 @@
     Author     : Gisel
 --%>
 
+<%@page import="Classes.Bedelia.Profesor"%>
+<%@page import="Manejadores.ManejadorProfesores"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="Classes.Bedelia.Libreta"%>
 <%@page import="Manejadores.ManejadorBedelia"%>
@@ -180,49 +182,54 @@
                 int i=0;
                 String color;
                 if(u.isAdmin()||u.isNotas()){
-                    for (  HashMap<Integer,Libreta> p : mp.getLibretas().values()){
-                        for (  Libreta l : p.values()){
-                            if ((i%2)==0){
-                                color=" #ccccff";
-                            }
-                            else{
-                                color=" #ffff99";
-                            }
-                            i++;
-
-                           out.print("<tr style='background-color:"+color+"'>"
-                           +"<td style='width: 5%' align='center'>"+i+"</td>"
-                           +"<td style='width: 5%;display:none' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(l.getId())+"' form='formCadeteListar' /></td>"
-                           +"<td style='width: 10%' align='center'>"+l.getMateria().getNombre()+"</td>"
-                           +"<td style='width: 10%' align='center'>"+l.getGrupo().getCusoBedelia().getNombre()+"</td>"
-                           +"<td style='width: 10%' align='center'>"+l.getGrupo().getAnio()+" - "+l.getGrupo().getNombre()+"</td>"
-                           +"<td style='width: 10%' align='center'>"+ l.getProfesor().obtenerNombreCompleto() +"</td>");
-                            out.print("<td style='width: 5%' align='center'><a href='libreta.jsp?id="+l.getId()+"'><img src='images/ver.png' width='60%' /></a></td>");
-                            out.print("<td style='width: 5%' align='center'><a href='Libreta?elim=1&id="+l.getId()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
-                           +"</tr>");
+                    for (  Libreta l : mp.getLibretas().values()){
+                        if ((i%2)==0){
+                            color=" #ccccff";
                         }
+                        else{
+                            color=" #ffff99";
+                        }
+                        i++;
+
+                       out.print("<tr style='background-color:"+color+"'>"
+                       +"<td style='width: 5%' align='center'>"+i+"</td>"
+                       +"<td style='width: 5%;display:none' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(l.getId())+"' form='formCadeteListar' /></td>"
+                       +"<td style='width: 10%' align='center'>"+l.getMateria().getNombre()+"</td>"
+                       +"<td style='width: 10%' align='center'>"+l.getGrupo().getCusoBedelia().getNombre()+"</td>"
+                       +"<td style='width: 10%' align='center'>"+l.getGrupo().getAnio()+" - "+l.getGrupo().getNombre()+"</td>"
+                       +"<td style='width: 10%' align='center'>"+ l.getProfesor().obtenerNombreCompleto() +"</td>");
+                        out.print("<td style='width: 5%' align='center'><a href='libreta.jsp?id="+l.getId()+"'><img src='images/ver.png' width='60%' /></a></td>");
+                        out.print("<td style='width: 5%' align='center'><a href='Libreta?elim=1&id="+l.getId()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
+                       +"</tr>");
                     }
                 }
                 else{
                     if(u.isProfesor()){
-                        for (  Libreta l : mp.getLibretas().get(u.getCiProfesor()).values()){
-                            if ((i%2)==0){
-                                color=" #ccccff";
-                            }
-                            else{
-                                color=" #ffff99";
-                            }
-                            i++;
+                        ManejadorProfesores mprof= ManejadorProfesores.getInstance();
+                        Profesor prof=mprof.getProfesor(u.getCiProfesor());
+                        if(!prof.getLibretas().isEmpty()){
+                            for (  Libreta l : prof.getLibretas().values()){
+                                if ((i%2)==0){
+                                    color=" #ccccff";
+                                }
+                                else{
+                                    color=" #ffff99";
+                                }
+                                i++;
 
-                           out.print("<tr style='background-color:"+color+"'>"
-                           +"<td style='width: 5%' align='center'>"+i+"</td>"
-                           +"<td style='width: 5%;display:none' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(l.getId())+"' form='formCadeteListar' /></td>"
-                           +"<td style='width: 10%' align='center'>"+l.getMateria().getNombre()+"</td>"
-                           +"<td style='width: 10%' align='center'>"+l.getGrupo().getCusoBedelia().getNombre()+"</td>"
-                           +"<td style='width: 10%' align='center'>"+l.getGrupo().getAnio()+" - "+l.getGrupo().getNombre()+"</td>"
-                           +"<td style='width: 10%' align='center'>"+ l.getProfesor().obtenerNombreCompleto() +"</td>");
-                            out.print("<td style='width: 5%' align='center'><a href='libreta.jsp?id="+l.getId()+"'><img src='images/ver.png' width='60%' /></a></td>"
-                           +"</tr>");
+                               out.print("<tr style='background-color:"+color+"'>"
+                               +"<td style='width: 5%' align='center'>"+i+"</td>"
+                               +"<td style='width: 5%;display:none' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(l.getId())+"' form='formCadeteListar' /></td>"
+                               +"<td style='width: 10%' align='center'>"+l.getMateria().getNombre()+"</td>"
+                               +"<td style='width: 10%' align='center'>"+l.getGrupo().getCusoBedelia().getNombre()+"</td>"
+                               +"<td style='width: 10%' align='center'>"+l.getGrupo().getAnio()+" - "+l.getGrupo().getNombre()+"</td>"
+                               +"<td style='width: 10%' align='center'>"+ l.getProfesor().obtenerNombreCompleto() +"</td>");
+                                out.print("<td style='width: 5%' align='center'><a href='libreta.jsp?id="+l.getId()+"'><img src='images/ver.png' width='60%' /></a></td>"
+                               +"</tr>");
+                            }
+                        }
+                        else{
+                            out.print("<tr><td colspan='6' align='center'>NO EXISTEN LIBRETAS ASOCIADAS.</td></tr>");
                         }
                     }
                 }

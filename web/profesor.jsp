@@ -91,6 +91,13 @@
     <div id="content">
         <div id="Datos-Personales">
             <%
+            if(request.getParameter("id")==null || request.getParameter("id").equals("-1")){
+                out.print("<h2>ALTA DE PROFESOR</h2>");
+            }
+            else{
+                out.print("<h2>VER PROFESOR</h2>");
+            }
+            if(u.isAdmin()){
                 ManejadorCodigoBD mcbd = new ManejadorCodigoBD();
                 if(mcbd.existeUsuarioProfesor(c.getCi())){
                     %>
@@ -102,6 +109,7 @@
                     <a style="float: right" href="usuario.jsp?ciProfesor=<%= c.getCi() %>">CREAR USUARIO SISTEMA</a>
                     <%
                 };
+            }
             %>
             <form <% if (request.getParameter("id")==null){ out.print("action='Profesores'");} else{out.print("action='Profesores?id="+request.getParameter("id")+"'");} %> method="post" id="formularioAlta" onsubmit="return Validar(this);">
                 <table>

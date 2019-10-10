@@ -94,7 +94,7 @@ public class ManejadorProfesoresBD {
             sql="SELECT * FROM sistemasem.profesores left join sistemasem.grado on profesores.idgrado = grado.codigo order by primerApellido asc;";
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                p.add(new Profesor(rs.getInt("ci"), mc.getGrado(rs.getInt("idGrado")), mc.getArma(rs.getInt("idArma")), rs.getString("primerNombre"), rs.getString("segundoNombre"), rs.getString("primerApellido"), rs.getString("segundoApellido"), rs.getString("observaciones"), rs.getString("fechaIngreso"), rs.getString("telefono"), rs.getString("correo"), rs.getString("numeroCuenta"), rs.getString("dependenciaFinanciera"), rs.getInt("cantHoras"), rs.getInt("categoria"), rs.getInt("antiguedad"), true));
+                p.add(new Profesor(rs.getInt("ci"), mc.getGrado(rs.getInt("idGrado")), mc.getArma(rs.getInt("idArma")), rs.getString("primerNombre"), rs.getString("segundoNombre"), rs.getString("primerApellido"), rs.getString("segundoApellido"), rs.getString("observaciones"), rs.getString("fechaIngreso"), rs.getString("telefono"), rs.getString("correo"), rs.getString("numeroCuenta"), rs.getString("dependenciaFinanciera"), rs.getInt("cantHoras"), rs.getInt("categoria"), rs.getInt("antiguedad"), true,new HashMap<>()));
             }
             
         } catch (Exception ex) {
@@ -128,7 +128,7 @@ public class ManejadorProfesoresBD {
             int row=s.executeUpdate();
             if (row>0){
                 ManejadorCodigos mc= ManejadorCodigos.getInstance();
-                return new Profesor(rp.ci, mc.getGrado(rp.idGrado), mc.getArma(rp.idArma), rp.primerNombre, rp.segundoNombre, rp.primerApellido, rp.segundoApellido, rp.observaciones, rp.fechaIngreso, rp.telefono, rp.correo, rp.numeroCuenta, rp.dependenciaFinanciera, rp.cantHoras, rp.categoria, rp.antiguedad, rp.adminBedelia);
+                return new Profesor(rp.ci, mc.getGrado(rp.idGrado), mc.getArma(rp.idArma), rp.primerNombre, rp.segundoNombre, rp.primerApellido, rp.segundoApellido, rp.observaciones, rp.fechaIngreso, rp.telefono, rp.correo, rp.numeroCuenta, rp.dependenciaFinanciera, rp.cantHoras, rp.categoria, rp.antiguedad, rp.adminBedelia,new HashMap<>());
             }
         }
         catch(Exception e){

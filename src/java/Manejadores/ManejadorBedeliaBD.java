@@ -14,6 +14,7 @@ import Classes.Bedelia.LibretaIndividual;
 import Classes.Bedelia.Materia;
 import Classes.Bedelia.Nota;
 import Classes.Bedelia.Notificacion;
+import Classes.Bedelia.Profesor;
 import Classes.Bedelia.Promedio;
 import Classes.Bedelia.RecordFalta;
 import Classes.Bedelia.RecordSancion;
@@ -157,8 +158,8 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-    HashMap<Integer, HashMap<Integer,Libreta>> obtenerLibretas(HashMap<Integer, Materia> materias, HashMap<Integer, CursoBedelia> cursos) {
-        HashMap<Integer, HashMap<Integer,Libreta>> p= new HashMap<>();
+    HashMap<Integer, Libreta> obtenerLibretas(HashMap<Integer, Materia> materias, HashMap<Integer, CursoBedelia> cursos) {
+        HashMap<Integer, Libreta> p= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql;
@@ -167,14 +168,16 @@ public class ManejadorBedeliaBD {
             int ciProfesor;
             ManejadorBedelia mb = ManejadorBedelia.getInstance();
             ManejadorProfesores mp = ManejadorProfesores.getInstance();
+            Profesor prof=null;
+            Libreta l=null;
             while (rs.next()){
                 ciProfesor=rs.getInt("ciProfesor");
-                if(p.get(ciProfesor)==null){
-                    p.put(ciProfesor, new HashMap<>());
-                }
+                prof=mp.getProfesor(ciProfesor);
                 HashMap<Integer,LibretaIndividual> libretasIndividuales = obtenerLibretasIndividuales(rs.getInt("id"));
                 LinkedList<TemaTratado> temasTratados = obtenerTemasTratados(rs.getInt("id"));
-                p.get(rs.getInt("ciProfesor")).put(rs.getInt("id"), new Libreta(rs.getInt("id"),materias.get(rs.getInt("idMateria")),cursos.get(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombreGrupo")),mp.getProfesor(ciProfesor),rs.getString("salon"),libretasIndividuales,temasTratados,rs.getBoolean("cerrada"),rs.getBoolean("cerradaPrimeraReunion"),obtenerMesesCerrados(rs.getInt("id")),rs.getString("juicioGrupalPrimeraReunion"),rs.getString("juicioGrupalSegundaReunion")));
+                l=new Libreta(rs.getInt("id"),materias.get(rs.getInt("idMateria")),cursos.get(rs.getInt("idCurso")).getGrupo(rs.getInt("anio"), rs.getString("nombreGrupo")),prof,rs.getString("salon"),libretasIndividuales,temasTratados,rs.getBoolean("cerrada"),rs.getBoolean("cerradaPrimeraReunion"),obtenerMesesCerrados(rs.getInt("id")),rs.getString("juicioGrupalPrimeraReunion"),rs.getString("juicioGrupalSegundaReunion"));
+                p.put(rs.getInt("id"),l);
+                prof.getLibretas().put(rs.getInt("id"), l);
             }
             
         } catch (Exception ex) {
@@ -690,7 +693,7 @@ public class ManejadorBedeliaBD {
         }
         return -1;
     }
-    LinkedList<Notificacion> obtenerNotificaciones(HashMap<Integer, HashMap<Integer,Libreta>> libretas, int estado) {
+    LinkedList<Notificacion> obtenerNotificaciones(HashMap<Integer, Libreta> libretas, int estado) {
         LinkedList<Notificacion> p= new LinkedList<>();
         try {
             Statement s= connection.createStatement();
@@ -702,11 +705,10 @@ public class ManejadorBedeliaBD {
             Falta falta;
             Sancion sancion;
             while (rs.next()){
-                for(HashMap<Integer,Libreta> lista:libretas.values()){
-                    if(lista.containsKey(rs.getInt("idLibreta"))){
-                        l= lista.get(rs.getInt("idLibreta"));
-                    }
+                if(libretas.containsKey(rs.getInt("idLibreta"))){
+                    l= libretas.get(rs.getInt("idLibreta"));
                 }
+                
                 RecordFalta rf= new RecordFalta();
                 rf.idFalta=rs.getInt("idFalta");
                 rf.cantHoras=rs.getInt("cantHoras");
