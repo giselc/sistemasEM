@@ -88,7 +88,7 @@
         </tr>
         <tr>
             <td>Activo: </td>
-            <td><input type=checkbox name="activo" checked="" <% if(d!=null && d.isActivo()||d==null){out.print("checked=\"checked\"");} %> /> </td>
+            <td><input type=checkbox name="activo" <% if(d!=null && d.isActivo()||d==null){out.print("checked=\"checked\"");} %> /> </td>
         </tr>
     </table>
     <p align='right'><input type="submit"  value="Aceptar" /></p>

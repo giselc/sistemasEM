@@ -4,6 +4,7 @@
     Author     : Gisel
 --%>
 
+<%@page import="java.util.LinkedList"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="Classes.Bedelia.CursoBedelia"%>
 <%@page import="Classes.Bedelia.Materia"%>
@@ -32,7 +33,8 @@
             <%
                 HashMap<Integer,Materia> materiasCurso=d.getMaterias();
                 String display="";
-                out.print("<table style='width: 100%;' id='tablalistado'>"
+                LinkedList<Materia> materiasInactivas = new LinkedList();
+                out.print("<h3>MATERIAS ACTIVAS</h3><table style='width: 100%;' id='tablalistado'>"
                         + "<tr style='background-color:#ffcc66'>"
                             +"<td style='width: 5%' align='center'></td>"
                             +"<td style='width: 5%' align='center'><input type='checkbox' onclick='seleccionar_todo()' id='selTodo'></td>"
@@ -50,6 +52,7 @@
                 int i=0;
                 String color;
                 for (  Materia m : materiasCurso.values()){
+                    if(m.isActivo()){
                         if ((i%2)==0){
                             color=" #ccccff";
                         }
@@ -88,7 +91,68 @@
               out.print("<td style='width: 5%' align='center'><a href='Curso?desvincular="+m.getId()+"&idCurso="+d.getId()+"'><img src='images/desvincular.png' width='60%' /></a></td>"
                     +"</tr>"); 
                        }
+                    else{
+                        materiasInactivas.add(m);
+                    }
+                }
                 
+            out.print("</table>");
+            
+            out.print("<h3>MATERIAS INACTIVAS</h3><table style='width: 100%;' id='tablalistado'>"
+                        + "<tr style='background-color:#ffcc66'>"
+                            +"<td style='width: 5%' align='center'></td>"
+                            +"<td style='width: 5%' align='center'><input type='checkbox' onclick='seleccionar_todo()' id='selTodo'></td>"
+                            +"<td style='width: 5%' align='center'> ID </td>"
+                            +"<td style='width: 15%' align='center'>C&oacute;digo</td>"
+                            +"<td  style='width: 20%' align='center'>Nombre</td>"
+                            +"<td  style='width: 10%' align='center'>Semestral</td>"
+                            +"<td style='width: 10%' align='center'>Semestre</td>"
+                            +"<td style='width: 10%' align='center'>Secundaria</td>"
+                            +"<td style='width: 10%' align='center'>Espec&iacute;fica</td>"
+                            +"<td style='width: 5%' align='center'>Coeficiente</td>"
+                           +"<td style='width: 5%' align='center'>Ver</td>"
+                        +"<td style='width: 5%' align='center'>Desvincular</td>");
+                
+                i=0;
+                for (  Materia m : materiasInactivas){
+                        if ((i%2)==0){
+                            color=" #ccccff";
+                        }
+                        else{
+                            color=" #ffff99";
+                        }
+                        i++;
+                        
+            out.print("<tr style='background-color:"+color+"'>"
+                       +"<td style='width: 5%' align='center'>"+i+"</td>"
+                       +"<td style='width: 5%"+display+"' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(m.getId())+"' form='formCadeteListar' /></td>"
+                       +"<td style='width: 5%' align='center'>"+m.getId()+"</td>"
+                       +"<td style='width: 15%' align='center'>"+ m.getCodigo() +"</td>"
+                       +"<td style='width: 20%' align='center'>"+ m.getNombre() +"</td>");
+                       if(m.isSemestral()){
+                      out.print("<td style='width: 5%' align='center'>SI</td>");
+            }
+            else{
+                out.print("<td style='width: 5%' align='center'>NO</td>");
+            }
+                       out.print("<td style='width: 10%' align='center'>"+ m.getSemestre() +"</td>");
+            if(m.isSecundaria()){
+                      out.print("<td style='width: 5%' align='center'>SI</td>");
+            }
+            else{
+                out.print("<td style='width: 5%' align='center'>NO</td>");
+            }
+            if(m.isEspecifica()){
+                      out.print("<td style='width: 5%' align='center'>SI</td>");
+            }
+            else{
+                out.print("<td style='width: 5%' align='center'>NO</td>");
+            }
+                       out.print("<td style='width: 10%' align='center'>"+m.getCoeficiente()+"</td>"
+                       +"<td style='width: 5%' align='center'><a href='materia.jsp?id="+m.getId()+"'><img src='images/ver.png' width='60%' /></a></td>");
+              out.print("<td style='width: 5%' align='center'><a href='Curso?desvincular="+m.getId()+"&idCurso="+d.getId()+"'><img src='images/desvincular.png' width='60%' /></a></td>"
+                    +"</tr>"); 
+                }
             out.print("</table>");
             %> 
                 

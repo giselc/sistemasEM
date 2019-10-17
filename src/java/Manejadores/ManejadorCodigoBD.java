@@ -285,7 +285,7 @@ public class ManejadorCodigoBD {
             if (rs.next()){
                 TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
                 TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
-                d= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"),rs.getInt("ciProfesor"));
+                d= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"),rs.getInt("ciProfesor"),rs.getBoolean("cambiarContra"));
 
             }
         } catch (Exception ex) {
@@ -302,7 +302,7 @@ public class ManejadorCodigoBD {
             while (rs.next()){
                 TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
                 TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
-                al.add( new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"),rs.getInt("ciProfesor")));
+                al.add( new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"),rs.getInt("ciProfesor"),rs.getBoolean("cambiarContra")));
             }
         } catch (Exception ex) {
              System.out.print("ManejadorCodigoBD-getUsuarios: "+ex.getMessage());
@@ -380,15 +380,16 @@ public class ManejadorCodigoBD {
     //Retorna un Usuario con los parametros indicados persistiendolo en la base de datos si 'creador' es Admin.
     //retorna null si creador no es admin o se produjo algun error en la escritura de la base de datos.
     //PRECONDICIONES: - existeUsuario(usuario)==false
-    public boolean crarUsuario(Usuario creador, String nombre, String nombreMostrar, String contrasena, boolean admin,int tipoPersonal,int tipodescuento, boolean notas, boolean habilitacion,boolean profesor, int ciProfesor){
+    public boolean crarUsuario(Usuario creador, String nombre, String nombreMostrar, String contrasena, boolean cambiarContra,boolean admin,int tipoPersonal,int tipodescuento, boolean notas, boolean habilitacion,boolean profesor, int ciProfesor){
         if (creador.isAdmin()){
             try {
-                String sql= "insert into sistemasEM.usuarios (nombre, mostrar, contrasena,admin,permisosPersonal,permisosDescuento,notas, habilitacion,profesor,ciProfesor) values(?,?,MD5(?),?,?,?,?,?,?,?)";
+                String sql= "insert into sistemasEM.usuarios (nombre, mostrar, contrasena,cambiarContra,admin,permisosPersonal,permisosDescuento,notas, habilitacion,profesor,ciProfesor) values(?,?,?,MD5(?),?,?,?,?,?,?,?)";
                 PreparedStatement s= connection.prepareStatement(sql);
                 int i=1;
                 s.setString(i++, nombre);
                 s.setString(i++, nombreMostrar);
                 s.setString(i++, contrasena);
+                s.setBoolean(i++, cambiarContra);
                 s.setBoolean(i++, admin);
                 s.setInt(i++, tipoPersonal);
                 s.setInt(i++, tipodescuento);
@@ -437,10 +438,16 @@ public class ManejadorCodigoBD {
     
     
     //retorna false si 'creador' no es admin(o no es contrasena propia) o su contrasena anterior es incorrecta o se produjo algun error en la escritura de la base de datos.
-    public boolean cambiarContrasena(Usuario creador, int id, String contrasenaNueva, String contrasenaAnterior){
+    public boolean cambiarContrasena(Usuario creador, int id, String contrasenaNueva, String contrasenaAnterior,boolean cambiarContra){
         if(creador.isAdmin()){
             try {
-                String sql= "Update sistemaEM.usuarios set contrasena=MD5('"+contrasenaNueva+"') where id="+id;
+                String sql="";
+                if(cambiarContra){
+                    sql= "Update sistemaEM.usuarios set contrasena=MD5('"+contrasenaNueva+"'), cambiarContra=1 where id="+id;
+                }
+                else{
+                    sql= "Update sistemaEM.usuarios set contrasena=MD5('"+contrasenaNueva+"'), cambiarContra=0 where id="+id;
+                }
                 Statement s= connection.createStatement();
                 int result = s.executeUpdate(sql);
                 if(result>0){
@@ -453,10 +460,11 @@ public class ManejadorCodigoBD {
         else{
             if(creador.getId()== id){
                 try {
-                    String sql= "Update sistemasEM.usuarios set contrasena=MD5('"+contrasenaNueva+"') where id="+id + " and contrasena=MD5('"+contrasenaAnterior+"')";
+                    String sql= "Update sistemasEM.usuarios set contrasena=MD5('"+contrasenaNueva+"'), cambiarContra=0 where id="+id + " and contrasena=MD5('"+contrasenaAnterior+"')";
                     Statement s= connection.createStatement();
                     int result = s.executeUpdate(sql);
                     if(result>0){
+                        creador.setCambiarcontra(false);
                         return true;
                     }
                 } catch (SQLException ex) {
@@ -479,7 +487,7 @@ public class ManejadorCodigoBD {
                 while(rs.next()){
                     TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
                     TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
-                    al.add( new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"),rs.getInt("ciProfesor")));
+                    al.add( new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"),rs.getInt("ciProfesor"),rs.getBoolean("cambiarContra")));
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -499,7 +507,7 @@ public class ManejadorCodigoBD {
                 while(rs.next()){
                     TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
                     TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
-                    u= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"),rs.getInt("ciProfesor"));
+                    u= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"),rs.getInt("ciProfesor"),rs.getBoolean("cambiarContra"));
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);
@@ -518,7 +526,7 @@ public class ManejadorCodigoBD {
                 while(rs.next()){
                     TipoDescuento td =  this.getTipoDescuento(rs.getInt("permisosDescuento"));
                     TipoPersonal tp =  this.getTipoPersonal(rs.getInt("permisosPersonal"));
-                    u= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"),rs.getInt("ciProfesor"));
+                    u= new Usuario(rs.getInt("id"), rs.getString("nombre"), rs.getString("mostrar"),rs.getBoolean("admin"),tp,td,rs.getBoolean("notas"),rs.getBoolean("habilitacion"),rs.getBoolean("profesor"),rs.getInt("ciProfesor"),rs.getBoolean("cambiarContra"));
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ManejadorCodigoBD.class.getName()).log(Level.SEVERE, null, ex);

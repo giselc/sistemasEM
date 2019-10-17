@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -35,6 +36,8 @@ public class Promedios extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession sesion = request.getSession();
+        String redirect;
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         try (PrintWriter out = response.getWriter()) {
@@ -54,31 +57,50 @@ public class Promedios extends HttpServlet {
             }
             else{
                 Classes.Bedelia.Libreta l = mb.getLibretas().get(idLibreta);
-                Promedio promedio=null;
                 double valorPromedio = 0;
                 String juicio="";
-                int mes = Integer.valueOf(request.getParameter("mesAgregarNota"));
-                if(request.getParameter("guardarPromedios")!=null || request.getParameter("cerrarPromedios")!=null){
+                String mensaje = "";
+                boolean ok=true;
+                int mes = Integer.valueOf(request.getParameter("mesPromedio"));
+                if(request.getParameter("guardarPromedios")!=null || request.getParameter("cerrarMes")!=null){
                    for(LibretaIndividual li : l.getLibretasIndividuales().values()){
                        if(l.getMateria().isSecundaria()){
-                           valorPromedio = Double.valueOf(request.getParameter("PROMEDIO-"+li.getAlumno().getCi()));
-                           if(request.getParameter("JUICIO-"+li.getAlumno().getCi())!=null){
+                            if(!request.getParameter("PROMEDIO-"+li.getAlumno().getCi()).equals("")){
+                                valorPromedio = Double.valueOf(request.getParameter("PROMEDIO-"+li.getAlumno().getCi()));
+                            }
+                            else{
+                                valorPromedio=1;
+                            }
+                            if(request.getParameter("JUICIO-"+li.getAlumno().getCi())!=null){
                                juicio=request.getParameter("JUICIO-"+li.getAlumno().getCi());
-                           }
+                            }
                        }
                        else{
-                           valorPromedio = mb.calculoPromedio(li, mes);
+                           valorPromedio = mb.calculoPromedio(li, mes,l);
                        }
-                       if(request.getParameter("guardarPromedios")!=null ){
-                           mb.guardarPromedio(li,valorPromedio,mes,juicio,false);
-                       }
-                       else{
-                           mb.guardarPromedio(li,valorPromedio,mes,juicio,true);
-                       }
-                   }
-                   if(request.getParameter("JUICIOGRUPAL")!=null){
-                       mb.guardarJuicioGrupal(request.getParameter("JUICIOGRUPAL"),mes);
-                   }
+                        ok=ok&&mb.guardarPromedio(li,valorPromedio,mes,juicio);
+                             
+                    }
+                    if(ok){
+                        mensaje="Promedios guardados sastifactoriamente.";
+                        if(request.getParameter("cerrarMes")!=null){
+                            if(mb.cerrarPromedio(l, mes)){
+                                mensaje="Promedios guardados y cerrados sastifactoriamente.";
+                            }
+                            else{
+                                mensaje+=" ERROR al cerrar los promedios.";
+                            }
+                        }
+                    }
+                    else{
+                        mensaje="ERROR al guardar los promedios. Contacte al administrador";
+                    }
+                    if(request.getParameter("JUICIOGRUPAL")!=null){
+                        mb.guardarJuicioGrupal(request.getParameter("JUICIOGRUPAL"),mes,l);
+                    }
+                    sesion.setAttribute("Mensaje", mensaje);
+                    response.sendRedirect("libreta.jsp?id="+l.getId());
+
                 }
             }
         }

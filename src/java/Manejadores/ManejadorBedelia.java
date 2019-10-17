@@ -14,6 +14,7 @@ import Classes.Bedelia.Materia;
 import Classes.Bedelia.Nota;
 import Classes.Bedelia.Notificacion;
 import Classes.Bedelia.Profesor;
+import Classes.Bedelia.Promedio;
 import Classes.Bedelia.RecordFalta;
 import Classes.Bedelia.RecordSancion;
 import Classes.Bedelia.Sancion;
@@ -452,13 +453,28 @@ public class ManejadorBedelia {
                         html+="<td colspan='3'>JUNIO</td>"; fila+="<td>O</td><td>E</td><td>P</td>"; 
                         html+="<td>PRIMER PARCIAL</b></td>"; fila+="<td>E</td>";
                         break;
-                    case 12:
-                        html+="<td>MARZO</td>"; fila+="<td>P</td>";
-                        html+="<td>ABRIL</td>"; fila+="<td>P</td>";
-                        html+= "<td>MAYO</td>"; fila+="<td>P</td>";
-                        html+= "<td>JUNIO</td>"; fila+="<td>P</td>";
-                        break;
-                    case 13: 
+                    case 13:
+                        if(l.getMateria().isSemestral()&&l.getMateria().getSemestre()==1){
+                            html+="<td>MARZO</td>"; fila+="<td>P</td>";
+                            html+="<td>ABRIL</td>"; fila+="<td>P</td>";
+                            html+= "<td>MAYO</td>"; fila+="<td>P</td>";
+                            html+= "<td>JUNIO</td>"; fila+="<td>P</td>";
+                        }
+                        else{
+                            if(!l.getMateria().isSemestral()){
+                                html+="<td>MARZO</td>"; fila+="<td>P</td>";
+                                html+="<td>ABRIL</td>"; fila+="<td>P</td>";
+                                html+= "<td>MAYO</td>"; fila+="<td>P</td>";
+                                html+= "<td>JUNIO</td>"; fila+="<td>P</td>";
+                            }
+                            html+= "<td>JULIO</td>"; fila+="<td>P</td>";
+                            html+= "<td>AGOSTO</td>"; fila+="<td>P</td>";
+                            html+="<td>SETIEMBRE</td>"; fila+="<td>P</td>";
+                            html+= "<td>OCTUBRE</td>"; fila+="<td>P</td>";
+                        }
+                            break;
+                       
+                    case 12: 
                         html+="<td>PRIMERA REUNI&Oacute;N</b></td>"; fila+="<td>P</td>";
                         html+= "<td colspan='3'>JULIO</td>"; fila+="<td>O</td><td>E</td><td>P</td>";
                         html+= "<td colspan='3'>AGOSTO</td>"; fila+="<td>O</td><td>E</td><td>P</td>";
@@ -466,24 +482,14 @@ public class ManejadorBedelia {
                         html+= "<td colspan='3'>OCTUBRE</td>"; fila+="<td>O</td><td>E</td><td>P</td>";
                         html+="<td>SEGUNDO PARCIAL</b></td>"; fila+="<td>E</td>";
                         break;
-                    case 14:
-                        if(!l.getMateria().isSemestral()){
-                            html+="<td>MARZO</td>"; fila+="<td>P</td>";
-                            html+="<td>ABRIL</td>"; fila+="<td>P</td>";
-                            html+= "<td>MAYO</td>"; fila+="<td>P</td>";
-                            html+= "<td>JUNIO</td>"; fila+="<td>P</td>";
-                        }
-                        html+= "<td>JULIO</td>"; fila+="<td>P</td>";
-                        html+= "<td>AGOSTO</td>"; fila+="<td>P</td>";
-                        html+="<td>SETIEMBRE</td>"; fila+="<td>P</td>";
-                        html+= "<td>OCTUBRE</td>"; fila+="<td>P</td>";
-                        break;
+                    
+                        
                 }
                     
                 
             
                     html+= "<td>PROMEDIO</td>";fila+="<td></td>";
-                    if(mes==11||mes==13){
+                    if(mes==11||mes==12){
                          html+="<td>JUICIO</b></td>"; fila+="<td></td>";
                     }
         html+= "</tr>";
@@ -527,14 +533,28 @@ public class ManejadorBedelia {
                         html+="<td></td>";
                     }
                     break;
-                case 12:
-                    html+=promedioMesHTML(li, 3);
-                    html+=promedioMesHTML(li, 4);
-                    html+=promedioMesHTML(li, 5);
-                    html+=promedioMesHTML(li, 6);
+                case 13:
+                    if(l.getMateria().isSemestral()&&l.getMateria().getSemestre()==1){
+                        html+=promedioMesHTML(li, 3);
+                        html+=promedioMesHTML(li, 4);
+                        html+=promedioMesHTML(li, 5);
+                        html+=promedioMesHTML(li, 6);
+                    }
+                    else{
+                        if(!l.getMateria().isSemestral()){
+                            html+=promedioMesHTML(li, 3);
+                            html+=promedioMesHTML(li, 4);
+                            html+=promedioMesHTML(li, 5);
+                            html+=promedioMesHTML(li, 6);
+                        }
+                        html+=promedioMesHTML(li, 7);
+                        html+=promedioMesHTML(li, 8);
+                        html+=promedioMesHTML(li, 9);
+                        html+=promedioMesHTML(li, 10);
+                    }
                     break;
-                case 13: 
-                    html+="<td><b><p>"+li.getPromedioPrimeraReunion()+"</p></b></td>";
+                case 12: 
+                    html+="<td><b><p>"+li.getPromedios().get(11).getNota()+"</p></b></td>"; //primeraReunion
                     html+=notasMesHTML(li, 7);
                     html+=promedioMesHTML(li, 7);
                     html+=notasMesHTML(li, 8);
@@ -549,25 +569,13 @@ public class ManejadorBedelia {
                     else{
                         html+="<td></td>";
                     }
-                    break;
-                case 14: 
-                    if(!l.getMateria().isSemestral()){
-                        html+=promedioMesHTML(li, 3);
-                        html+=promedioMesHTML(li, 4);
-                        html+=promedioMesHTML(li, 5);
-                        html+=promedioMesHTML(li, 6);
-                    }
-                    html+=promedioMesHTML(li, 7);
-                    html+=promedioMesHTML(li, 8);
-                    html+=promedioMesHTML(li, 9);
-                    html+=promedioMesHTML(li, 10);
-                    break;
+                    break;                    
                 default : html+=notasMesHTML(li, mes); break;
             }
             html+= "<td style='color:#1e2eef'><b>";
             if(l.getMateria().isSecundaria()){
                 if(li.getPromedios().containsKey(mes)){
-                        html+="<input type='number' min = '1' step='0.01' max=12 value='"+li.getPromedios().get(mes)+"' name='PROMEDIO-"+li.getAlumno().getCi()+"'/>";
+                        html+="<input type='number' min = '1' step='0.01' max=12 value='"+li.getPromedios().get(mes).getNota()+"' name='PROMEDIO-"+li.getAlumno().getCi()+"'/>";
 
                 }
                 else{
@@ -575,14 +583,14 @@ public class ManejadorBedelia {
                 }
             }
             else{
-                html+=this.calculoPromedio(li,mes);
+                html+=this.calculoPromedio(li,mes,l);
             }
             html+="</b></td>";
             if(mes==11){
                 
                 html+="<td><input type='text' value='"+li.getJuicioPrimeraReunion()+"' name='JUICIO-"+li.getAlumno().getCi()+"'/></td>";
             }
-            if(mes==13){
+            if(mes==12){
                 html+="<td><input type='text' value='"+li.getJuicioSegundaReunion()+"' name='JUICIO-"+li.getAlumno().getCi()+"'/></td>";
             }
             
@@ -591,37 +599,68 @@ public class ManejadorBedelia {
         if(mes==11){
             html+="<tr><td>JUICIO GRUPAL:</td><td><input type='text' value='"+l.getJuicioGrupalPrimeraReunion()+"' name='JUICIOGRUPAL'/></td></tr>";
         }
-        if(mes==13){
+        if(mes==12){
             html+="<tr><td>JUICIO GRUPAL:</td><td><input type='text' value='"+l.getJuicioGrupalSegundaReunion()+"' name='JUICIOGRUPAL'/></td></tr>";
         }
         return html;
     }
-    public double calculoPromedio(LibretaIndividual li, int mes){
-        double suma= 0;
-        int sumacoef = 0;
-        if(li.getNotasOrales().containsKey(mes)){
-            for(Nota n:li.getNotasOrales().get(mes)){
-                suma+=n.getNota()*2;
-                sumacoef+=2;
+    public double calculoPromedio(LibretaIndividual li, int mes,Libreta l){ //mensual, semestral y anual 
+        if(mes<=10){
+            double suma= 0;
+            int sumacoef = 0;
+            if(li.getNotasOrales().containsKey(mes)){
+                for(Nota n:li.getNotasOrales().get(mes)){
+                    suma+=n.getNota()*2;
+                    sumacoef+=2;
+                }
             }
-        }
-        if(li.getNotasEscritos().containsKey(mes)){
-            for(Nota n:li.getNotasEscritos().get(mes)){
-                suma+=n.getNota()*3;
-                sumacoef+=3;
+            if(li.getNotasEscritos().containsKey(mes)){
+                for(Nota n:li.getNotasEscritos().get(mes)){
+                    suma+=n.getNota()*3;
+                    sumacoef+=3;
+                }
             }
-        }
-        if(sumacoef>0){
-            return (double)Math.round((suma/sumacoef) * 100d) / 100d;
+            if(sumacoef>0){
+                return (double)Math.round((suma/sumacoef) * 100d) / 100d;
+            }
+            else{
+                return 1.00;
+            }
         }
         else{
-            return 1.00;
+            if(mes==13){ 
+                if(l.getMateria().isSemestral() && l.getMateria().getSemestre()==1){//PROMEDIO ANUAL materia semestral primer semestre
+                    double suma = 0;
+                    for(int i=3;i<=6;i++){
+                        suma+=li.getPromedios().get(i).getNota();
+                    }
+                    return (double)Math.round((suma/4) * 100d) / 100d;
+                }
+                else{
+                    if(l.getMateria().isSemestral() && l.getMateria().getSemestre()==2){ //PROMEDIO ANUAL materia semestral segundo semestre
+                        double suma = 0;
+                        for(int i=7;i<=10;i++){
+                            suma+=li.getPromedios().get(i).getNota();
+                        }
+                        return (double)Math.round((suma/4) * 100d) / 100d;
+                    }
+                    else{
+                        //PROMEDIO ANUAL materia anual
+                        double suma = 0;
+                        for(int i=3;i<=10;i++){
+                            suma+=li.getPromedios().get(i).getNota();
+                        }
+                        return (double)Math.round((suma/8) * 100d) / 100d;
+                    }
+                }
+            }
         }
+        return 1.0;
     }
     private String promedioMesHTML(LibretaIndividual li,int mes){
         String html="<td>";
         if(li.getPromedios().containsKey(mes)){
-            html+=li.getPromedios().get(mes);
+            html+=li.getPromedios().get(mes).getNota();
         }
         html+="</td>";
         return html;
@@ -657,6 +696,57 @@ public class ManejadorBedelia {
             return true;
         }
         return false;
+    }
+    public boolean guardarPromedio(LibretaIndividual li, double valorPromedio, int mes, String juicio) {
+        ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
+        boolean ok=false;
+        if(li.getPromedios().containsKey(mes)){
+            ok= mb.modificarPromedio(li,valorPromedio,mes,juicio);
+        }
+        else{
+            ok= mb.guardarPromedio(li,valorPromedio,mes,juicio);
+        }
+        if(ok){
+            if(mes==11){
+                li.setJuicioPrimeraReunion(juicio);
+            }
+            else{
+                if(mes==12){
+                    li.setJuicioSegundaReunion(juicio);
+                }
+            }
+            if(li.getPromedios().containsKey(mes)){
+                li.getPromedios().get(mes).setNota(valorPromedio);
+            }
+            else{
+                li.getPromedios().put(mes, new Promedio(valorPromedio, mes));
+            }
+        }
+        return ok;
+    }
+    public boolean cerrarPromedio(Libreta libreta,int mes){
+        ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
+        if(!libreta.getMesesCerrados().containsKey(mes)){
+            if(mb.cerrarPromedio(libreta.getId(), mes)){
+                libreta.getMesesCerrados().put(mes, true);
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+    public void guardarJuicioGrupal(String juicio, int mes,Libreta l) {
+        ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
+        if(mb.guardarJuicioGrupal(juicio,mes,l)){
+            if (mes==11){
+                l.setJuicioGrupalPrimeraReunion(juicio);
+            }
+            else{
+                if(mes==12){
+                    l.setJuicioGrupalSegundaReunion(juicio);
+                }
+            }
+        }
     }
     private static class ManejadorBedeliaHolder {
 
@@ -823,17 +913,11 @@ public class ManejadorBedelia {
     //retorna true si hay alguna libreta asociada al curso idCurso
     public boolean cursoConLibretasAsociadas(int idCurso){
         Libreta l;
-        HashMap<Integer,Libreta> lp;
         Iterator it =libretas.values().iterator();
-        Iterator it1;
         while(it.hasNext()){
-            lp=(HashMap<Integer,Libreta>)it.next();
-            it1=lp.values().iterator();
-            while(it1.hasNext()){
-                l=(Libreta)it1.next();
-                if(l.getGrupo().getCusoBedelia().getId()==idCurso){
-                    return true;
-                }
+            l=(Libreta)it.next();
+            if(l.getGrupo().getCusoBedelia().getId()==idCurso){
+                return true;
             }
         }
         return false;

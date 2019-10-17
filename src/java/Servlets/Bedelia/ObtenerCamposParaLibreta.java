@@ -62,12 +62,14 @@ public class ObtenerCamposParaLibreta extends HttpServlet {
                     else{
                         JsonArrayBuilder jab= Json.createArrayBuilder();
                         for (Classes.Bedelia.Materia m : hm.values()){
-                            jab.add(Json.createObjectBuilder()
-                                .add("id", m.getId())
-                                .add("codigo", Manejadores.ManejadorPersonal.reemplazarTildes(m.getCodigo()))
-                                .add("nombre", Manejadores.ManejadorPersonal.reemplazarTildes(m.getNombre()))
-                            );
-                        };
+                            if(m.isActivo()){
+                                jab.add(Json.createObjectBuilder()
+                                    .add("id", m.getId())
+                                    .add("codigo", Manejadores.ManejadorPersonal.reemplazarTildes(m.getCodigo()))
+                                    .add("nombre", Manejadores.ManejadorPersonal.reemplazarTildes(m.getNombre()))
+                                );
+                            };
+                        }
                         json.add("materias", jab);
                     }
                    // System.out.print(json.build());

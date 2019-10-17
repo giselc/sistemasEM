@@ -232,7 +232,7 @@ public class ManejadorBedeliaBD {
                     }
                     grillaFaltasSancion.get(mes).get(dia).add(new FaltaSancion(null,sancion));
                 }
-                p.put(rs.getInt("ciAlumno"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciAlumno")), faltas, grillaFaltasSancion, notasOrales,notasEscritos, promedios, sanciones,rs.getDouble("PromedioAnual"),rs.getDouble("NotaFinal"),rs.getBoolean("activo"),rs.getDouble("promedioPrimeraReunion"),rs.getDouble("promedioSegundaReunion"),notaPrimerParcial,notaSegundoParcial,rs.getString("juicioPrimeraReunion"),rs.getString("juicioSegundaReunion")));
+                p.put(rs.getInt("ciAlumno"),new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciAlumno")), faltas, grillaFaltasSancion, notasOrales,notasEscritos, promedios, sanciones,rs.getDouble("NotaFinal"),rs.getBoolean("activo"),notaPrimerParcial,notaSegundoParcial,rs.getString("juicioPrimeraReunion"),rs.getString("juicioSegundaReunion")));
             }
             
         } catch (SQLException | NumberFormatException ex) {
@@ -294,7 +294,7 @@ public class ManejadorBedeliaBD {
             sql="SELECT * FROM sistemasem.promedios where  idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno;
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
-                p.put(rs.getInt("id"),new Promedio(rs.getInt("id"),rs.getInt("tipoPromedio"), rs.getDouble("nota"),rs.getInt("mes")));
+                p.put(rs.getInt("mes"),new Promedio(rs.getDouble("nota"),rs.getInt("mes")));
             }
         } catch (Exception ex) {
             System.out.print("obtenerPromediosLibretaIndividual-ManejadorBedeliaBD:"+ex.getMessage());
@@ -884,5 +884,86 @@ public class ManejadorBedeliaBD {
             System.out.print("modificarLibreta-ManejadorBedeliaBD: "+ex);
             return false;
         }
+    }
+
+    boolean modificarPromedio(LibretaIndividual li, double valorPromedio, int mes, String Juicio) {
+        String sql = "UPDATE sistemasem.promedios set nota=? where mes=? and idLibreta=? and ciAlumno=?";
+        int i=1;
+        try {
+            PreparedStatement statement= connection.prepareStatement(sql); // sql a insertar en postulantes
+            statement.setDouble(i++,valorPromedio);
+            statement.setInt(i++,mes);
+            statement.setInt(i++,li.getIdLibreta());
+            statement.setInt(i++,li.getAlumno().getCi());
+            statement.addBatch();
+            if(mes==11){
+                statement.addBatch("UPDATE sistemasem.libretasIndividuales set juicioPrimeraReunion='"+Juicio+"' where idLibreta="+li.getIdLibreta()+" and ciAlumno="+li.getAlumno().getCi());
+            }
+            else{
+                if(mes==12){
+                    statement.addBatch("UPDATE sistemasem.libretasIndividuales set juicioSegundaReunion='"+Juicio+"' where idLibreta="+li.getIdLibreta()+" and ciAlumno="+li.getAlumno().getCi());
+                }
+            }
+            int[] row=statement.executeBatch();
+            boolean ret = true;
+            for(int in:row){
+                ret=ret&&(in>0);
+            }
+            return ret;
+            
+        } catch (Exception ex) {
+            System.out.print("modificarPromedio-ManejadorBedeliaBD: "+ex);
+            return false;
+        }
+    }
+
+    boolean guardarPromedio(LibretaIndividual li, double valorPromedio, int mes,String juicio) {
+        try {
+            String sql= "insert into sistemasEM.promedios (idLibreta,ciAlumno,mes, nota) values(?,?,?,?)";
+            PreparedStatement s= connection.prepareStatement(sql);
+            int i=1;
+            s.setInt(i++,li.getIdLibreta());
+            s.setInt(i++, li.getAlumno().getCi());
+            s.setInt(i++, mes);
+            s.setDouble(i++,valorPromedio);
+            return s.executeUpdate()>0;
+        } catch (Exception ex) {
+            System.out.print("guardarPromedio-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return false;
+    }
+
+    public boolean guardarJuicioGrupal(String juicio, int mes, Libreta l) {
+        String sql="";
+        if(mes==11){
+            sql = "UPDATE sistemasem.libretas set juicioGrupalPrimeraReunion=? where id=?";
+        }
+        else{
+            if(mes==12){
+                sql = "UPDATE sistemasem.libretas set juicioGrupalSegundaReunion=? where id=?";
+            }
+        }
+        int i=1;
+        try {
+            PreparedStatement statement= connection.prepareStatement(sql); // sql a insertar en postulantes
+            statement.setString(i++,juicio);
+            statement.setInt(i++,l.getId());
+            return statement.executeUpdate()>0;
+        }
+        catch(Exception ex){
+              System.out.print("guardarJuicioGrupal-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return false;
+    }
+
+    public boolean cerrarPromedio(int idLibreta, int mes) {
+        try {
+            String sql= "insert into sistemasEM.mesesCerrados (idLibreta,mes) values("+idLibreta+","+mes+")";
+            Statement s= connection.createStatement();
+            return s.executeUpdate(sql)>0;
+        } catch (Exception ex) {
+            System.out.print("cerrarPromedio-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return false;
     }
 }

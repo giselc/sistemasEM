@@ -4,6 +4,7 @@
     Author     : Gisel
 --%>
 
+<%@page import="java.util.LinkedList"%>
 <%@page import="Classes.Bedelia.CursoBedelia"%>
 <%@page import="Manejadores.ManejadorBedelia"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -129,11 +130,12 @@
 %>
 <p align="left"><a href="javascript:history.go(-1)"><img src="images/atras.png" width="15%"/></a></p>
     <ul id="tabs">
-        <li><a href="#"><b>CURSOS</b></a></li>
+        <li><a href="#" title='CursosActivos'><b>CURSOS ACTIVOS</b></a></li>
+        <li><a href="#" title='CursosInactivos'><b>CURSOS INACTIVOS</b></a></li>
     </ul>
     <div id="loader" style="z-index: 50;position: fixed; top:0; left:0; width:100%; height: 100%;background: url('images/loading-verde.gif') center center no-repeat; background-size: 10%"></div>
     <div id="content">
-        <div>
+        <div id='CursosActivos'>
             <div id='dialog2' style="display:none" title="Seleccione los campos a listar:">
                 <form method="post" target="_blank"  id="formProfesoresListar" name="formProfesoresListar" action='Listar?tipoPersonal=4'>
                     
@@ -154,6 +156,8 @@
                 
             <%
             ManejadorBedelia mp = ManejadorBedelia.getInstance();
+            LinkedList<CursoBedelia> cursosInactivos = new LinkedList();
+
             %>   
 
     
@@ -173,6 +177,56 @@
                 int i=0;
                 String color;
                 for (  CursoBedelia p : mp.getCursos().values()){
+                    if(p.isActivo()){
+                        if ((i%2)==0){
+                            color=" #ccccff";
+                        }
+                        else{
+                            color=" #ffff99";
+                        }
+                        i++;
+                        
+                       out.print("<tr style='background-color:"+color+"'>"
+                       +"<td style='width: 5%' align='center'>"+i+"</td>"
+                       +"<td style='width: 5%;display:none' align='center'><input type='checkbox' name='List[]' value='"+String.valueOf(p.getId())+"' form='formCadeteListar' /></td>"
+                       +"<td style='width: 10%' align='center'>"+p.getId()+"</td>"
+                       +"<td style='width: 10%' align='center'>"+p.getCodigo()+"</td>"
+                       +"<td style='width: 10%' align='center'>"+p.getNombre()+"</td>"
+                       +"<td style='width: 10%' align='center'>"+p.getAnioCurricular()+"</td>"
+                       +"<td style='width: 10%' align='center'>");
+                       if(p.isJefatura()){
+                            out.print("JE");
+                       }else{
+                            out.print("JCC");
+                       }
+                       out.print("</td>");
+                        out.print("<td style='width: 5%' align='center'><a href='curso.jsp?id="+p.getId()+"'><img src='images/ver.png' width='60%' /></a></td>");
+                        out.print("<td style='width: 5%' align='center'><a href='Curso?elim=1&id="+p.getId()+"'><img src='images/eliminar.png' width='60%' /></a></td>"
+                       +"</tr>");
+                    }
+                    else{
+                        cursosInactivos.add(p);
+                    }
+                }
+                out.print("</table>");
+            %> 
+         </div>
+         <div id='CursosInactivos'>
+             <%
+                out.print("<table style='width: 100%;' id='tablalistado'>"
+                        + "<tr style='background-color:#ffcc66'>"
+                            +"<td style='width: 5%' align='center'></td>"
+                            +"<td style='width: 5%; display:none' align='center'><input type='checkbox' onclick='seleccionar_todo()' id='selTodo'></td>"
+                            +"<td style='width: 10%' align='center'>id</td>"
+                            +"<td style='width: 10%' align='center'>Codigo</td>"
+                            +"<td style='width: 10%' align='center'>Nombre</td>"
+                            +"<td style='width: 10%' align='center'>Anio Curricular</td>"
+                            +"<td style='width: 10%' align='center'>Jefatura</td>");
+                out.print(  "<td style='width: 5%' align='center'>Ver</td>");
+                out.print(  "<td style='width: 5%' align='center'>Elim</td>"   
+                +"</tr>" );
+                i=0;
+                for (  CursoBedelia p : cursosInactivos ){
                         if ((i%2)==0){
                             color=" #ccccff";
                         }
@@ -200,10 +254,10 @@
                        +"</tr>");
                 }
                 out.print("</table>");
-            %> 
+              %>
          </div>
      </div>    
-<% 
+<%
     }
     else{
         sesion.setAttribute("Mensaje","Lo sentimos, no tiene permisos para acceder a esta p&aacute;gina. Contacte al administrador.");

@@ -99,6 +99,14 @@
                                     </script>
                                      <%
                                  }
+                                 else if(loginStatus!=null && loginStatus.equals("perdidaDeSesion")){
+                                     out.println("<td><h4 style='margin:0px;color: #ffff33;font-size: 100%'>DEBE INICAR SESI&Oacute;N</h4></td>");
+                                     %>
+                                    <script>
+                                        alert("Se ha perdido la sesión. Debe loguearse nuevamente.")
+                                    </script>
+                                     <%
+                                 }
 
                     %>
                 </tr>

@@ -12,7 +12,7 @@
 <script>
     function validarContrasena(f){
         if (f.elements["pass"].value != f.elements["pass1"].value){
-            document.getElementById("textocontrasena").innerHTML = "No coinciden las contraseñas.";
+            slert("ERROR! No coinciden las contraseñas.");
             return false;
         }
         else{
@@ -96,9 +96,9 @@
                 <table style=" width: 100%; border-collapse: separate;border-spacing: 2px;text-align: center;vertical-align: central;">
                     <tr>
                         <td colspan="2" style="color: #cd0a0a">
-                            <% if(session.getAttribute("mensaje")!=null){
-                                out.print("<img src='images/icono-informacion.png' width='8%'/>"+session.getAttribute("mensaje"));
-                                session.setAttribute("mensaje", null);
+                            <% if(session.getAttribute("Mensaje")!=null){
+                                out.print("<img src='images/icono-informacion.png' width='8%'/>"+session.getAttribute("Mensaje"));
+                                session.setAttribute("Mensaje", null);
                             };%>
                         </td>
                     </tr>
@@ -232,9 +232,12 @@
 
                         </td>
                     </tr>
-                    <tr>
+                     <tr>
+                        <td>
+                            <p><b>Usuario debe cambiar la contrase&ntilde;a:</b></p>
+                        </td>
                         <td colspan="2">
-                            <h3 id="textocontrasena" style="color: red"></h3>
+                            <input  checked="checked" type=checkbox name="cambiarContra" />
                         </td>
                     </tr>
                 </table>

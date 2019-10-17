@@ -87,12 +87,17 @@ public class Usuario extends HttpServlet {
                     String url="usuarios.jsp";
                     if(!mc.existeUsuario(usuario)){
                         String pass = request.getParameter("pass");
-                        if(mc.crarUsuario(u,usuario,nombreMostrar,pass,admin,tipoPermisoPersonal,tipoPermisoDescuento,permisoSistemaNotas,permisoSistemaHabilitacion,esProfesor,ciProfesor)){
+                        boolean cambiarContra = false;
+                        if (request.getParameter("cambiarContra")!=null){
+                            cambiarContra = request.getParameter("cambiarContra").equals("on");
+                        }
+                        if(mc.crarUsuario(u,usuario,nombreMostrar,pass,cambiarContra,admin,tipoPermisoPersonal,tipoPermisoDescuento,permisoSistemaNotas,permisoSistemaHabilitacion,esProfesor,ciProfesor)){
                             sesion.setAttribute("mensaje", "Usuario creado sastifactoriamente.");
                         }
                         else{
                             sesion.setAttribute("mensaje", "ERROR al crear el usuario.");
                         }
+                        
                     }
                     else{
                         url="usuario.jsp";
@@ -119,18 +124,24 @@ public class Usuario extends HttpServlet {
                         contraAnt= request.getParameter("contraAnt");
                     }
                     String contraNue= request.getParameter("contraNue");
-                    if(mc.cambiarContrasena(u, id, contraNue, contraAnt)){
-                        sesion.setAttribute("mensaje", "Contraseña modificada sastifactoriamente.");
+                    boolean cambiarContra = false;
+                    if (request.getParameter("cambiarContra")!=null){
+                        cambiarContra = request.getParameter("cambiarContra").equals("on");
+                    }
+                    if(mc.cambiarContrasena(u, id, contraNue, contraAnt,cambiarContra)){
+                        sesion.setAttribute("Mensaje", "Contraseña modificada sastifactoriamente.");
+                        if(request.getParameter("contraAnt")!=null){
+                            response.sendRedirect(""); 
+                        }
+                        else{
+                            response.sendRedirect("usuarios.jsp"); 
+                        }
                     }
                     else{
-                        sesion.setAttribute("mensaje", "ERROR al modificar la contraseña.");
-                    }
-                    if(request.getParameter("contraAnt")!=null){
+                        sesion.setAttribute("Mensaje", "ERROR al modificar la contraseña.");
                         response.sendRedirect("cambiarContrasena.jsp?id="+id);
                     }
-                    else{
-                        response.sendRedirect("usuarios.jsp"); 
-                    }
+                    
                     
                 }
                 else{

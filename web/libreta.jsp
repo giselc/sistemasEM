@@ -643,18 +643,7 @@
         function cambiarProfesor(select){
             document.getElementById("editarProfesor").href="profesor.jsp?id="+select.value;
         }
-        function guardarPromedios(idLibreta){
-            form = document.getElementById("formGuardarPromedios");
-            form.action = "Promedios?idLibreta="+idLibreta+"&guardarPromedios=1"
-            form.submit();
-            return false;
-        }
-        function cerrarPromedios(idLibreta){
-            form = document.getElementById("formGuardarPromedios");
-            form.action = "Promedios?idLibreta="+idLibreta+"&cerrarPromedios=1"
-            form.submit();
-            return false;
-        }
+        
 </script>
 <style>
     table tr td{
@@ -662,6 +651,30 @@
     }
     p{
         margin: 0px;
+    }
+    .cat{
+        color: #ff3300;
+    }
+    .primeraReunion {
+        color: #cc0000;
+    }
+    .segundaReunion {
+        color: #cc0000;
+    }
+    .promedioAnual {
+        color: #cc0000;
+    }
+    .promediosMensuales {
+        color: #990000;
+    }
+    .orales {
+        
+    }
+    .escritos {
+        color: #0000aa;
+    }
+    .parciales{
+        color:#0000ff
     }
 </style>
 
@@ -730,7 +743,9 @@ if(d==null){
                             <option value="-1"></option>
                             <%
                             for(CursoBedelia cb: mp.getCursos().values()){
-                                out.print("<option value='"+cb.getId() +"'>"+ cb.getCodigo()+" - "+cb.getNombre()+"</option>");
+                                if(cb.isActivo()){
+                                    out.print("<option value='"+cb.getId() +"'>"+ cb.getCodigo()+" - "+cb.getNombre()+"</option>");
+                                }
                             }
                             %>
                          </select>
@@ -1394,7 +1409,7 @@ else{
                                         if(d.getMateria().isSecundaria()){
                                             %> 
                                             <td title="Segunda evaluaci&oacute;n especial" style="width: 3%"> 2&deg;EE</td>
-                                            <td style="width: 3%">2&deg;R</td>
+                                            <td style="width: 3%" colspan="2">2&deg;R</td>
                                                <%
                                         }
                                     }
@@ -1434,6 +1449,7 @@ else{
                                             %>
                                             <td>E</td>
                                             <td>P</td>
+                                            <td>CAT</td>
                                                <%
                                         }
                                     }
@@ -1479,17 +1495,19 @@ else{
                             </table>
                     </div>
                     <div id="promedios">
+                        
+                        <form id='formGuardarPromedios' method="post"  >
+                          
                         <p align="right">
                             <%
                             if(d.getMateria().isSecundaria()){
                             %>
-                            <button onclick="guardarPromedios(<%= d.getId() %>);" style="background-color: #ff6600; border-radius: 15px; color: #ffffff; font-size: large;">&nbsp;GUARDAR CAMBIOS&nbsp;</button>
+                            <input type='submit' name='boton1' onclick="this.form.action=form.action = 'Promedios?idLibreta=<%= d.getId() %>&guardarPromedios=1';" value='GUARDAR CAMBIOS' style="background-color: #ff6600;border-radius: 15px; color: #ffffff;font-size: large">
                             <%
                             }
                             %>
-                            <button onclick="cerrarMesPromedios(<%= d.getId() %>);" style="background-color: #cd0a0a; border-radius: 15px; color: #ffffff; font-size: large;">&nbsp;CERRAR MES&nbsp;</button>
+                            <input type='submit' name='boton2' onclick="this.form.action=form.action = 'Promedios?idLibreta=<%= d.getId() %>&cerrarMes=1';" value='CERRAR MES' style="background-color: #cd0a0a; border-radius: 15px; color: #ffffff;font-size: large" >
                         </p>
-                        <form id='formGuardarPromedios' method="post" action="Promedios?idLibreta=<%= d.getId() %>" >
                         <table>
                             <tr>
                                 <td>
@@ -1520,14 +1538,14 @@ else{
                                         <option value="6" >JUNIO</option>
                                         <%
                                         }
-                                        if(d.getMateria().isSecundaria() && !d.isCerradaPrimeraReunion()){
+                                        if(d.getMateria().isSecundaria() && (!d.getMesesCerrados().containsKey(11))){
                                             %>
                                             <option value="11" >PRIMERA REUNI&Oacute;N</option>
                                             <%
                                         }
-                                        if(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1){
+                                        if(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1 && (!d.getMesesCerrados().containsKey(13))){
                                             %>
-                                            <option value="12" >PROMEDIO ANUAL</option>
+                                            <option value="13" >PROMEDIO ANUAL</option>
                                             <%
                                         }
                                     }
@@ -1552,15 +1570,17 @@ else{
                                         <option value="10" >OCTUBRE</option>
                                         <%
                                         }
-                                        if(d.getMateria().isSecundaria()){
+                                        if(d.getMateria().isSecundaria() && (!d.getMesesCerrados().containsKey(12))){
                                             %>
-                                            <option value="13" >SEGUNDA REUNI&Oacute;N</option>
+                                            <option value="12" >SEGUNDA REUNI&Oacute;N</option>
                                             <%
                                         }
                                         else{
+                                            if(!d.getMesesCerrados().containsKey(13)){
                                             %>
                                             <option value="14" >PROMEDIO ANUAL</option>
                                             <%
+                                            }
                                         }
                                     }
                                     %>

@@ -114,7 +114,7 @@ public class CursoBedelia extends HttpServlet {
                                         mensaje="ERROR al modificar el curso. Tiene libretas asociadas";
                                         break;
                                 }
-                                redirect="/curso.jsp?id="+request.getParameter("id");
+                                redirect="curso.jsp?id="+request.getParameter("id");
                             }
                             else{
                                 //agregar

@@ -14,6 +14,17 @@
         <link rel="stylesheet" href="css/sistemasEM.css" type="text/css"/>
         <link rel="stylesheet" href="css/jquery-ui.css" type="text/css"/>
         <link rel="stylesheet" href="css/tabs.css" type="text/css"/>
+        <script>
+            window.addEventListener( "pageshow", function ( event ) {
+            var historyTraversal = event.persisted || 
+                                   ( typeof window.performance != "undefined" && 
+                                        window.performance.navigation.type === 2 );
+            if ( historyTraversal ) {
+              // Handle page restore.
+              window.location.reload();
+            }
+          });
+        </script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <style type="text/css">
                         body{
@@ -71,13 +82,14 @@
                     <% 
                     HttpSession sesion= request.getSession();
                     if (sesion.getAttribute("usuarioID")!=null){
+                        ManejadorCodigos mc = ManejadorCodigos.getInstance();
+                        Usuario u= (Classes.Usuario)sesion.getAttribute("usuario");
+                        if(u!=null){
                     %>
                     <table style="width: 100%">
                         <tr>
                             <td style="width: 20%; vertical-align: top" >
                                 <p style="color: #000000; margin: 0px"><%
-                                    ManejadorCodigos mc = ManejadorCodigos.getInstance();
-                                    Usuario u= (Classes.Usuario)sesion.getAttribute("usuario");
                                     out.print("Bienvenido ");out.print(u.getNombreMostrar());
                                     %></p>
                                 

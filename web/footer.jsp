@@ -3,6 +3,12 @@
                             </tr>
                         </table>
                         <%
+                            }
+                            else{
+                                sesion.setAttribute("usuarioID", null);
+                                sesion.setAttribute("login", "perdidaDeSesion");
+                                response.sendRedirect("");
+                            }
                         }
                         else{
                             sesion.setAttribute("login", "vacio");

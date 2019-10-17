@@ -53,29 +53,61 @@ public class login extends HttpServlet {
                 else{
                     if(u.getPermisosPersonal()!=null){
                         sesion.setAttribute("inicio", "personal.jsp?id="+u.getPermisosPersonal().getId());
+                        if(u.isCambiarcontra()){
+                            sesion.setAttribute("Mensaje", "ATENCIÓN! Debe cambiar la contraseña.");
+                            response.sendRedirect("cambiarContrasena.jsp?id="+u.getId());
+                        }
+                        else{    
                             response.sendRedirect("personal.jsp");
+                        }
                         
                     }
                     else{
                         if(u.getPermisosDescuento()!=null){
                             sesion.setAttribute("inicio", "descuentos.jsp?id="+u.getPermisosDescuento().getId());
-                            response.sendRedirect("descuentos.jsp");
+                            if(u.isCambiarcontra()){
+                                sesion.setAttribute("Mensaje", "ATENCIÓN! Debe cambiar la contraseña.");
+                                response.sendRedirect("cambiarContrasena.jsp?id="+u.getId());
+                            }
+                            else{    
+                                response.sendRedirect("descuentos.jsp");
+                            }
+                            
                         }
                         else{
                             if(u.isNotas()){
                                 sesion.setAttribute("inicio", "bedelia.jsp");
-                                response.sendRedirect("bedelia.jsp");
+                                if(u.isCambiarcontra()){
+                                    sesion.setAttribute("Mensaje", "ATENCIÓN! Debe cambiar la contraseña.");
+                                    response.sendRedirect("cambiarContrasena.jsp?id="+u.getId());
+                                }
+                                else{    
+                                    response.sendRedirect("bedelia.jsp");
+                                }
+                                
                             }
                             else{
                                 if(u.isHabilitacion()){
                                     sesion.setAttribute("inicio", "habilitacion.jsp");
-                                    response.sendRedirect("habilitacion.jsp");
+                                    if(u.isCambiarcontra()){
+                                        sesion.setAttribute("Mensaje", "ATENCIÓN! Debe cambiar la contraseña.");
+                                        response.sendRedirect("cambiarContrasena.jsp?id="+u.getId());
+                                    }
+                                    else{    
+                                        response.sendRedirect("habilitacion.jsp");
+                                    }
                                 }
                                 else{
 
                                     if(u.isProfesor()){
                                         sesion.setAttribute("inicio", "libretas.jsp");
-                                        response.sendRedirect("libretas.jsp");
+                                        if(u.isCambiarcontra()){
+                                            sesion.setAttribute("Mensaje", "ATENCIÓN! Debe cambiar la contraseña.");
+                                            response.sendRedirect("cambiarContrasena.jsp?id="+u.getId());
+                                        }
+                                        else{    
+                                            response.sendRedirect("libretas.jsp");
+                                        }
                                     }
                                     else{
                                         sesion.setAttribute("usuarioID", null);

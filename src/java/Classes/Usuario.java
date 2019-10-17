@@ -20,8 +20,9 @@ public class Usuario {
     private final boolean habilitacion;
     private final boolean profesor;
     private final int ciProfesor;
-
-    public Usuario(int id, String nombre, String nombreMostrar, boolean admin, TipoPersonal permisosPersonal, TipoDescuento tipoDescuento, boolean notas, boolean habilitacion,boolean profesor,int ciProfesor) {
+    private boolean cambiarcontra;
+    
+    public Usuario(int id, String nombre, String nombreMostrar, boolean admin, TipoPersonal permisosPersonal, TipoDescuento tipoDescuento, boolean notas, boolean habilitacion,boolean profesor,int ciProfesor,boolean cambiarContra) {
         this.id = id;
         this.nombre = nombre;
         this.nombreMostrar = nombreMostrar;
@@ -32,6 +33,15 @@ public class Usuario {
         this.habilitacion = habilitacion;
         this.profesor = profesor;
         this.ciProfesor= ciProfesor;
+        this.cambiarcontra = cambiarContra;
+    }
+
+    public boolean isCambiarcontra() {
+        return cambiarcontra;
+    }
+
+    public void setCambiarcontra(boolean cambiarcontra) {
+        this.cambiarcontra = cambiarcontra;
     }
 
     public int getCiProfesor() {
