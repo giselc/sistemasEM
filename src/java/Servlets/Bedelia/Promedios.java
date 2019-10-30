@@ -7,9 +7,11 @@ package Servlets.Bedelia;
 
 import Classes.Bedelia.LibretaIndividual;
 import Classes.Bedelia.Promedio;
+import Classes.Bedelia.RecordPromedios;
 import Manejadores.ManejadorBedelia;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.LinkedList;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
@@ -89,6 +91,8 @@ public class Promedios extends HttpServlet {
                 boolean ok=true;
                 int mes = Integer.valueOf(request.getParameter("mesPromedio"));
                 if(request.getParameter("guardarPromedios")!=null || request.getParameter("cerrarMes")!=null){
+                   LinkedList<RecordPromedios> lrp= new LinkedList<>();
+                   RecordPromedios rp;
                    for(LibretaIndividual li : l.getLibretasIndividuales().values()){
                        if(l.getMateria().isSecundaria()){
                             if(!request.getParameter("PROMEDIO-"+li.getAlumno().getCi()).equals("")){
@@ -104,22 +108,34 @@ public class Promedios extends HttpServlet {
                        else{
                            valorPromedio = mb.calculoPromedio(li, mes,l);
                        }
-                        ok=ok&&mb.guardarPromedio(li,valorPromedio,mes,juicio);
+                       rp= new RecordPromedios();
+                       rp.juicio=juicio;
+                       rp.valorPromedio=valorPromedio;
+                       rp.li=li;
+                       lrp.add(rp);
+                        //ok=ok&&mb.guardarPromedio(li,valorPromedio,mes,juicio);
                              
                     }
+                   if(request.getParameter("cerrarMes")!=null){
+                       ok=mb.guardarCerrarPromedio(l,lrp,mes,true);
+                   }
+                   else{
+                       ok=mb.guardarCerrarPromedio(l,lrp,mes,false);
+                   }
+                   
                     if(ok){
-                        mensaje="Promedios guardados satisfactoriamente.";
-                        if(request.getParameter("cerrarMes")!=null){
-                            if(mb.cerrarPromedio(l, mes)){
-                                mensaje="Promedios guardados y cerrados satisfactoriamente.";
-                            }
-                            else{
-                                mensaje+=" ERROR al cerrar los promedios.";
-                            }
-                        }
+//                        mensaje="Promedios guardados satisfactoriamente.";
+//                        if(request.getParameter("cerrarMes")!=null){
+//                            if(mb.cerrarPromedio(l, mes)){
+                                mensaje="Promedios procesados correctamente.";
+//                            }
+//                            else{
+//                                mensaje+=" ERROR al cerrar los promedios.";
+//                            }
+//                        }
                     }
                     else{
-                        mensaje="ERROR al guardar los promedios. Contacte al administrador";
+                        mensaje="ERROR al procesar los promedios. Contacte al administrador";
                     }
                     if(request.getParameter("JUICIOGRUPAL")!=null){
                         mb.guardarJuicioGrupal(request.getParameter("JUICIOGRUPAL"),mes,l);

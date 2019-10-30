@@ -17,6 +17,7 @@ import Classes.Bedelia.Notificacion;
 import Classes.Bedelia.Profesor;
 import Classes.Bedelia.Promedio;
 import Classes.Bedelia.RecordFalta;
+import Classes.Bedelia.RecordPromedios;
 import Classes.Bedelia.RecordSancion;
 import Classes.Bedelia.Sancion;
 import Classes.Bedelia.TemaTratado;
@@ -988,7 +989,6 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
     public boolean modificarLibreta(int id, int ciProfesor, String salon) {
         String sql = "UPDATE sistemasem.libretas set ciProfesor=?,salon=? where id=?";
         int i=1;
@@ -1005,54 +1005,51 @@ public class ManejadorBedeliaBD {
             return false;
         }
     }
-
-    boolean modificarPromedio(LibretaIndividual li, double valorPromedio, int mes, String Juicio) {
-        String sql = "UPDATE sistemasem.promedios set nota=? where mes=? and idLibreta=? and ciAlumno=?";
-        int i=1;
-        try {
-            PreparedStatement statement= connection.prepareStatement(sql); // sql a insertar en postulantes
-            statement.setDouble(i++,valorPromedio);
-            statement.setInt(i++,mes);
-            statement.setInt(i++,li.getIdLibreta());
-            statement.setInt(i++,li.getAlumno().getCi());
-            statement.addBatch();
-            if(mes==11){
-                statement.addBatch("UPDATE sistemasem.libretasIndividuales set juicioPrimeraReunion='"+Juicio+"' where idLibreta="+li.getIdLibreta()+" and ciAlumno="+li.getAlumno().getCi());
-            }
-            else{
-                if(mes==12){
-                    statement.addBatch("UPDATE sistemasem.libretasIndividuales set juicioSegundaReunion='"+Juicio+"' where idLibreta="+li.getIdLibreta()+" and ciAlumno="+li.getAlumno().getCi());
-                }
-            }
-            int[] row=statement.executeBatch();
-            boolean ret = true;
-            for(int in:row){
-                ret=ret&&(in>0);
-            }
-            return ret;
-            
-        } catch (Exception ex) {
-            System.out.print("modificarPromedio-ManejadorBedeliaBD: "+ex);
-            return false;
-        }
-    }
-
-    boolean guardarPromedio(LibretaIndividual li, double valorPromedio, int mes,String juicio) {
-        try {
-            String sql= "insert into sistemasEM.promedios (idLibreta,ciAlumno,mes, nota) values(?,?,?,?)";
-            PreparedStatement s= connection.prepareStatement(sql);
-            int i=1;
-            s.setInt(i++,li.getIdLibreta());
-            s.setInt(i++, li.getAlumno().getCi());
-            s.setInt(i++, mes);
-            s.setDouble(i++,valorPromedio);
-            return s.executeUpdate()>0;
-        } catch (Exception ex) {
-            System.out.print("guardarPromedio-ManejadorBedeliaBD:"+ex.getMessage());
-        }
-        return false;
-    }
-
+//    boolean modificarPromedio(LibretaIndividual li, double valorPromedio, int mes, String Juicio) {
+//        String sql = "UPDATE sistemasem.promedios set nota=? where mes=? and idLibreta=? and ciAlumno=?";
+//        int i=1;
+//        try {
+//            PreparedStatement statement= connection.prepareStatement(sql); // sql a insertar en postulantes
+//            statement.setDouble(i++,valorPromedio);
+//            statement.setInt(i++,mes);
+//            statement.setInt(i++,li.getIdLibreta());
+//            statement.setInt(i++,li.getAlumno().getCi());
+//            statement.addBatch();
+//            if(mes==11){
+//                statement.addBatch("UPDATE sistemasem.libretasIndividuales set juicioPrimeraReunion='"+Juicio+"' where idLibreta="+li.getIdLibreta()+" and ciAlumno="+li.getAlumno().getCi());
+//            }
+//            else{
+//                if(mes==12){
+//                    statement.addBatch("UPDATE sistemasem.libretasIndividuales set juicioSegundaReunion='"+Juicio+"' where idLibreta="+li.getIdLibreta()+" and ciAlumno="+li.getAlumno().getCi());
+//                }
+//            }
+//            int[] row=statement.executeBatch();
+//            boolean ret = true;
+//            for(int in:row){
+//                ret=ret&&(in>0);
+//            }
+//            return ret;
+//            
+//        } catch (Exception ex) {
+//            System.out.print("modificarPromedio-ManejadorBedeliaBD: "+ex);
+//            return false;
+//        }
+//    }
+//    boolean guardarPromedio(LibretaIndividual li, double valorPromedio, int mes,String juicio) {
+//        try {
+//            String sql= "insert into sistemasEM.promedios (idLibreta,ciAlumno,mes, nota) values(?,?,?,?)";
+//            PreparedStatement s= connection.prepareStatement(sql);
+//            int i=1;
+//            s.setInt(i++,li.getIdLibreta());
+//            s.setInt(i++, li.getAlumno().getCi());
+//            s.setInt(i++, mes);
+//            s.setDouble(i++,valorPromedio);
+//            return s.executeUpdate()>0;
+//        } catch (Exception ex) {
+//            System.out.print("guardarPromedio-ManejadorBedeliaBD:"+ex.getMessage());
+//        }
+//        return false;
+//    }
     public boolean guardarJuicioGrupal(String juicio, int mes, Libreta l) {
         String sql="";
         if(mes==11){
@@ -1075,15 +1072,102 @@ public class ManejadorBedeliaBD {
         }
         return false;
     }
-
-    public boolean cerrarPromedio(int idLibreta, int mes) {
+    public boolean cerrarPromedio(Libreta libreta, int mes, LinkedList<RecordPromedios> lrp) {
         try {
-            String sql= "insert into sistemasEM.mesesCerrados (idLibreta,mes) values("+idLibreta+","+mes+")";
-            Statement s= connection.createStatement();
+            String sql="update sistemasEm.registrosEscolaridad set promedioAnual=?,categoria=?, estado=? where ciAlumno=? and idCurso=? and idMateria=? and anio=? and nombreGrupo=?";
+            PreparedStatement s= connection.prepareStatement(sql);
+            if(mes==12||mes==13){
+                int i;
+                for(RecordPromedios rp:lrp){
+                    i=1;
+                    s.setDouble(i++, rp.valorPromedio);
+                    int estado=4;
+                    if(libreta.getMateria().isSecundaria()){
+                        String categoria=ManejadorBedelia.obtenerCategoria(libreta.getMateria().isEspecifica(), rp.valorPromedio);
+                        s.setString(i++, categoria);
+                        if(categoria.equals("A")){
+                            estado=3;
+                        };
+                    }
+                    else{
+                        s.setString(i++, "");
+                        if(rp.valorPromedio>=ManejadorBedelia.VALOR_EXONERACION){
+                            estado=3;
+                        };
+                    }
+                    s.setInt(i++, estado);
+                    s.setInt(i++, rp.li.getAlumno().getCi());
+                    s.setInt(i++,libreta.getGrupo().getCusoBedelia().getId());
+                    s.setInt(i++, libreta.getMateria().getId());
+                    s.setInt(i++,libreta.getGrupo().getAnio());
+                    s.setString(i++,libreta.getGrupo().getNombre());
+                }
+            }
+            s.addBatch("insert into sistemasEM.mesesCerrados (idLibreta,mes) values("+libreta.getId()+","+mes+")");
+
             return s.executeUpdate(sql)>0;
         } catch (Exception ex) {
             System.out.print("cerrarPromedio-ManejadorBedeliaBD:"+ex.getMessage());
         }
         return false;
+    }
+    boolean guardarCerrarPromedio(Libreta l, LinkedList<RecordPromedios> lrp, int mes, boolean cerrado) {
+        try{
+            String sql= "insert into sistemasEM.promedios (idLibreta,ciAlumno,mes, nota) values(?,?,?,?)";
+            PreparedStatement s= connection.prepareStatement(sql);
+            int i;
+            for(RecordPromedios rp : lrp){
+                i=1;
+                s.setInt(i++,rp.li.getIdLibreta());
+                s.setInt(i++, rp.li.getAlumno().getCi());
+                s.setInt(i++, mes);
+                s.setDouble(i++,rp.valorPromedio);
+                s.addBatch();
+                if(mes==11){
+                    s.addBatch("UPDATE sistemasem.libretasIndividuales set juicioPrimeraReunion='"+rp.juicio+"' where idLibreta="+rp.li.getIdLibreta()+" and ciAlumno="+rp.li.getAlumno().getCi());
+                }
+                else{
+                    if(mes==12){
+                        s.addBatch("UPDATE sistemasem.libretasIndividuales set juicioSegundaReunion='"+rp.juicio+"' where idLibreta="+rp.li.getIdLibreta()+" and ciAlumno="+rp.li.getAlumno().getCi());
+                    }
+                }
+            }
+            s.executeBatch();
+            return true;
+        }
+        catch(Exception ex){
+            String sql = "UPDATE sistemasem.promedios set nota=? where mes=? and idLibreta=? and ciAlumno=?";
+            int i;
+            try {
+                PreparedStatement statement= connection.prepareStatement(sql); 
+                for(RecordPromedios rp : lrp){
+                    i=1;
+                    statement.setDouble(i++,rp.valorPromedio);
+                    statement.setInt(i++,mes);
+                    statement.setInt(i++,rp.li.getIdLibreta());
+                    statement.setInt(i++,rp.li.getAlumno().getCi());
+                    statement.addBatch();
+                    if(mes==11){
+                        statement.addBatch("UPDATE sistemasem.libretasIndividuales set juicioPrimeraReunion='"+rp.juicio+"' where idLibreta="+rp.li.getIdLibreta()+" and ciAlumno="+rp.li.getAlumno().getCi());
+                    }
+                    else{
+                        if(mes==12){
+                            statement.addBatch("UPDATE sistemasem.libretasIndividuales set juicioSegundaReunion='"+rp.juicio+"' where idLibreta="+rp.li.getIdLibreta()+" and ciAlumno="+rp.li.getAlumno().getCi());
+                        }
+                    }
+                }
+                statement.executeBatch();
+            }
+            catch(Exception ex1){
+                System.out.print("guardarCerrarPromedio-ManejadorBedeliaBD:"+ex1.getMessage());
+                return false;
+            }
+        }
+        if(cerrado){
+            return this.cerrarPromedio(l, mes,lrp);
+        }
+        else{
+            return true;
+        }
     }
 }

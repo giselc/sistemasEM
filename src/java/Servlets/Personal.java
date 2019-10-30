@@ -112,7 +112,6 @@ public class Personal extends HttpServlet {
             }
             catch(Exception ex){
                 mensaje = "ERROR: " + ex.getMessage();
-                System.out.print(mensaje);
                 response.sendRedirect("personal.jsp");
             }
         }

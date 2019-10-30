@@ -206,7 +206,6 @@ public class ManejadorPersonalBD {
                 s.setString(i++,"");//segundo apellido
             }
             else{
-                System.out.print(campos.length);
                 s.setString(i++,campos[7]);//segundo apellido
             }
             s.setString(i++,"");//observaciones
@@ -537,7 +536,7 @@ public class ManejadorPersonalBD {
             }
             
         } catch (SQLException ex) {
-            System.out.print(ex);
+            System.out.print("agregarPersonal-ManejadorPersonalBD"+ex.getMessage());
             return null;
         }
         return null;
@@ -602,7 +601,7 @@ public class ManejadorPersonalBD {
                         return row>0;
                     }
                     catch(SQLException ex){
-                       System.out.print("modificarPersonal:"+ex.getMessage());
+                       System.out.print("modificarPersonal1-ManejadorPersonalBD:"+ex.getMessage());
                        return false;
                     }
                 }
@@ -617,7 +616,7 @@ public class ManejadorPersonalBD {
             }
             
         } catch (SQLException ex) {
-            System.out.print(ex);
+            System.out.print("modificarPersonal2-ManejadorPersonalBD:"+ex.getMessage());
             return false;
         }
     }
@@ -636,7 +635,7 @@ public class ManejadorPersonalBD {
             s.executeUpdate(sql);
             return true;
         } catch (SQLException ex) {
-            System.out.print("bajaCadete:"+ex.getMessage());
+            System.out.print("bajaCadete-ManejadorPersonalBD:"+ex.getMessage());
         }
         return false;
     }
@@ -670,9 +669,9 @@ public class ManejadorPersonalBD {
                 return null;
             }
             catch(Exception ex1){
-                System.out.print("crearCadeteDesdeHistorial: "+ex1.getMessage());
+                System.out.print("crearCadeteDesdeHistorial1-ManejadorPersonalBD:: "+ex1.getMessage());
             }
-            System.out.print("crearCadeteDesdeHistorial: "+ex.getMessage());
+            System.out.print("crearCadeteDesdeHistorial2-ManejadorPersonalBD:: "+ex.getMessage());
         }
         return null;
     }
@@ -683,7 +682,7 @@ public class ManejadorPersonalBD {
             ResultSet rs=s.executeQuery(sql);
             return(rs.next());
         } catch (SQLException ex) {
-            System.out.print("crearCadeteDesdeHistorial: "+ex.getMessage());
+            System.out.print("crearCadeteDesdeHistorial-ManejadorPersonalBD:: "+ex.getMessage());
         }
         return false;
     }
@@ -715,7 +714,7 @@ public class ManejadorPersonalBD {
             return(row>0);
 
         } catch (SQLException ex) {
-            System.out.print(ex);
+            System.out.print("actualizarGrados-ManejadorPersonalBD: "+ex.getMessage());
             return false;
         }
     }
@@ -727,7 +726,7 @@ public class ManejadorPersonalBD {
             return (s.executeUpdate(sql)>0);
         }
         catch(Exception e){
-            System.out.print("EliminarPersonal: "+e.getMessage());
+            System.out.print("EliminarPersonal-ManejadorPersonalBD:: "+e.getMessage());
         }
         return false;
     }

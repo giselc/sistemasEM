@@ -722,7 +722,6 @@ out.print("                </td>\n" +
     }
     public LinkedList<Personal> getPersonalListarGrado(int tipo,Boolean asc){//0=des,1=asc
         LinkedList<Personal> personalLista= new LinkedList();
-        System.out.print(tipo);
         if(asc){
             for(Personal c : personal.get(tipo)){
                 if(personalLista.isEmpty()){

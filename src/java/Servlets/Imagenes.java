@@ -80,7 +80,6 @@ public class Imagenes extends HttpServlet {
                                 response.setContentType("image/"+ext.substring(1));
                                 break;
                         }
-                        System.out.print(response.getContentType());
                         path= "c:/SEM-Documentos/"+ci+"-"+idDoc+ext;
                     }
                 }

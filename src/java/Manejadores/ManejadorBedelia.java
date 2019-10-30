@@ -16,6 +16,7 @@ import Classes.Bedelia.Notificacion;
 import Classes.Bedelia.Profesor;
 import Classes.Bedelia.Promedio;
 import Classes.Bedelia.RecordFalta;
+import Classes.Bedelia.RecordPromedios;
 import Classes.Bedelia.RecordSancion;
 import Classes.Bedelia.Sancion;
 import Classes.Cadete;
@@ -36,7 +37,7 @@ public class ManejadorBedelia {
     private HashMap<Integer,Libreta> libretas; //HashMap<idLibreta,Libreta>
     private LinkedList<Notificacion> notificacionesNuevas;
     private LinkedList<Notificacion> notificacionesLeidas;
-    
+    static final double VALOR_EXONERACION = 7.5;
     
     private ManejadorBedelia() {
         ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
@@ -45,8 +46,6 @@ public class ManejadorBedelia {
         libretas = mb.obtenerLibretas(materias,cursos);
         notificacionesNuevas = mb.obtenerNotificaciones(libretas,1);
         notificacionesLeidas = mb.obtenerNotificaciones(libretas,2);
-        System.out.print(notificacionesNuevas.size());
-        System.out.print(notificacionesLeidas.size());
     }
     public synchronized static ManejadorBedelia getInstance() {
         return ManejadorBedeliaHolder.INSTANCE;
@@ -714,44 +713,103 @@ public class ManejadorBedelia {
         }
         return false;
     }
-    public boolean guardarPromedio(LibretaIndividual li, double valorPromedio, int mes, String juicio) {
+     public boolean guardarCerrarPromedio(Libreta l,LinkedList<RecordPromedios> lrp, int mes, boolean cerrado) {
         ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
-        boolean ok=false;
-        if(li.getPromedios().containsKey(mes)){
-            ok= mb.modificarPromedio(li,valorPromedio,mes,juicio);
-        }
-        else{
-            ok= mb.guardarPromedio(li,valorPromedio,mes,juicio);
-        }
-        if(ok){
-            if(mes==11){
-                li.setJuicioPrimeraReunion(juicio);
-            }
-            else{
-                if(mes==12){
-                    li.setJuicioSegundaReunion(juicio);
+        if(mb.guardarCerrarPromedio(l,lrp,mes,cerrado)){
+            for(RecordPromedios rp:lrp){
+                if(mes==11){
+                    rp.li.setJuicioPrimeraReunion(rp.juicio);
+                }
+                else{
+                    if(mes==12){
+                        rp.li.setJuicioSegundaReunion(rp.juicio);
+                    }
+                }
+                if(rp.li.getPromedios().containsKey(mes)){
+                    rp.li.getPromedios().get(mes).setNota(rp.valorPromedio);
+                }
+                else{
+                    rp.li.getPromedios().put(mes, new Promedio(rp.valorPromedio, mes));
                 }
             }
-            if(li.getPromedios().containsKey(mes)){
-                li.getPromedios().get(mes).setNota(valorPromedio);
+            if(cerrado){
+                if(!l.getMesesCerrados().containsKey(mes)){
+                    l.getMesesCerrados().put(mes, true);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+//    public boolean guardarPromedio(LibretaIndividual li, double valorPromedio, int mes, String juicio) {
+//        ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
+//        boolean ok=false;
+//        if(li.getPromedios().containsKey(mes)){
+//            ok= mb.modificarPromedio(li,valorPromedio,mes,juicio);
+//        }
+//        else{
+//            ok= mb.guardarPromedio(li,valorPromedio,mes,juicio);
+//        }
+//        if(ok){
+//            if(mes==11){
+//                li.setJuicioPrimeraReunion(juicio);
+//            }
+//            else{
+//                if(mes==12){
+//                    li.setJuicioSegundaReunion(juicio);
+//                }
+//            }
+//            if(li.getPromedios().containsKey(mes)){
+//                li.getPromedios().get(mes).setNota(valorPromedio);
+//            }
+//            else{
+//                li.getPromedios().put(mes, new Promedio(valorPromedio, mes));
+//            }
+//        }
+//        return ok;
+//    }
+//    public boolean cerrarPromedio(Libreta libreta,int mes){
+//        ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
+//        if(!libreta.getMesesCerrados().containsKey(mes)){
+//            if(mb.cerrarPromedio(libreta, mes)){
+//                libreta.getMesesCerrados().put(mes, true);
+//                return true;
+//            }
+//            return false;
+//        }
+//        return true;
+//    }
+     static public String obtenerCategoria(boolean especifica,double promedio){
+         if(especifica){
+            if(promedio<4){ //1 2 y 3
+                return "D";
+            }
+            else if(promedio<7){ // 4 5 y 6
+                    return "C";
+            }
+            else if(promedio<8){ //7
+                return "B";
             }
             else{
-                li.getPromedios().put(mes, new Promedio(valorPromedio, mes));
+                return "A";
             }
         }
-        return ok;
-    }
-    public boolean cerrarPromedio(Libreta libreta,int mes){
-        ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
-        if(!libreta.getMesesCerrados().containsKey(mes)){
-            if(mb.cerrarPromedio(libreta.getId(), mes)){
-                libreta.getMesesCerrados().put(mes, true);
-                return true;
+        else{
+            if(promedio<3){ //1 y 2
+                return "D";
             }
-            return false;
+            else if(promedio<5){ //3 y 4
+                    return "C";
+
+            }
+            else if(promedio<6){ //5
+                    return "B";
+            }
+            else{
+                return "A";
+            }
         }
-        return true;
-    }
+     }
     public void guardarJuicioGrupal(String juicio, int mes,Libreta l) {
         ManejadorBedeliaBD mb= new ManejadorBedeliaBD();
         if(mb.guardarJuicioGrupal(juicio,mes,l)){
@@ -765,6 +823,8 @@ public class ManejadorBedelia {
             }
         }
     }
+
+   
     private static class ManejadorBedeliaHolder {
 
         private static final ManejadorBedelia INSTANCE = new ManejadorBedelia();

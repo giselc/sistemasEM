@@ -54,8 +54,6 @@ public class ManejadorProfesoresBD {
             while((linea=br.readLine())!=null){
                i=1;
                campos= linea.split(";");
-               //System.out.print(Arrays.toString(campos));
-
                s.setInt(i++, Integer.valueOf(campos[0]));//ci
                s.setInt(i++, Integer.valueOf(campos[1]));//grado
                s.setInt(i++, 0); //arma

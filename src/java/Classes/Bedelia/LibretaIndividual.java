@@ -211,36 +211,7 @@ public class LibretaIndividual {
                     }
                     else{
                         out.print("<td class='segundaReunion'><b title='JUICIO:"+juicioSegundaReunion+"'>"+promedios.get(12).getNota()+"</b></td>"); 
-                        if(l.getMateria().isEspecifica()){
-                            if(promedios.get(12).getNota()<4){ //1 2 y 3
-                                out.print("<td class='cat'><b>D</b></td>");
-                            }
-                            else if(promedios.get(12).getNota()<7){ // 4 5 y 6
-                                    out.print("<td class='cat'><b>C</b></td>");
-                            }
-                            else if(promedios.get(12).getNota()<8){ //7
-                                out.print("<td class='cat'><b>B</b></td>");
-                            }
-                            else{
-                                out.print("<td class='cat'><b>A</b></td>"); //>=8
-                            }
-                        }
-                        else{
-                            if(promedios.get(12).getNota()<3){ //1 y 2
-                                out.print("<td class='cat'><b>D</b></td>");
-                            }
-                            else if(promedios.get(12).getNota()<5){ //3 y 4
-                                    out.print("<td class='cat'><b>C</b></td>");
-
-                            }
-                            else if(promedios.get(12).getNota()<6){ //5
-                                    out.print("<td class='cat'><b>B</b></td>");
-
-                            }
-                            else{
-                                out.print("<td class='cat'><b>A</b></td>"); //>=6
-                            }
-                        }
+                        out.print("<td class='cat'><b>"+ManejadorBedelia.obtenerCategoria(l.getMateria().isEspecifica(), promedios.get(12).getNota())+"</b></td>");
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(LibretaIndividual.class.getName()).log(Level.SEVERE, null, ex);
