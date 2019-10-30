@@ -56,7 +56,7 @@ public class Profesores extends HttpServlet {
                 if(request.getParameter("elim")!=null){
                     //baja
                     if( mp.eliminarProfesor(ci)){
-                        mensaje="Profesor eliminado sastisfactoriamente.";
+                        mensaje="Profesor eliminado satisfactoriamente.";
                         redirect="profesores.jsp";
                     }
                     else{
@@ -126,7 +126,7 @@ public class Profesores extends HttpServlet {
                         else{
                             //agregar
                             if(mp.agregarProfesor(rp)){
-                                mensaje="Profesor agregado sastisfactoriamente.";
+                                mensaje="Profesor agregado satisfactoriamente.";
                                 redirect="profesor.jsp?id="+request.getParameter("ci");
                             }
                             else{

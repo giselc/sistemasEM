@@ -535,19 +535,24 @@
                 mintardestr.style="display:none";
             }
         }    
-        function agregarNota(ci,tr){
-            document.getElementById("formAgregarNota").reset();
-            var trform= document.getElementById("trFotoNombre");
-            trform.deleteCell(0);
-            trform.deleteCell(0);
-            trform.insertCell(0);
-            trform.cells[0].innerHTML=tr.cells[0].innerHTML;
-            trform.insertCell(1);
-            trform.cells[1].innerHTML=tr.cells[1].innerHTML;
-            document.getElementById("ciAgregarNota").value=ci;
-            var tablaAgregarNota= document.getElementById("tablaAgregarNota");
-            tablaAgregarNota.style="display:block";
-            document.getElementById("valorAgregarNota").focus();
+        function agregarNota(ci,tr,cerrado){
+            if(!cerrado){
+                document.getElementById("formAgregarNota").reset();
+                var trform= document.getElementById("trFotoNombre");
+                trform.deleteCell(0);
+                trform.deleteCell(0);
+                trform.insertCell(0);
+                trform.cells[0].innerHTML=tr.cells[0].innerHTML;
+                trform.insertCell(1);
+                trform.cells[1].innerHTML=tr.cells[1].innerHTML;
+                document.getElementById("ciAgregarNota").value=ci;
+                var tablaAgregarNota= document.getElementById("tablaAgregarNota");
+                tablaAgregarNota.style="display:block";
+                document.getElementById("valorAgregarNota").focus();
+            }
+            else{
+                alert("NO puede agregar notas, la libreta ya ha sido cerrada.")
+            }
             
         }
         function agregarNotaServidor(form,idLibreta,ciProfesor){
@@ -635,6 +640,8 @@
                     var msj = obj.msj;
                     var grillaPromedios = document.getElementById("grillaPromedios");
                     grillaPromedios.innerHTML = msj[0].html;
+                    var botonGuardarCerrar = document.getElementById("botonesGuardarCerrar");
+                    botonGuardarCerrar.innerHTML  = msj[0].botonGuardarCerrar;
                 };
             };
             xmlhttp.open("POST","Promedios?cambiarGrilla=1&idLibreta="+idLibreta+"&ciProfesor="+ciProfesor+"&mes="+mesPromedio);
@@ -665,16 +672,14 @@
         color: #cc0000;
     }
     .promediosMensuales {
-        color: #990000;
     }
     .orales {
-        
+        color: #555555;
     }
     .escritos {
-        color: #0000aa;
+        color: #333333;
     }
     .parciales{
-        color:#0000ff
     }
 </style>
 
@@ -1139,6 +1144,7 @@ else{
                                             D&iacute;as:
                                     </td>
                                 </tr>
+                               
                                 <tr style='background-color:#ffcc66;padding:0px;'>
                                     <td>
                                         Alumnos:
@@ -1295,8 +1301,10 @@ else{
                                     <input type="radio" onclick="mostrarMesAgregarNota(true);" name="tipoAgregarNota" value="1">Escrito<br>
                                     <%
                                     if(d.getMateria().isSecundaria()){
+                                        if(!d.getMesesCerrados().containsKey(11)){
                                     %>
                                     <input type="radio" onclick="mostrarMesAgregarNota(false);" name="tipoAgregarNota" value="3">1er Parcial<br>
+                                    <% } %>
                                     <input type="radio" onclick="mostrarMesAgregarNota(false);" name="tipoAgregarNota" value="4">2do Parcial<br>
                                     <%
                                     }
@@ -1311,44 +1319,44 @@ else{
                                     <select form="formAgregarNota" name='mesAgregarNota' />
                                     <%
                                     if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1)){
-                                        if(!d.getMesesCerrados().containsKey(3)){
+                                        if(!d.getMesesCerrados().containsKey(3)&&!d.getMesesCerrados().containsKey(11)&&!d.getMesesCerrados().containsKey(12)&&!d.getMesesCerrados().containsKey(13)){
                                         %>
                                         <option value="3" <% if(mes==3){out.print("selected");} %>>MARZO</option>
                                         <%
                                         }
-                                        if(!d.getMesesCerrados().containsKey(4)){
+                                        if(!d.getMesesCerrados().containsKey(4)&&!d.getMesesCerrados().containsKey(11)&&!d.getMesesCerrados().containsKey(12)&&!d.getMesesCerrados().containsKey(13)){
                                         %>
                                         <option value="4" <% if(mes==4){out.print("selected");} %>>ABRIL</option>
                                         <%
                                         }
-                                        if(!d.getMesesCerrados().containsKey(5)){
+                                        if(!d.getMesesCerrados().containsKey(5)&&!d.getMesesCerrados().containsKey(11)&&!d.getMesesCerrados().containsKey(12)&&!d.getMesesCerrados().containsKey(13)){
                                         %>
                                         <option value="5" <% if(mes==5){out.print("selected");} %>>MAYO</option>
                                         <%
                                         }
-                                        if(!d.getMesesCerrados().containsKey(6)){
+                                        if(!d.getMesesCerrados().containsKey(6)&&!d.getMesesCerrados().containsKey(11)&&!d.getMesesCerrados().containsKey(12)&&!d.getMesesCerrados().containsKey(13)){
                                         %>
                                         <option value="6" <% if(mes==6){out.print("selected");} %>>JUNIO</option>
                                         <%
                                         }
                                     }
                                     if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==2)){
-                                        if(!d.getMesesCerrados().containsKey(7)){
+                                        if(!d.getMesesCerrados().containsKey(7)&&!d.getMesesCerrados().containsKey(12)&&!d.getMesesCerrados().containsKey(13)){
                                         %>
                                         <option value="7" <% if(mes==7){out.print("selected");} %>>JULIO</option>
                                         <%
                                         }
-                                        if(!d.getMesesCerrados().containsKey(8)){
+                                        if(!d.getMesesCerrados().containsKey(8)&&!d.getMesesCerrados().containsKey(12)&&!d.getMesesCerrados().containsKey(13)){
                                         %>
                                         <option value="8" <% if(mes==8){out.print("selected");} %>>AGOSTO</option>
                                         <%
                                         }
-                                        if(!d.getMesesCerrados().containsKey(9)){
+                                        if(!d.getMesesCerrados().containsKey(9)&&!d.getMesesCerrados().containsKey(12)&&!d.getMesesCerrados().containsKey(13)){
                                         %>
                                         <option value="9" <% if(mes==9){out.print("selected");} %>>SETIEMBRE</option>
                                         <%
                                         }
-                                        if(!d.getMesesCerrados().containsKey(10)){
+                                        if(!d.getMesesCerrados().containsKey(10)&&!d.getMesesCerrados().containsKey(12)&&!d.getMesesCerrados().containsKey(13)){
                                         %>
                                         <option value="10" <% if(mes==10){out.print("selected");} %>>OCTUBRE</option>
                                         <%
@@ -1381,86 +1389,88 @@ else{
                         </table> 
                         </form>
                         <table id="grillaNotas" style=" width: 100%; overflow-x: scroll;border-collapse: separate;border-spacing: 2px;text-align: center;vertical-align: central;">
-                                
+                            <thead>
                                 <tr style='background-color:#ffcc66;padding:0px;'>
-                                    <td></td>
-                                    <td>Alumnos:</td>
+                                    <th></th>
+                                    <th>Alumnos:</th>
                                     <% if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1)){ %>
-                                    <td colspan="3" style="width: 10%">MARZO</td>
-                                    <td colspan="3" style="width: 10%">ABRIL</td>
-                                    <td colspan="3" style="width: 10%">MAYO</td>
-                                    <td colspan="3" style="width: 10%">JUNIO</td>
+                                    <th colspan="3" style="width: 10%" >MARZO</th>
+                                    <th colspan="3" style="width: 10%" >ABRIL</th>
+                                    <th colspan="3" style="width: 10%" >MAYO</th>
+                                    <th colspan="3" style="width: 10%" >JUNIO</th>
                                     <%
                                         if(d.getMateria().isSecundaria()){
                                             %> 
-                                            <td title="Primera evaluaci&oacute;n especial" style="width: 3%"> 1&deg;EE</td>
-                                            <td style="width: 3%">1&deg;R</td>
+                                            <th title="Primera evaluaci&oacute;n especial" style="width: 3%" > 1&deg;EE</th>
+                                            <th style="width: 3%" >1&deg;R</th>
                                             
                                                <%
                                         }
                                     }
                                     if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==2)){
                                     %>
-                                    <td colspan="3" style="width: 10%">JULIO</td>
-                                    <td colspan="3" style="width: 10%">AGOSTO</td>
-                                    <td colspan="3" style="width: 10%">SETIEMBRE</td>
-                                    <td colspan="3" style="width: 10%">OCTUBRE</td>
+                                    <th colspan="3" style="width: 10%" >JULIO</th>
+                                    <th colspan="3" style="width: 10%" >AGOSTO</th>
+                                    <th colspan="3" style="width: 10%" >SETIEMBRE</th>
+                                    <th colspan="3" style="width: 10%" >OCTUBRE</th>
                                     <%
                                         if(d.getMateria().isSecundaria()){
                                             %> 
-                                            <td title="Segunda evaluaci&oacute;n especial" style="width: 3%"> 2&deg;EE</td>
-                                            <td style="width: 3%" colspan="2">2&deg;R</td>
+                                            <th title="Segunda evaluaci&oacute;n especial" style="width: 3%" > 2&deg;EE</th>
+                                            <th style="width: 3%" colspan="2" >2&deg;R</th>
                                                <%
                                         }
                                     }
                                     if(!d.getMateria().isSecundaria()){
                                         %>
-                                             <td style="width: 3%">PA</td>  
+                                             <th style="width: 3%" >PA</th>  
                                         <%
                                     }
                                     %>
                                 </tr>
+                                
                                 <tr style='background-color:#ffcc66;padding:0px;'>
-                                    <td></td>
-                                    <td></td>
+                                    <th></th>
+                                    <th></th>
                                     <% if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1)){ %>
                                     
-                                    <td>O</td><td>E</td><td>P</td>
-                                    <td>O</td><td>E</td><td>P</td>
-                                    <td>O</td><td>E</td><td>P</td>
-                                    <td>O</td><td>E</td><td>P</td>
+                                    <th>O</th><th>E</th><th>P</th>
+                                    <th>O</th><th>E</th><th>P</th>
+                                    <th>O</th><th>E</th><th>P</th>
+                                    <th>O</th><th>E</th><th>P</th>
                                     <%
                                          if(d.getMateria().isSecundaria()){
                                             %>
-                                            <td>E</td>
-                                            <td>P</td>
+                                            <th>E</th>
+                                            <th>P</th>
                                                <%
                                         }
                                     }
                                     if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==2)){
                                     %>
                                     
-                                    <td>O</td><td>E</td><td>P</td>
-                                    <td>O</td><td>E</td><td>P</td>
-                                    <td>O</td><td>E</td><td>P</td>
-                                    <td>O</td><td>E</td><td>P</td>
+                                    <th>O</th><th>E</th><th>P</th>
+                                    <th>O</th><th>E</th><th>P</th>
+                                    <th>O</th><th>E</th><th>P</th>
+                                    <th>O</th><th>E</th><th>P</th>
                                     <%
                                     if(d.getMateria().isSecundaria()){
                                             %>
-                                            <td>E</td>
-                                            <td>P</td>
-                                            <td>CAT</td>
+                                            <th>E</th>
+                                            <th>P</th>
+                                            <th>CAT</th>
                                                <%
                                         }
                                     }
                                     if(!d.getMateria().isSecundaria()){
                                         %>
-                                        <td>P</td>     
+                                        <th>P</th>     
                                         <%
                                     }
                                     %>
                                 </tr>
-                                    
+                                 </thead>
+                                 <tbody>    
                                     <%
                                     i=0;
                                     for(LibretaIndividual l: d.getLibretasIndividuales().values()){
@@ -1471,7 +1481,7 @@ else{
                                             color=" #ffff99";
                                         }
                                         i++;
-                    out.print("<tr style=\"background-color:"+color+"; cursor: crosshair \" onclick='agregarNota("+l.getAlumno().getCi()+",this)' title='Para agregar una nota a "+ l.getAlumno().getPrimerApellido()+ " " + l.getAlumno().getPrimerNombre() +" hacer click'>" );
+                    out.print("<tr style=\"background-color:"+color+"; cursor: crosshair \" onclick='agregarNota("+l.getAlumno().getCi()+",this,"+(d.getMesesCerrados().containsKey(12)||d.getMesesCerrados().containsKey(13))+")' title='Para agregar una nota a "+ l.getAlumno().getPrimerApellido()+ " " + l.getAlumno().getPrimerNombre() +" hacer click'>" );
                         out.print("<td>");
                             if(l.getAlumno().getFoto()!=""){
                                 %>
@@ -1492,21 +1502,14 @@ else{
                                    }
                             
                                 %>
+                            </tbody>
                             </table>
                     </div>
                     <div id="promedios">
                         
                         <form id='formGuardarPromedios' method="post"  >
                           
-                        <p align="right">
-                            <%
-                            if(d.getMateria().isSecundaria()){
-                            %>
-                            <input type='submit' name='boton1' onclick="this.form.action=form.action = 'Promedios?idLibreta=<%= d.getId() %>&guardarPromedios=1';" value='GUARDAR CAMBIOS' style="background-color: #ff6600;border-radius: 15px; color: #ffffff;font-size: large">
-                            <%
-                            }
-                            %>
-                            <input type='submit' name='boton2' onclick="this.form.action=form.action = 'Promedios?idLibreta=<%= d.getId() %>&cerrarMes=1';" value='CERRAR MES' style="background-color: #cd0a0a; border-radius: 15px; color: #ffffff;font-size: large" >
+                        <p align="right" id='botonesGuardarCerrar'>
                         </p>
                         <table>
                             <tr>
@@ -1517,70 +1520,43 @@ else{
                                     <select  id="mesPromedio" name='mesPromedio' onchange="cambiarGrillaPromedio(<%= d.getId() %>, <%= d.getProfesor().getCi() %>);"/>
                                         <option value="-1" disabled="disabled" selected hidden>Seleccionar promedio a cerrar:</option>
                                     <%
-                                    if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1)){
-                                        if(!d.getMesesCerrados().containsKey(3)){
-                                        %>
+                                    if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1))
+                                    {
+                                        %> 
                                         <option value="3">MARZO</option>
-                                        <%
-                                        }
-                                        if(!d.getMesesCerrados().containsKey(4)){
-                                        %>
                                         <option value="4">ABRIL</option>
-                                        <%
-                                        }
-                                        if(!d.getMesesCerrados().containsKey(5)){
-                                        %>
                                         <option value="5" >MAYO</option>
-                                        <%
-                                        }
-                                        if(!d.getMesesCerrados().containsKey(6)){
-                                        %>
                                         <option value="6" >JUNIO</option>
                                         <%
-                                        }
-                                        if(d.getMateria().isSecundaria() && (!d.getMesesCerrados().containsKey(11))){
+                                        if(d.getMateria().isSecundaria()){
                                             %>
                                             <option value="11" >PRIMERA REUNI&Oacute;N</option>
                                             <%
                                         }
-                                        if(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1 && (!d.getMesesCerrados().containsKey(13))){
-                                            %>
-                                            <option value="13" >PROMEDIO ANUAL</option>
-                                            <%
+                                        else{
+                                            if(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==1){
+                                                %>
+                                                <option value="13" >PROMEDIO ANUAL</option>
+                                                <%
+                                            }
                                         }
                                     }
                                     if (!d.getMateria().isSemestral()||(d.getMateria().isSemestral()&& d.getMateria().getSemestre()==2)){
-                                        if(!d.getMesesCerrados().containsKey(7)){
                                         %>
                                         <option value="7" >JULIO</option>
-                                        <%
-                                        }
-                                        if(!d.getMesesCerrados().containsKey(8)){
-                                        %>
                                         <option value="8" >AGOSTO</option>
-                                        <%
-                                        }
-                                        if(!d.getMesesCerrados().containsKey(9)){
-                                        %>
                                         <option value="9" >SETIEMBRE</option>
-                                        <%
-                                        }
-                                        if(!d.getMesesCerrados().containsKey(10)){
-                                        %>
                                         <option value="10" >OCTUBRE</option>
                                         <%
-                                        }
-                                        if(d.getMateria().isSecundaria() && (!d.getMesesCerrados().containsKey(12))){
+                                        if(d.getMateria().isSecundaria()){
                                             %>
                                             <option value="12" >SEGUNDA REUNI&Oacute;N</option>
-                                            <%
+                                        <%
                                         }
                                         else{
-                                            if(!d.getMesesCerrados().containsKey(13)){
                                             %>
                                             <option value="14" >PROMEDIO ANUAL</option>
                                             <%
-                                            }
                                         }
                                     }
                                     %>

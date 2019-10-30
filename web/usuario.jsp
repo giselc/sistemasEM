@@ -214,8 +214,8 @@
                             <input  id="ciProfesor" type=number name="ciProfesor" <% if(u1!=null && u1.isProfesor()){out.print("value='"+u1.getCiProfesor()+"' required" );}else{if(p!=null){out.print("value='"+p.getCi()+"' required ");}else{out.print("disabled");};} %>/>
                         </td>
                     </tr>
-                    
-                    <tr <% if (u1!=null){out.print("hidden='hidden'");};%>>
+                    <% if (u1==null){%>
+                    <tr>
                         <td class="title">
                             <p><b>Contrase&ntilde;a:</b></p>
                         </td>
@@ -223,7 +223,7 @@
                             <p><input type=password name="pass"/></p>
                         </td>
                     </tr>
-                    <tr <% if (u1!=null){out.print("hidden='hidden'");};%>>
+                    <tr>
                         <td class="title">
                             <p><b>Repita la contrase&ntilde;a:</b></p>
                         </td>
@@ -240,6 +240,9 @@
                             <input  checked="checked" type=checkbox name="cambiarContra" />
                         </td>
                     </tr>
+                    <%
+                    }
+                    %>
                 </table>
                         <p align='right'><input type="submit"  value="Aceptar" /></p>
                 </form>

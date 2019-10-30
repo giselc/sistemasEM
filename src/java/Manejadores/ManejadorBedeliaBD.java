@@ -185,12 +185,72 @@ public class ManejadorBedeliaBD {
         }
         return p;
     }
+    public LibretaIndividual obtenerLibretaIndividual(int idLibreta, int ciAlumno){
+        LibretaIndividual p= null;
+        try {
+            Statement s= connection.createStatement();
+            String sql;
+            sql="SELECT * FROM sistemasem.libretasIndividuales where idLibreta="+idLibreta+" and ciAlumno="+ciAlumno;
+            ResultSet rs=s.executeQuery(sql);
+            if (rs.next()){
+                HashMap<Integer,Sancion> sanciones;
+                HashMap<Integer,Promedio> promedios;
+                HashMap<Integer, LinkedList<Nota>> notasOrales;
+                HashMap<Integer, LinkedList<Nota>> notasEscritos;
+                HashMap<Integer, Falta> faltas;
+                Nota notaPrimerParcial = null;
+                Nota notaSegundoParcial = null;
+                ManejadorPersonal mp = ManejadorPersonal.getInstance();
+                sanciones= obtenerSancionesLibretaIndividual(idLibreta,ciAlumno);
+                promedios = obtenerPromediosLibretaIndividual(idLibreta,ciAlumno);
+                notasOrales = obtenerNotasLibretaIndividual(2,idLibreta,ciAlumno);
+                notaPrimerParcial=obtenerNotaParcialLibretaIndividual(3,idLibreta,ciAlumno);
+                notaSegundoParcial=obtenerNotaParcialLibretaIndividual(4,idLibreta,ciAlumno);
+                notasEscritos = obtenerNotasLibretaIndividual(1,idLibreta,ciAlumno);
+                faltas = obtenerFaltasLibretaIndividual(idLibreta,ciAlumno);
+                HashMap<Integer,HashMap<Integer,LinkedList<FaltaSancion>>> grillaFaltasSancion= new HashMap<>();
+                int mes,dia;
+                for(Falta f:faltas.values()){
+                    mes= Integer.valueOf(f.getFecha().split("-")[1]);
+                    dia= Integer.valueOf(f.getFecha().split("-")[2]);
+                    if(grillaFaltasSancion.get(mes)==null){
+                        grillaFaltasSancion.put(mes, new HashMap<>());
+                    }
+                    if(grillaFaltasSancion.get(mes).get(dia)==null){
+                        grillaFaltasSancion.get(mes).put(dia,new LinkedList<>());
+                    }
+                    grillaFaltasSancion.get(mes).get(dia).add(new FaltaSancion(f,null));
+                }
+                for(Sancion sancion:sanciones.values()){
+                    mes= Integer.valueOf(sancion.getFecha().split("-")[1]);
+                    dia= Integer.valueOf(sancion.getFecha().split("-")[2]);
+                    if(grillaFaltasSancion.get(mes)==null){
+                        grillaFaltasSancion.put(mes, new HashMap<>());
+                    }
+                    if(grillaFaltasSancion.get(mes).get(dia)==null){
+                        grillaFaltasSancion.get(mes).put(dia,new LinkedList<>());
+                    }
+                    grillaFaltasSancion.get(mes).get(dia).add(new FaltaSancion(null,sancion));
+                }
+               p=new LibretaIndividual(idLibreta,mp.getCadete(rs.getInt("ciAlumno")), faltas, grillaFaltasSancion, notasOrales,notasEscritos, promedios, sanciones,rs.getDouble("NotaFinal"),rs.getBoolean("activo"),notaPrimerParcial,notaSegundoParcial,rs.getString("juicioPrimeraReunion"),rs.getString("juicioSegundaReunion"));
+               sql="UPDATE sistemasem.libretasIndividuales set activo=1 where idLibreta="+idLibreta+" and ciAlumno="+ciAlumno;
+               int i=s.executeUpdate(sql);
+               if(i==0){
+                   return null;
+               }
+            }
+            
+        } catch (SQLException | NumberFormatException ex) {
+            System.out.print("obtenerLibretaIndividual-ManejadorBedeliaBD:"+ex.getMessage());
+        }
+        return p;
+    }
     private HashMap<Integer, LibretaIndividual> obtenerLibretasIndividuales(int idLibreta) {
         HashMap<Integer, LibretaIndividual> p= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql;
-            sql="SELECT * FROM sistemasem.libretasIndividuales where idLibreta="+idLibreta;
+            sql="SELECT * FROM sistemasem.libretasIndividuales where idLibreta="+idLibreta+" and activo=1";
             ResultSet rs=s.executeQuery(sql);
             HashMap<Integer,Sancion> sanciones;
             HashMap<Integer,Promedio> promedios;
@@ -256,12 +316,12 @@ public class ManejadorBedeliaBD {
         }
         return l;
     }
-    private HashMap<Integer, Sancion> obtenerSancionesLibretaIndividual(int idLibretaIndividual, int ciAlumno) {
+    private HashMap<Integer, Sancion> obtenerSancionesLibretaIndividual(int idLibreta, int ciAlumno) {
         HashMap<Integer, Sancion> p= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql;
-            sql="SELECT * FROM sistemasem.sanciones where idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno;
+            sql="SELECT * FROM sistemasem.sanciones where idLibreta="+idLibreta + " and ciAlumno="+ciAlumno;
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
                 p.put(rs.getInt("id"),new Sancion(rs.getInt("id"),rs.getInt("tipo"), rs.getInt("minutosTarde"),rs.getString("causa"), rs.getString("fecha")));
@@ -286,12 +346,12 @@ public class ManejadorBedeliaBD {
         }
         return p;
     }
-    private HashMap<Integer, Promedio> obtenerPromediosLibretaIndividual(int idLibretaIndividual, int ciAlumno) {
+    private HashMap<Integer, Promedio> obtenerPromediosLibretaIndividual(int idLibreta, int ciAlumno) {
         HashMap<Integer, Promedio> p= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql;
-            sql="SELECT * FROM sistemasem.promedios where  idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno;
+            sql="SELECT * FROM sistemasem.promedios where  idLibreta="+idLibreta + " and ciAlumno="+ciAlumno;
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
                 p.put(rs.getInt("mes"),new Promedio(rs.getDouble("nota"),rs.getInt("mes")));
@@ -315,12 +375,12 @@ public class ManejadorBedeliaBD {
         }
         return null;
     }
-    private HashMap<Integer, LinkedList<Nota>> obtenerNotasLibretaIndividual(int tipo,int idLibretaIndividual, int ciAlumno) {
+    private HashMap<Integer, LinkedList<Nota>> obtenerNotasLibretaIndividual(int tipo,int idLibreta, int ciAlumno) {
         HashMap<Integer, LinkedList<Nota>> p= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql;
-            sql="SELECT * FROM sistemasem.notas where idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno +" and tipo="+tipo;
+            sql="SELECT * FROM sistemasem.notas where idLibreta="+idLibreta + " and ciAlumno="+ciAlumno +" and tipo="+tipo;
             ResultSet rs=s.executeQuery(sql);
             int mesNota;
             while (rs.next()){
@@ -335,12 +395,12 @@ public class ManejadorBedeliaBD {
         }
         return p;
     }
-    private HashMap<Integer, Falta> obtenerFaltasLibretaIndividual(int idLibretaIndividual, int ciAlumno) {
+    private HashMap<Integer, Falta> obtenerFaltasLibretaIndividual(int idLibreta, int ciAlumno) {
         HashMap<Integer, Falta> p= new HashMap<>();
         try {
             Statement s= connection.createStatement();
             String sql;
-            sql="SELECT * FROM sistemasem.faltas where idLibreta="+idLibretaIndividual + " and ciAlumno="+ciAlumno;
+            sql="SELECT * FROM sistemasem.faltas where idLibreta="+idLibreta + " and ciAlumno="+ciAlumno;
             ResultSet rs=s.executeQuery(sql);
             while (rs.next()){
                 p.put(rs.getInt("id"),new Falta(rs.getInt("id"),rs.getString("fecha"),rs.getInt("canthoras"), rs.getString("codigoMotivo"),rs.getString("observaciones")));
@@ -500,8 +560,15 @@ public class ManejadorBedeliaBD {
             PreparedStatement s= connection.prepareStatement(sql);
             String sql1= "insert into sistemasEM.`libretasIndividuales` (idLibreta,ciAlumno,promedioAnual,notaFinal,activo) values(?,?,?,?,?)";
             String sql2= "UPDATE sistemasEM.`libretasIndividuales` set activo=? where idLibreta=? and ciAlumno=?";
+            String sql3= "insert into sistemasEM.`registrosEscolaridad` (ciAlumno,idCurso,idMateria,anio,nombreGrupo,estado) values(?,?,?,?,?,?)";// estado 1-cursando, 2-baja, 3-aprobado, 4- a examen
+            String sql4= "UPDATE sistemasEM.`registrosEscolaridad` set estado=? where ciAlumno=? and idCurso=? and idMateria=? and anio=? and nombreGrupo=?";
+            Statement s5= connection.createStatement();
+            String sql5;
+            ResultSet rs;
             PreparedStatement s1= connection.prepareStatement(sql1);
             PreparedStatement s2= connection.prepareStatement(sql2);
+            PreparedStatement s3= connection.prepareStatement(sql3);
+            PreparedStatement s4= connection.prepareStatement(sql4);
             int i,j;
             for(Cadete alumno:alumnos){
                 i=1;
@@ -512,11 +579,21 @@ public class ManejadorBedeliaBD {
                 s.addBatch();
                 for(Libreta l:listaL){
                     j=1;
-                    if(l.getLibretasIndividuales().containsKey(alumno.getCi())){
+                    sql5="SELECT * FROM sistemasem.libretasIndividuales where idLibreta="+l.getId()+" and ciAlumno="+alumno.getCi();
+                    rs=s.executeQuery(sql5);
+                    if (rs.next()){
                         s2.setBoolean(j++, true);
                         s2.setInt(j++, l.getId());
                         s2.setInt(j++, alumno.getCi());
                         s2.addBatch();
+                        j=1;
+                        s4.setInt(j++,1);
+                        s4.setInt(j++, alumno.getCi());
+                        s4.setInt(j++, l.getGrupo().getCusoBedelia().getId());
+                        s4.setInt(j++, l.getMateria().getId());
+                        s4.setInt(j++, l.getGrupo().getAnio());
+                        s4.setString(j++, l.getGrupo().getNombre());
+                        s4.addBatch();
                     }
                     else{
                         s1.setInt(j++, l.getId());
@@ -525,6 +602,14 @@ public class ManejadorBedeliaBD {
                         s1.setInt(j++, 0);
                         s1.setBoolean(j++, true);
                         s1.addBatch();
+                        j=1;
+                        s3.setInt(j++, alumno.getCi());
+                        s3.setInt(j++, l.getGrupo().getCusoBedelia().getId());
+                        s3.setInt(j++, l.getMateria().getId());
+                        s3.setInt(j++, l.getGrupo().getAnio());
+                        s3.setString(j++, l.getGrupo().getNombre());
+                        s3.setInt(j++,1);
+                        s3.addBatch();
                     }
                 }
             }
@@ -532,6 +617,8 @@ public class ManejadorBedeliaBD {
             s.executeBatch();
             s1.executeBatch();
             s2.executeBatch();
+            s3.executeBatch();
+            s4.executeBatch();
         } catch (Exception ex) {
             System.out.print("asociarAlumnosGrupo-ManejadorBedeliaBD:"+ex.getMessage());
         }
@@ -542,7 +629,9 @@ public class ManejadorBedeliaBD {
             String sql= "DELETE FROM sistemasEM.`grupos-alumnos` where ciAlumno="+ciAlumno;
             Statement s= connection.createStatement();
             String sql1= "UPDATE sistemasEM.`libretasindividuales` SET `activo`=0 WHERE idLibreta=? and ciAlumno=?";
+            String sql2= "UPDATE sistemasEM.`registrosEscolaridad` set estado=? where ciAlumno=? and idCurso=? and idMateria=? and anio=? and nombreGrupo=?";
             PreparedStatement s1= connection.prepareStatement(sql1);
+            PreparedStatement s2= connection.prepareStatement(sql2);
             int j;
             if(s.executeUpdate(sql)>0){
                 for(Libreta l:listaL){
@@ -550,8 +639,17 @@ public class ManejadorBedeliaBD {
                     s1.setInt(j++, l.getId());
                     s1.setInt(j++, ciAlumno);
                     s1.addBatch();
+                    j=1;
+                    s2.setInt(j++, 2);
+                    s2.setInt(j++, ciAlumno);
+                    s2.setInt(j++, l.getGrupo().getCusoBedelia().getId());
+                    s2.setInt(j++, l.getMateria().getId());
+                    s2.setInt(j++, l.getGrupo().getAnio());
+                    s2.setString(j++, l.getGrupo().getNombre());
+                    s2.addBatch();
                 }
                 s1.executeBatch();
+                s2.executeBatch();
                 return true;
             }
         } catch (Exception ex) {
@@ -564,7 +662,9 @@ public class ManejadorBedeliaBD {
             String sql= "DELETE FROM sistemasEM.`grupos-alumnos` where ciAlumno=?";
             PreparedStatement s= connection.prepareStatement(sql);
             String sql1= "UPDATE sistemasEM.`libretasindividuales` SET `activo`=0 WHERE idLibreta=? and ciAlumno=?";
+            String sql2= "UPDATE sistemasEM.`registrosEscolaridad` set estado=? where ciAlumno=? and idCurso=? and idMateria=? and anio=? and nombreGrupo=?";
             PreparedStatement s1= connection.prepareStatement(sql1);
+            PreparedStatement s2= connection.prepareStatement(sql2);
             int j;
             for(String ci:listaAlumnos){
                 s.setInt(1, Integer.valueOf(ci));
@@ -574,9 +674,18 @@ public class ManejadorBedeliaBD {
                     s1.setInt(j++, l.getId());
                     s1.setInt(j++, Integer.valueOf(ci));
                     s1.addBatch();
+                    j=1;
+                    s2.setInt(j++, 2);
+                    s2.setInt(j++, Integer.valueOf(ci));
+                    s2.setInt(j++, l.getGrupo().getCusoBedelia().getId());
+                    s2.setInt(j++, l.getMateria().getId());
+                    s2.setInt(j++, l.getGrupo().getAnio());
+                    s2.setString(j++, l.getGrupo().getNombre());
+                    s2.addBatch();
                 }
             }
             s.executeBatch();
+            s1.executeBatch();
             s1.executeBatch();
             return true;
         
@@ -589,8 +698,10 @@ public class ManejadorBedeliaBD {
         try {
             String sql="insert into sistemasEM.libretas(ciProfesor,idCurso,anio,nombreGrupo,idMateria,salon) values (?,?,?,?,?,?)";
             String sql1= "insert into sistemasEM.`libretasIndividuales` (idLibreta,ciAlumno,promedioAnual,notaFinal,activo) values(?,?,?,?,?)";
+            String sql2="insert into sistemasEM.`registrosEscolaridad` (ciAlumno,idCurso,idMateria,anio,nombreGrupo,estado) values(?,?,?,?,?,?)";// estado 1-cursando, 2-baja, 3-aprobado, 4- a examen
             PreparedStatement s= connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
             PreparedStatement s1= connection.prepareStatement(sql1);
+            PreparedStatement s2= connection.prepareStatement(sql2);
             int i,j;
             i=1;
             s.setInt(i++, ciProfesor);
@@ -613,8 +724,17 @@ public class ManejadorBedeliaBD {
                             s1.setInt(j++, 0);
                             s1.setBoolean(j++, true);
                             s1.addBatch();
+                            j=1;
+                            s2.setInt(j++,alumno.getCi());
+                            s2.setInt(j++,idCurso);
+                            s2.setInt(j++,idMateria);
+                            s2.setInt(j++,anioGrupo);
+                            s2.setString(j++,nombreGrupo);
+                            s2.setInt(j++,1);
+                            s2.addBatch();
                         }
                         s1.executeBatch();
+                        s2.executeBatch();
                     }
                     return clave;
                 }

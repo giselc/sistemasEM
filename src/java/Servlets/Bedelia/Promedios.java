@@ -46,11 +46,37 @@ public class Promedios extends HttpServlet {
             Manejadores.ManejadorBedelia mb = ManejadorBedelia.getInstance();
             if(request.getParameter("cambiarGrilla")!=null){
                 int mes = Integer.valueOf(request.getParameter("mes"));
-                String html= mb.cambiarGrillaPromedio(idLibreta,mes,request.getContextPath());
+                Classes.Bedelia.Libreta l = mb.getLibretas().get(idLibreta);
+                String html= mb.cambiarGrillaPromedio(l,mes,request.getContextPath());
+                String botonGuardarCerrar ="";
+                if(mes<=6 && !l.getMesesCerrados().containsKey(mes) && ((l.getMateria().isSecundaria()&& !l.getMesesCerrados().containsKey(11) &&!l.getMesesCerrados().containsKey(12))|| (!l.getMateria().isSecundaria() && !l.getMesesCerrados().containsKey(13)))){ 
+                    if(l.getMateria().isSecundaria()){
+                            botonGuardarCerrar+="<input type='submit' name='boton1' onclick=\"this.form.action=form.action = 'Promedios?idLibreta="+l.getId()+"&guardarPromedios=1'\" value='GUARDAR CAMBIOS' style='background-color: #ff6600;border-radius: 15px; color: #ffffff;font-size: large'>";
+                    }
+                    botonGuardarCerrar+="<input type='submit' name='boton2' onclick=\"this.form.action=form.action = 'Promedios?idLibreta="+l.getId()+"&cerrarMes=1';\" value='CERRAR MES' style=\"background-color: #cd0a0a; border-radius: 15px; color: #ffffff;font-size: large\" >";
+                }
+                else if(mes>6 && mes<=11 && !l.getMesesCerrados().containsKey(mes) && ((l.getMateria().isSecundaria()&&!l.getMesesCerrados().containsKey(12))|| (!l.getMateria().isSecundaria() && !l.getMesesCerrados().containsKey(13)))){
+                    if(l.getMateria().isSecundaria()){
+                            botonGuardarCerrar+="<input type='submit' name='boton1' onclick=\"this.form.action=form.action = 'Promedios?idLibreta="+l.getId()+"&guardarPromedios=1'\" value='GUARDAR CAMBIOS' style='background-color: #ff6600;border-radius: 15px; color: #ffffff;font-size: large'>";
+                    }
+                    botonGuardarCerrar+="<input type='submit' name='boton2' onclick=\"this.form.action=form.action = 'Promedios?idLibreta="+l.getId()+"&cerrarMes=1';\" value='CERRAR MES' style=\"background-color: #cd0a0a; border-radius: 15px; color: #ffffff;font-size: large\" >";
+                }
+                else if(mes==12 && !l.getMesesCerrados().containsKey(mes)){
+                    botonGuardarCerrar+="<input type='submit' name='boton1' onclick=\"this.form.action=form.action = 'Promedios?idLibreta="+l.getId()+"&guardarPromedios=1'\" value='GUARDAR CAMBIOS' style='background-color: #ff6600;border-radius: 15px; color: #ffffff;font-size: large'>";
+                    botonGuardarCerrar+="<input type='submit' name='boton2' onclick=\"if(confirm('Se cerrará la libreta. Desea continuar?')){this.form.action=form.action = 'Promedios?idLibreta="+l.getId()+"&cerrarMes=1';}else{return false;};\" value='CERRAR MES' style=\"background-color: #cd0a0a; border-radius: 15px; color: #ffffff;font-size: large\" >";
+                }
+                else if(mes==13 && !l.getMesesCerrados().containsKey(mes)){
+                    botonGuardarCerrar+="<input type='submit' name='boton2' onclick=\"if(confirm('Se cerrará la libreta. Desea continuar?')){this.form.action=form.action = 'Promedios?idLibreta="+l.getId()+"&cerrarMes=1';}else{return false;};\" value='CERRAR MES' style=\"background-color: #cd0a0a; border-radius: 15px; color: #ffffff;font-size: large\" >";
+                }
+                
+                
+                
+                
                 JsonObjectBuilder json = Json.createObjectBuilder(); 
                 JsonArrayBuilder jab= Json.createArrayBuilder();
                 jab.add(Json.createObjectBuilder()
                     .add("html",html)
+                    .add("botonGuardarCerrar", botonGuardarCerrar)
                 );
                 json.add("msj", jab);
                 out.print(json.build());
@@ -82,10 +108,10 @@ public class Promedios extends HttpServlet {
                              
                     }
                     if(ok){
-                        mensaje="Promedios guardados sastifactoriamente.";
+                        mensaje="Promedios guardados satisfactoriamente.";
                         if(request.getParameter("cerrarMes")!=null){
                             if(mb.cerrarPromedio(l, mes)){
-                                mensaje="Promedios guardados y cerrados sastifactoriamente.";
+                                mensaje="Promedios guardados y cerrados satisfactoriamente.";
                             }
                             else{
                                 mensaje+=" ERROR al cerrar los promedios.";

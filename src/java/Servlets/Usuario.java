@@ -92,26 +92,26 @@ public class Usuario extends HttpServlet {
                             cambiarContra = request.getParameter("cambiarContra").equals("on");
                         }
                         if(mc.crarUsuario(u,usuario,nombreMostrar,pass,cambiarContra,admin,tipoPermisoPersonal,tipoPermisoDescuento,permisoSistemaNotas,permisoSistemaHabilitacion,esProfesor,ciProfesor)){
-                            sesion.setAttribute("mensaje", "Usuario creado sastifactoriamente.");
+                            sesion.setAttribute("Mensaje", "Usuario creado satisfactoriamente.");
                         }
                         else{
-                            sesion.setAttribute("mensaje", "ERROR al crear el usuario.");
+                            sesion.setAttribute("Mensaje", "ERROR al crear el usuario.");
                         }
                         
                     }
                     else{
                         url="usuario.jsp";
-                        sesion.setAttribute("mensaje", "El usuario: "+usuario+" ya existente en el sistema.");
+                        sesion.setAttribute("Mensaje", "El usuario: "+usuario+" ya existente en el sistema.");
                     }
                     response.sendRedirect(url);
                     
                 }
                 else{ //modificacion
                     if( mc.ModificarUsuario(u, id, nombreMostrar,admin,tipoPermisoPersonal,tipoPermisoDescuento,permisoSistemaNotas,permisoSistemaHabilitacion,esProfesor,ciProfesor)){
-                       sesion.setAttribute("mensaje", "Usuario modificado sastifactoriamente.");
+                       sesion.setAttribute("Mensaje", "Usuario modificado satisfactoriamente.");
                     }
                     else{
-                        sesion.setAttribute("mensaje", "ERROR al modificar el usuario.");
+                        sesion.setAttribute("Mensaje", "ERROR al modificar el usuario.");
                     }
                     response.sendRedirect("usuarios.jsp");
                 }
@@ -129,7 +129,7 @@ public class Usuario extends HttpServlet {
                         cambiarContra = request.getParameter("cambiarContra").equals("on");
                     }
                     if(mc.cambiarContrasena(u, id, contraNue, contraAnt,cambiarContra)){
-                        sesion.setAttribute("Mensaje", "Contraseña modificada sastifactoriamente.");
+                        sesion.setAttribute("Mensaje", "Contraseña modificada satisfactoriamente.");
                         if(request.getParameter("contraAnt")!=null){
                             response.sendRedirect(""); 
                         }
@@ -148,10 +148,10 @@ public class Usuario extends HttpServlet {
                     if(request.getParameter("elim")!= null){
                         int id=Integer.valueOf(request.getParameter("elim"));
                         if(mc.eliminarUsuario(u, id)){
-                            sesion.setAttribute("mensaje", "Usuario eliminado sastifactoriamente.");
+                            sesion.setAttribute("Mensaje", "Usuario eliminado satisfactoriamente.");
                         }
                         else{
-                            sesion.setAttribute("mensaje", "ERROR al eliminar el usuario. Puede que el usuario este asociado a algún postulante.");
+                            sesion.setAttribute("Mensaje", "ERROR al eliminar el usuario. Puede que el usuario este asociado a algún postulante.");
                         }
                         response.sendRedirect("usuarios.jsp"); 
                     }

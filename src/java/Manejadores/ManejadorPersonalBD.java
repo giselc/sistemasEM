@@ -628,13 +628,12 @@ public class ManejadorPersonalBD {
         Statement s;
         try {
             s = connection.createStatement();
-            String sql="insert into sistemasem.cadetesBajas (select cadetes.*,`idGrado`,`idArma`,`primerNombre`,`segundoNombre`,`primerApellido`,`segundoApellido`,`observaciones`,`fechaAltaSistema`,'"+causa+"'as causaBaja,'"+fecha+"' as fechaBaja from sistemasem.personal left join sistemasem.cadetes on personal.ci=cadetes.ci and personal.numero=cadetes.numero where cadetes.ci="+ci+")";
-            s.addBatch(sql);
+            String sql="insert into sistemasem.cadetesBajas (select cadetes.*,`idGrado`,`idArma`,`primerNombre`,`segundoNombre`,`primerApellido`,`segundoApellido`,`fechaAltaSistema`,'"+causa+"'as causaBaja,'"+fecha+"' as fechaBaja from sistemasem.personal left join sistemasem.cadetes on personal.ci=cadetes.ci and personal.numero=cadetes.numero where cadetes.ci="+ci+")";
+            s.executeUpdate(sql);
             sql="DELETE FROM sistemasem.personal where ci="+ci;
-            s.addBatch(sql);
+            s.executeUpdate(sql);
             sql="DELETE FROM sistemasem.cadetes where ci="+ci;
-            s.addBatch(sql);
-            s.executeBatch();
+            s.executeUpdate(sql);
             return true;
         } catch (SQLException ex) {
             System.out.print("bajaCadete:"+ex.getMessage());
@@ -644,10 +643,10 @@ public class ManejadorPersonalBD {
     public Cadete crearCadeteHistorial(int ci){
         try {
             Statement s= connection.createStatement();
-            String sql="Insert into sistemasem.personal SELECT numero, ci, idGrado, idArma, primerNombre, segundoNombre,primerApellido, segundoApellido, observaciones, fechaAltaSistema FROM sistemasem.cadetesBajas where ci="+ci+" order by fechaBaja desc LIMIT 1";
+            String sql="Insert into sistemasem.personal SELECT numero, ci, idGrado, idArma, primerNombre, segundoNombre,primerApellido, segundoApellido, fechaAltaSistema FROM sistemasem.cadetesBajas where ci="+ci+" order by fechaBaja desc LIMIT 1";
             s.addBatch(sql);
             sql="Insert into sistemasem.cadetes SELECT ci,fotopasaporte,numero,idCurso,idCarrera,fechaNac,sexo,idDepartamentoNac,localidadNac,cc,ccNro,idEstadoCivil,domicilio,idDepartamentoDom,localidadDom,telefono,email,derecha,hijos,repitiente,lmga,pasedirecto,notapaseDirecto,"
-                    + "talleoperacional,tallequepi,tallebotas,PNombreComp,PFechaNac,PDepartamentoNac,PLocalidadNac,PEstadoCivil,PDomicilio,PDepartamento,PLocalidad,PTelefono,PProfesion,PLugarTrabajo,"
+                    + "talleoperacional,tallequepi,tallebotas,observaciones,PNombreComp,PFechaNac,PDepartamentoNac,PLocalidadNac,PEstadoCivil,PDomicilio,PDepartamento,PLocalidad,PTelefono,PProfesion,PLugarTrabajo,"
                     + "MNombreComp,MFechaNac,MDepartamentoNac,MLocalidadNac,MEstadoCivil,MDomicilio,MDepartamento,MLocalidad,MTelefono,MProfesion,MLugarTrabajo FROM sistemasem.cadetesBajas where ci="+ci+" order by fechaBaja desc LIMIT 1";
             s.addBatch(sql);
             s.executeBatch();
@@ -671,7 +670,7 @@ public class ManejadorPersonalBD {
                 return null;
             }
             catch(Exception ex1){
-                
+                System.out.print("crearCadeteDesdeHistorial: "+ex1.getMessage());
             }
             System.out.print("crearCadeteDesdeHistorial: "+ex.getMessage());
         }

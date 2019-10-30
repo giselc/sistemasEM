@@ -1097,10 +1097,11 @@ out.print("                </td>\n" +
     }
     public synchronized boolean bajaCadete(int ci, String causa){
         ManejadorPersonalBD mp= new ManejadorPersonalBD();
+        ManejadorBedelia mb= ManejadorBedelia.getInstance();
         if( mp.bajaCadete(ci,causa)){
+            mb.desasociarAlumnoGrupos(ci);
             Iterator it = personal.get(1).iterator();
             boolean continuo=true;
-            ManejadorCodigos mc = ManejadorCodigos.getInstance();
             while(it.hasNext() && continuo ){
                 Cadete cadActual = (Cadete)it.next();
                 if(cadActual.getCi()==ci){

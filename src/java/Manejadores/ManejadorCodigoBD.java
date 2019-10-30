@@ -383,7 +383,7 @@ public class ManejadorCodigoBD {
     public boolean crarUsuario(Usuario creador, String nombre, String nombreMostrar, String contrasena, boolean cambiarContra,boolean admin,int tipoPersonal,int tipodescuento, boolean notas, boolean habilitacion,boolean profesor, int ciProfesor){
         if (creador.isAdmin()){
             try {
-                String sql= "insert into sistemasEM.usuarios (nombre, mostrar, contrasena,cambiarContra,admin,permisosPersonal,permisosDescuento,notas, habilitacion,profesor,ciProfesor) values(?,?,?,MD5(?),?,?,?,?,?,?,?)";
+                String sql= "insert into sistemasEM.usuarios (nombre, mostrar, contrasena,cambiarContra,admin,permisosPersonal,permisosDescuento,notas, habilitacion,profesor,ciProfesor) values(?,?,MD5(?),?,?,?,?,?,?,?,?)";
                 PreparedStatement s= connection.prepareStatement(sql);
                 int i=1;
                 s.setString(i++, nombre);
@@ -443,10 +443,10 @@ public class ManejadorCodigoBD {
             try {
                 String sql="";
                 if(cambiarContra){
-                    sql= "Update sistemaEM.usuarios set contrasena=MD5('"+contrasenaNueva+"'), cambiarContra=1 where id="+id;
+                    sql= "Update sistemasEM.usuarios set contrasena=MD5('"+contrasenaNueva+"'), cambiarContra=1 where id="+id;
                 }
                 else{
-                    sql= "Update sistemaEM.usuarios set contrasena=MD5('"+contrasenaNueva+"'), cambiarContra=0 where id="+id;
+                    sql= "Update sistemasEM.usuarios set contrasena=MD5('"+contrasenaNueva+"'), cambiarContra=0 where id="+id;
                 }
                 Statement s= connection.createStatement();
                 int result = s.executeUpdate(sql);

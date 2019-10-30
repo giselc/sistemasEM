@@ -8,7 +8,7 @@
 <!DOCTYPE html>
 <html>
         <link rel="stylesheet" href="css/login.css" type="text/css"/>
-        <title>Sistemas Internos E.M.</title>
+        <title>Sistemas Internos de la Escuela Militar</title>
         
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         

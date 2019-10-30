@@ -59,7 +59,7 @@ public class Personal extends HttpServlet {
                 if(request.getParameter("elim")!=null){
                     //baja
                     if( mp.bajaPersonal(ci,tipo)){
-                        mensaje="Personal eliminado sastisfactoriamente.";
+                        mensaje="Personal eliminado satisfactoriamente.";
                     }
                     else{
                         mensaje="ERROR al eliminar el Personal.";
@@ -98,7 +98,7 @@ public class Personal extends HttpServlet {
                             rp.fechaAltaSistema = request.getParameter("fechaAltaSistema");
                             rp.rc=null;
                             if(mp.agregarPersonal(rp,tipo)){
-                                mensaje="Personal agregado sastisfactoriamente.";
+                                mensaje="Personal agregado satisfactoriamente.";
                                 redirect="personal.jsp?tipo="+tipo;
                             }
                             else{

@@ -62,7 +62,7 @@ public class Cadete extends HttpServlet {
                     String causa = request.getParameter("causa");
 
                     if( mp.bajaCadete(ci, causa)){
-                        mensaje="Cadete eliminado sastisfactoriamente.";
+                        mensaje="Cadete eliminado satisfactoriamente.";
                         redirect="cadetes.jsp";
                     }
                     else{
@@ -108,7 +108,7 @@ public class Cadete extends HttpServlet {
                     else {
                         if(request.getParameter("crearDesdeHistorial")!=null){
                             if( mp.crearCadeteHistorial(ci)){
-                                mensaje="Cadete agregado sastisfactoriamente.";
+                                mensaje="Cadete agregado satisfactoriamente.";
                                 redirect="cadete.jsp?id="+ci;
                             }
                             else{
@@ -201,7 +201,7 @@ public class Cadete extends HttpServlet {
                             else{
                                 //agregar
                                 if(mp.agregarCadete(rp, foto)){
-                                    mensaje="Cadete agregado sastisfactoriamente.";
+                                    mensaje="Cadete agregado satisfactoriamente.";
                                     redirect="cadete.jsp?id="+request.getParameter("ci");
                                 }
                                 else{

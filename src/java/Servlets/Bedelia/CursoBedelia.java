@@ -54,7 +54,7 @@ public class CursoBedelia extends HttpServlet {
                     int id= Integer.valueOf(request.getParameter("id"));
                     switch(mp.eliminarCurso(id)){
                         case 0:
-                            mensaje="Curso eliminado sastisfactoriamente.";
+                            mensaje="Curso eliminado satisfactoriamente.";
                             redirect="cursos.jsp";
                             break;
                         case 1:
@@ -105,7 +105,7 @@ public class CursoBedelia extends HttpServlet {
                             if(id!=-1){
                                 switch(mp.modificarCurso(cb)){
                                     case 0:
-                                        mensaje="Curso modificado sastisfactoriamente.";
+                                        mensaje="Curso modificado satisfactoriamente.";
                                         break;
                                     case 1:
                                         mensaje="ERROR al modificar el curso. Tiene materias asociadas";
@@ -119,7 +119,7 @@ public class CursoBedelia extends HttpServlet {
                             else{
                                 //agregar
                                 if(mp.agregarCurso(cb)){
-                                    mensaje="Curso agregado sastisfactoriamente.";
+                                    mensaje="Curso agregado satisfactoriamente.";
                                     redirect="cursos.jsp";
                                 }
                                 else{

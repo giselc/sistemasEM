@@ -53,7 +53,7 @@ public class Materia extends HttpServlet {
                 if(request.getParameter("elim")!=null){
                     //baja
                     if(mp.eliminarMateria(Integer.valueOf(request.getParameter("elim")))){
-                            mensaje="Materia eliminado sastisfactoriamente.";
+                            mensaje="Materia eliminado satisfactoriamente.";
                             redirect="materias.jsp";
                     }
                     else{
@@ -92,7 +92,7 @@ public class Materia extends HttpServlet {
                     Classes.Bedelia.Materia m = new Classes.Bedelia.Materia(id, nombre, codigo,semestral, semestre, secundaria, coeficiente,activo,especifica);
                     if(id!=-1){
                         if(mp.modificarMateria(m)){
-                            mensaje="Materia modificada sastisfactoriamente.";
+                            mensaje="Materia modificada satisfactoriamente.";
                         }
                         else{
                             mensaje="ERROR al modificar la materia.";
@@ -106,7 +106,7 @@ public class Materia extends HttpServlet {
                             idCurso= Integer.valueOf(request.getParameter("idCurso"));
                         }
                         if(mp.agregarMateria(m,idCurso)){
-                            mensaje="Materia agregada sastisfactoriamente.";
+                            mensaje="Materia agregada satisfactoriamente.";
                             redirect="materias.jsp";
                         }
                         else{

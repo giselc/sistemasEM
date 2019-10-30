@@ -165,7 +165,7 @@ public class Libreta extends HttpServlet {
                         String nombre=resto.substring(0,resto.indexOf("/"));
                         Classes.Bedelia.Libreta l = mp.crearLibreta(Integer.valueOf(request.getParameter("curso")),anio,nombre,Integer.valueOf(request.getParameter("materia")),Integer.valueOf(request.getParameter("profesor")),salon);
                         if(l!=null){
-                            mensaje="Libreta agregada sastisfactoriamente.";
+                            mensaje="Libreta agregada satisfactoriamente.";
                             redirect="libreta.jsp?id="+l.getId();
                         }
                         else{

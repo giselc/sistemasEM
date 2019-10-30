@@ -11,7 +11,7 @@
 <%@ include file="header.jsp" %>
 <script>
     function confirmar(f){
-        var s="¿Seguro que desea eliminar el cadete?");
+        var s="¿Seguro que desea eliminar el cadete?";
         var r=confirm(s);
         if (r==true)
         {

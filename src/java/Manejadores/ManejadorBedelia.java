@@ -77,8 +77,9 @@ public class ManejadorBedelia {
                 if(!g.getAlumnos().containsKey(c.getCi())){
                     g.getAlumnos().put(c.getCi(), c);
                     for(Libreta l:listaL){
-                        if(l.getLibretasIndividuales().containsKey(c.getCi())){
-                            l.getLibretasIndividuales().get(c.getCi()).setActivo(true);
+                        LibretaIndividual li=mb.obtenerLibretaIndividual(l.getId(),c.getCi());
+                        if(li!=null){
+                            l.getLibretasIndividuales().put(c.getCi(),li);
                         }
                         else{
                             l.getLibretasIndividuales().put(c.getCi(), new LibretaIndividual(l.getId(), c));
@@ -99,13 +100,30 @@ public class ManejadorBedelia {
         }
         return l;
     }
+    public synchronized void desasociarAlumnoGrupos(Integer ciAlumno) {
+        ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
+        LinkedList<Libreta> listL;
+        for(CursoBedelia cb : cursos.values()){
+            for(Grupo g:cb.getGrupos()){
+                if(g.getAlumnos().containsKey(ciAlumno)){
+                    listL = this.getLibretasAsociadasAGrupo(g);
+                    if(mb.desasociarAlumnoGrupo(ciAlumno,g,listL)){
+                        g.getAlumnos().remove(ciAlumno);
+                        for(Libreta l: listL){
+                            l.getLibretasIndividuales().remove(ciAlumno); //baja pero no elimino las notas que ya estaban
+                        }
+                    }
+                }
+            }
+        }
+    }
     public synchronized boolean desasociarAlumnoGrupo(Integer ciAlumno, Grupo grupo) {
         LinkedList<Libreta> listL = this.getLibretasAsociadasAGrupo(grupo);
         ManejadorBedeliaBD mb = new ManejadorBedeliaBD();
         if(mb.desasociarAlumnoGrupo(ciAlumno,grupo,listL)){
             grupo.getAlumnos().remove(ciAlumno);
             for(Libreta l: listL){
-                l.getLibretasIndividuales().get(ciAlumno).setActivo(false); //baja pero no elimino las notas que ya estaban
+                l.getLibretasIndividuales().remove(ciAlumno); //baja pero no elimino las notas que ya estaban
             }
             return true;
         }
@@ -431,8 +449,7 @@ public class ManejadorBedelia {
         }
         return false;
     }
-    public synchronized String cambiarGrillaPromedio(int idLibreta, int mes, String contextPath) {
-        Libreta l = this.libretas.get(idLibreta);
+    public synchronized String cambiarGrillaPromedio(Libreta l, int mes, String contextPath) {
         String fila="<tr style='background-color:#ffcc66;padding:0px'><td></td><td></td>";
         String html = "<tr style='background-color:#ffcc66;padding:0px'>"
                 + "     <td></td>"
